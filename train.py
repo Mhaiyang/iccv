@@ -2,7 +2,6 @@ import datetime
 import os
 
 import torch
-print(1)
 from torch import nn
 from torch import optim
 from torch.autograd import Variable
@@ -12,9 +11,11 @@ from torchvision import transforms
 
 import joint_transforms
 from config import msd_training_root
+from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
 from model.bdrar import BDRAR
+from backbone.resnet import resnet101
 
 cudnn.benchmark = True
 
@@ -57,10 +58,7 @@ log_path = os.path.join(ckpt_path, exp_name, str(datetime.datetime.now()) + '.tx
 
 
 def main():
-    net = BDRAR().cuda().train()
-
-    for name, param in net.named_parameters():
-        print(name)
+    net = resnet101(backbone_path).cuda().train()
 
     optimizer = optim.SGD([
         {'params': [param for name, param in net.named_parameters() if name[-4:] == 'bias'],
@@ -91,6 +89,7 @@ def train(net, optimizer):
         loss4_l2h_record = AvgMeter()
 
         for i, data in enumerate(train_loader):
+            # Poly Strategy.
             optimizer.param_groups[0]['lr'] = 2 * args['lr'] * (1 - float(curr_iter) / args['iter_num']
                                                                 ) ** args['lr_decay']
             optimizer.param_groups[1]['lr'] = args['lr'] * (1 - float(curr_iter) / args['iter_num']
@@ -144,8 +143,9 @@ def train(net, optimizer):
             print(log)
             open(log_path, 'a').write(log + '\n')
 
-            if curr_iter > args['iter_num']:
+            if curr_iter >= args['iter_num']:
                 torch.save(net.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % curr_iter))
+                torch.save(optimizer.state_dict(), os.path.join(ckpt_path, exp_name, '%d_optim.pth' % curr_iter))
                 return
 
 

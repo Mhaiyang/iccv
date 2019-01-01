@@ -176,63 +176,63 @@ class ResNet(nn.Module):
         return x
 
 
-def resnet18(pretrained=False, **kwargs):
-    """Constructs a ResNet-18 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet18']))
-    return model
-
-
-def resnet34(pretrained=False, **kwargs):
-    """Constructs a ResNet-34 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(BasicBlock, [3, 4, 6, 3], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet34']))
-    return model
-
-
-def resnet50(pretrained=False, **kwargs):
-    """Constructs a ResNet-50 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(Bottleneck, [3, 4, 6, 3], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
-    return model
-
-
-def resnet101(backbone_path=None, **kwargs):
-    """Constructs a ResNet-101 model.
-
-    Args:
-        backbone_path: If not None, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(Bottleneck, [3, 4, 23, 3], **kwargs)
-    if backbone_path is not None:
-        # model.load_state_dict(model_zoo.load_url(model_urls['resnet101']))
-        model.load_state_dict(torch.load(backbone_path))
-        print("{}\nLoaded Pre-trained Weights!".format(backbone_path))
-    return model
-
-
-def resnet152(pretrained=False, **kwargs):
-    """Constructs a ResNet-152 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(Bottleneck, [3, 8, 36, 3], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet152']))
-    return model
+# def resnet18(pretrained=False, **kwargs):
+#     """Constructs a ResNet-18 model.
+#
+#     Args:
+#         pretrained (bool): If True, returns a model pre-trained on ImageNet
+#     """
+#     model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
+#     if pretrained:
+#         model.load_state_dict(model_zoo.load_url(model_urls['resnet18']))
+#     return model
+#
+#
+# def resnet34(pretrained=False, **kwargs):
+#     """Constructs a ResNet-34 model.
+#
+#     Args:
+#         pretrained (bool): If True, returns a model pre-trained on ImageNet
+#     """
+#     model = ResNet(BasicBlock, [3, 4, 6, 3], **kwargs)
+#     if pretrained:
+#         model.load_state_dict(model_zoo.load_url(model_urls['resnet34']))
+#     return model
+#
+#
+# def resnet50(pretrained=False, **kwargs):
+#     """Constructs a ResNet-50 model.
+#
+#     Args:
+#         pretrained (bool): If True, returns a model pre-trained on ImageNet
+#     """
+#     model = ResNet(Bottleneck, [3, 4, 6, 3], **kwargs)
+#     if pretrained:
+#         model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
+#     return model
+#
+#
+# def resnet101(backbone_path=None, **kwargs):
+#     """Constructs a ResNet-101 model.
+#
+#     Args:
+#         backbone_path: If not None, returns a model pre-trained on ImageNet
+#     """
+#     model = ResNet(Bottleneck, [3, 4, 23, 3], **kwargs)
+#     if backbone_path is not None:
+#         # model.load_state_dict(model_zoo.load_url(model_urls['resnet101']))
+#         model.load_state_dict(torch.load(backbone_path))
+#         print("{}\nLoaded Pre-trained Weights!".format(backbone_path))
+#     return model
+#
+#
+# def resnet152(pretrained=False, **kwargs):
+#     """Constructs a ResNet-152 model.
+#
+#     Args:
+#         pretrained (bool): If True, returns a model pre-trained on ImageNet
+#     """
+#     model = ResNet(Bottleneck, [3, 8, 36, 3], **kwargs)
+#     if pretrained:
+#         model.load_state_dict(model_zoo.load_url(model_urls['resnet152']))
+#     return model

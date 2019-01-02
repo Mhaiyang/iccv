@@ -11,7 +11,4 @@
 import torch
 import torch.nn.functional as F
 
-a = torch.Tensor([-2, -2, 2, 2])
-print(a)
-
-print(F.sigmoid(a))
+print("Average Time Is : {:.2f}".format(0.12345))

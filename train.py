@@ -9,7 +9,7 @@ from torch.autograd import Variable
 from torch.backends import cudnn
 from torch.utils.data import DataLoader
 from torchvision import transforms
-
+from tensorboardX import SummaryWriter
 
 import joint_transforms
 from config import msd_training_root
@@ -28,7 +28,7 @@ exp_name = 'MHY'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'iter_num': 10,
+    'iter_num': 100,
     'train_batch_size': 16,
     'last_iter': 0,
     'lr': 5e-3,
@@ -36,8 +36,11 @@ args = {
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
-    'scale': 416
+    'scale': 416,
+    'add_graph': True
 }
+
+writer = SummaryWriter(log_dir='./log', comment=exp_name)
 
 joint_transform = joint_transforms.Compose([
     joint_transforms.RandomRotate(),
@@ -64,6 +67,9 @@ def main():
     print(args)
 
     net = MHY(backbone_path).cuda(device_ids[0]).train()
+    if args['add_graph']:
+        writer.add_graph(net, input_to_model=torch.rand(
+            args['train_batch_size'], 3, args['scale'], args['scale']).cuda())
     net = nn.DataParallel(net, device_ids=device_ids)
 
     optimizer = optim.SGD([
@@ -84,6 +90,7 @@ def main():
     check_mkdir(os.path.join(ckpt_path, exp_name))
     open(log_path, 'w').write(str(args) + '\n\n')
     train(net, optimizer)
+    writer.close()
 
 
 def train(net, optimizer):
@@ -117,10 +124,10 @@ def train(net, optimizer):
             loss_f1 = bce_logit(predict_f1, labels)
             loss_f0 = bce_logit(predict_f0, labels)
 
-            loss_b3 = bce(1 - F.sigmoid(predict_b3), labels)
-            loss_b2 = bce(1 - F.sigmoid(predict_b2), labels)
-            loss_b1 = bce(1 - F.sigmoid(predict_b1), labels)
-            loss_b0 = bce(1 - F.sigmoid(predict_b0), labels)
+            loss_b3 = bce(1 - torch.sigmoid(predict_b3), labels)
+            loss_b2 = bce(1 - torch.sigmoid(predict_b2), labels)
+            loss_b1 = bce(1 - torch.sigmoid(predict_b1), labels)
+            loss_b0 = bce(1 - torch.sigmoid(predict_b0), labels)
 
             loss_fb = bce_logit(predict_fb, labels)
 
@@ -141,6 +148,18 @@ def train(net, optimizer):
             loss_b1_record.update(loss_b1.data, batch_size)
             loss_b0_record.update(loss_b0.data, batch_size)
             loss_fb_record.update(loss_fb.data, batch_size)
+
+            if curr_iter % 10 == 0:
+                writer.add_scalar('Total loss', loss, curr_iter)
+                writer.add_scalar('f3 loss', loss_f3, curr_iter)
+                writer.add_scalar('f2 loss', loss_f2, curr_iter)
+                writer.add_scalar('f1 loss', loss_f1, curr_iter)
+                writer.add_scalar('f0 loss', loss_f0, curr_iter)
+                writer.add_scalar('b3 loss', loss_b3, curr_iter)
+                writer.add_scalar('b2 loss', loss_b2, curr_iter)
+                writer.add_scalar('b1 loss', loss_b1, curr_iter)
+                writer.add_scalar('b0 loss', loss_b0, curr_iter)
+                writer.add_scalar('fb loss', loss_fb, curr_iter)
 
             curr_iter += 1
 

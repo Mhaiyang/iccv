@@ -89,7 +89,7 @@ class MHY(nn.Module):
         resnet101 = ResNet(Bottleneck, [3, 4, 23, 3])
         if backbone_path is not None:
             resnet101.load_state_dict(torch.load(backbone_path))
-            print("{}\nLoaded Pre-trained Weights!".format(backbone_path))
+            print("{}\nLoad Pre-trained Weights Succeed!".format(backbone_path))
 
         self.layer0 = nn.Sequential(resnet101.conv1, resnet101.bn1, resnet101.relu)
         self.layer1 = nn.Sequential(resnet101.maxpool, resnet101.layer1)
@@ -152,19 +152,19 @@ class MHY(nn.Module):
 
         predict_fb = self.predict_fb(f0, b0)
 
-        predict_f3 = F.upsample(predict_f3, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_f2 = F.upsample(predict_f2, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_f1 = F.upsample(predict_f1, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_f0 = F.upsample(predict_f0, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f3 = F.interpolate(predict_f3, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f2 = F.interpolate(predict_f2, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f1 = F.interpolate(predict_f1, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f0 = F.interpolate(predict_f0, size=x.size()[2:], mode='bilinear', align_corners=True)
 
-        predict_b3 = F.upsample(predict_b3, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_b2 = F.upsample(predict_b2, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_b1 = F.upsample(predict_b1, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_b0 = F.upsample(predict_b0, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b3 = F.interpolate(predict_b3, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b2 = F.interpolate(predict_b2, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b1 = F.interpolate(predict_b1, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b0 = F.interpolate(predict_b0, size=x.size()[2:], mode='bilinear', align_corners=True)
 
-        predict_fb = F.upsample(predict_fb, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_fb = F.interpolate(predict_fb, size=x.size()[2:], mode='bilinear', align_corners=True)
 
         if self.training:
             return predict_f3, predict_f2, predict_f1, predict_f0, \
                    predict_b3, predict_b2, predict_b1, predict_b0, predict_fb
-        return F.sigmoid(predict_fb)
+        return torch.sigmoid(predict_fb)

@@ -20,7 +20,7 @@ from model.mhy import MHY
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [0, 1]
 # torch.cuda.set_device(0)
 
 ckpt_path = './ckpt'
@@ -28,8 +28,8 @@ exp_name = 'MHY'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'iter_num': 3000,
-    'train_batch_size': 8,
+    'iter_num': 10,
+    'train_batch_size': 16,
     'last_iter': 0,
     'lr': 5e-3,
     'lr_decay': 0.9,
@@ -156,6 +156,7 @@ def train(net, optimizer):
             if curr_iter >= args['iter_num']:
                 torch.save(net.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % curr_iter))
                 torch.save(optimizer.state_dict(), os.path.join(ckpt_path, exp_name, '%d_optim.pth' % curr_iter))
+                print("Optimization Have Done!")
                 return
 
 

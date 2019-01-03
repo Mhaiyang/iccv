@@ -4,6 +4,12 @@ Start!
 
 ### Environment
 
+cuda 9.0
+cudnn 7
+torch 0.4.1
+torchvision 0.2.1
+
+
 ```
 sudo pip3 install -r requirements.txt
 git clone https://github.com/Mhaiyang/dss_crf.git

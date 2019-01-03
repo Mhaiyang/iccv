@@ -16,19 +16,19 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.mhy import MHY
+from model.edge import EDGE
 
 cudnn.benchmark = True
 
-device_ids = [0, 1]
-# torch.cuda.set_device(0)
+device_ids = [0]
+# device_ids = [0, 1]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY'
+exp_name = 'EDGE'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'iter_num': 100,
+    'iter_num': 10000,
     'train_batch_size': 16,
     'last_iter': 0,
     'lr': 5e-3,
@@ -40,7 +40,10 @@ args = {
     'add_graph': True
 }
 
-writer = SummaryWriter(log_dir='./log', comment=exp_name)
+vis_path = os.path.join(ckpt_path, exp_name, 'log')
+if not os.path.exists(vis_path):
+    os.mkdir(vis_path)
+writer = SummaryWriter(log_dir=vis_path, comment=exp_name)
 
 joint_transform = joint_transforms.Compose([
     joint_transforms.RandomRotate(),
@@ -66,7 +69,7 @@ log_path = os.path.join(ckpt_path, exp_name, str(datetime.datetime.now()) + '.tx
 def main():
     print(args)
 
-    net = MHY(backbone_path).cuda(device_ids[0]).train()
+    net = EDGE(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda())
@@ -99,8 +102,8 @@ def train(net, optimizer):
         train_loss_record, \
         loss_f3_record, loss_f2_record, loss_f1_record, loss_f0_record, \
         loss_b3_record, loss_b2_record, loss_b1_record, loss_b0_record, \
-        loss_fb_record = AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), \
-                         AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter()
+        loss_fb_record, loss_e_record = AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), \
+                         AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter()
 
         for i, data in enumerate(train_loader):
             # Poly Strategy.
@@ -109,7 +112,7 @@ def train(net, optimizer):
             optimizer.param_groups[1]['lr'] = args['lr'] * (1 - float(curr_iter) / args['iter_num']
                                                             ) ** args['lr_decay']
 
-            inputs, labels = data
+            inputs, labels, edges = data
             batch_size = inputs.size(0)
             inputs = Variable(inputs).cuda()
             labels = Variable(labels).cuda()
@@ -117,7 +120,7 @@ def train(net, optimizer):
             optimizer.zero_grad()
 
             predict_f3, predict_f2, predict_f1, predict_f0, \
-            predict_b3, predict_b2, predict_b1, predict_b0, predict_fb = net(inputs)
+            predict_b3, predict_b2, predict_b1, predict_b0, predict_e, predict_fb = net(inputs)
 
             loss_f3 = bce_logit(predict_f3, labels)
             loss_f2 = bce_logit(predict_f2, labels)
@@ -129,10 +132,12 @@ def train(net, optimizer):
             loss_b1 = bce(1 - torch.sigmoid(predict_b1), labels)
             loss_b0 = bce(1 - torch.sigmoid(predict_b0), labels)
 
+            loss_e = bce_logit(predict_e, edges)
+
             loss_fb = bce_logit(predict_fb, labels)
 
             loss = loss_f3 + loss_f2 + loss_f1 + loss_f0 + \
-                   loss_b3 + loss_b2 + loss_b1 + loss_b0 + loss_fb
+                   loss_b3 + loss_b2 + loss_b1 + loss_b0 + loss_e + loss_fb
 
             loss.backward()
 
@@ -147,6 +152,7 @@ def train(net, optimizer):
             loss_b2_record.update(loss_b2.data, batch_size)
             loss_b1_record.update(loss_b1.data, batch_size)
             loss_b0_record.update(loss_b0.data, batch_size)
+            loss_e_record.update(loss_e.data, batch_size)
             loss_fb_record.update(loss_fb.data, batch_size)
 
             if curr_iter % 10 == 0:
@@ -159,16 +165,17 @@ def train(net, optimizer):
                 writer.add_scalar('b2 loss', loss_b2, curr_iter)
                 writer.add_scalar('b1 loss', loss_b1, curr_iter)
                 writer.add_scalar('b0 loss', loss_b0, curr_iter)
+                writer.add_scalar('e loss', loss_e, curr_iter)
                 writer.add_scalar('fb loss', loss_fb, curr_iter)
 
             curr_iter += 1
 
             log = '[iter %d], [sum %.5f],  [f3 %.5f], [f2 %.5f], [f1 %.5f], [f0 %.5f] ' \
-                  '[b3 %.5f], [b2 %.5f], [b1 %.5f], [b0 %.5f], [fb %.5f], [lr %.13f]' % \
+                  '[b3 %.5f], [b2 %.5f], [b1 %.5f], [b0 %.5f], [e %.5f], [fb %.5f], [lr %.13f]' % \
                   (curr_iter, train_loss_record.avg,
                    loss_f3_record.avg, loss_f2_record.avg, loss_f1_record.avg, loss_f0_record.avg,
                    loss_b3_record.avg, loss_b2_record.avg, loss_b1_record.avg, loss_b0_record.avg,
-                   loss_fb_record.avg, optimizer.param_groups[1]['lr'])
+                   loss_e_record.avg, loss_fb_record.avg, optimizer.param_groups[1]['lr'])
             print(log)
             open(log_path, 'a').write(log + '\n')
 

@@ -20,7 +20,7 @@ from model.edge import EDGE
 
 cudnn.benchmark = True
 
-device_ids = [2, 3]
+device_ids = [2, 3, 4, 5]
 # device_ids = [0, 1]
 
 ckpt_path = './ckpt'
@@ -60,7 +60,7 @@ img_transform = transforms.Compose([
 target_transform = transforms.ToTensor()
 
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=4, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 
 bce = nn.BCELoss().cuda(device_ids[0])
 bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])

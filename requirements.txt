@@ -1,0 +1,4 @@
+Cython
+scikit-image
+tensorboardX
+xlwt

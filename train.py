@@ -40,9 +40,10 @@ args = {
     'add_graph': True
 }
 
+check_mkdir(ckpt_path)
+check_mkdir(os.path.join(ckpt_path, exp_name))
 vis_path = os.path.join(ckpt_path, exp_name, 'log')
-if not os.path.exists(vis_path):
-    os.mkdir(vis_path)
+check_mkdir(vis_path)
 writer = SummaryWriter(log_dir=vis_path, comment=exp_name)
 
 joint_transform = joint_transforms.Compose([
@@ -89,8 +90,7 @@ def main():
         optimizer.param_groups[0]['lr'] = 2 * args['lr']
         optimizer.param_groups[1]['lr'] = args['lr']
 
-    check_mkdir(ckpt_path)
-    check_mkdir(os.path.join(ckpt_path, exp_name))
+
     open(log_path, 'w').write(str(args) + '\n\n')
     train(net, optimizer)
     writer.close()

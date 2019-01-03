@@ -20,7 +20,7 @@ from model.edge import EDGE
 
 cudnn.benchmark = True
 
-device_ids = [0, 2, 3, 4]
+device_ids = [2, 3, 4, 5]
 # device_ids = [0, 1]
 
 ckpt_path = './ckpt'
@@ -62,8 +62,8 @@ target_transform = transforms.ToTensor()
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 
-bce = nn.BCELoss().cuda()
-bce_logit = nn.BCEWithLogitsLoss().cuda()
+bce = nn.BCELoss().cuda(device_ids[0])
+bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 log_path = os.path.join(ckpt_path, exp_name, str(datetime.datetime.now()) + '.txt')
 
 
@@ -73,7 +73,7 @@ def main():
     net = EDGE(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
-            args['train_batch_size'], 3, args['scale'], args['scale']).cuda())
+            args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
     net = nn.DataParallel(net, device_ids=device_ids)
 
     optimizer = optim.SGD([
@@ -114,8 +114,9 @@ def train(net, optimizer):
 
             inputs, labels, edges = data
             batch_size = inputs.size(0)
-            inputs = Variable(inputs).cuda()
-            labels = Variable(labels).cuda()
+            inputs = Variable(inputs).cuda(device_ids[0])
+            labels = Variable(labels).cuda(device_ids[0])
+            edges = Variable(edges).cuda(device_ids[0])
 
             optimizer.zero_grad()
 

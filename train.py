@@ -60,7 +60,7 @@ img_transform = transforms.Compose([
 target_transform = transforms.ToTensor()
 
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=8, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 
 bce = nn.BCELoss().cuda()
 bce_logit = nn.BCEWithLogitsLoss().cuda()

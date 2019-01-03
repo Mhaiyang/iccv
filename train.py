@@ -20,7 +20,7 @@ from model.edge import EDGE
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [2, 3, 4, 5]
 # device_ids = [0, 1]
 
 ckpt_path = './ckpt'

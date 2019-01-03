@@ -1,4 +1,4 @@
 Cython
 scikit-image
-tensorboardX
+tensorboardX==1.4
 xlwt

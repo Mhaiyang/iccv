@@ -29,7 +29,7 @@ exp_name = 'EDGE'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'iter_num': 10000,
+    'iter_num': 5000,
     'train_batch_size': 12,
     'last_iter': 0,
     'lr': 1e-3,
@@ -38,7 +38,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 416,
-    'add_graph': False
+    'add_graph': True
 }
 
 check_mkdir(ckpt_path)
@@ -61,6 +61,7 @@ img_transform = transforms.Compose([
 target_transform = transforms.ToTensor()
 
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
+print(train_set.__len__())
 train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 
 bce = nn.BCELoss().cuda(device_ids[0])
@@ -139,7 +140,7 @@ def train(net, optimizer):
             loss_fb = bce_logit(predict_fb, labels)
 
             loss = loss_f3 + loss_f2 + loss_f1 + loss_f0 + \
-                   loss_b3 + loss_b2 + loss_b1 + loss_b0 + loss_e + loss_fb
+                   loss_b3 + loss_b2 + loss_b1 + loss_b0 + 10*loss_e + loss_fb
 
             loss.backward()
 

@@ -3,7 +3,6 @@ import os
 import time
 
 import torch
-from torch import nn
 from PIL import Image
 from torch.autograd import Variable
 from torchvision import transforms
@@ -17,7 +16,7 @@ torch.cuda.set_device(0)
 ckpt_path = './ckpt'
 exp_name = 'EDGE'
 args = {
-    'snapshot': '10000',
+    'snapshot': '5000',
     'scale': 416,
     'crf': True
 }

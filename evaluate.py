@@ -18,7 +18,7 @@ ckpt_path = 'ckpt'
 
 exp_name = 'EDGE'
 args = {
-    'snapshot': '10000',
+    'snapshot': '5000',
     'type': 0
 }
 

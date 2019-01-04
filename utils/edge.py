@@ -14,7 +14,7 @@ import numpy as np
 import cv2
 import skimage.io
 
-DATA_DIR = "/home/taylor/data/MSD9/test"
+DATA_DIR = "/home/iccd/data/MSD9/train"
 MASK_DIR = os.path.join(DATA_DIR, "mask")
 EDGE_DIR = os.path.join(DATA_DIR, "edge")
 if not os.path.exists(EDGE_DIR):

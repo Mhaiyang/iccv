@@ -169,19 +169,19 @@ class EDGE(nn.Module):
 
         predict_fb = self.predict_fb(f0, b0, e0)
 
-        predict_f3 = F.interpolate(predict_f3, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_f2 = F.interpolate(predict_f2, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_f1 = F.interpolate(predict_f1, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_f0 = F.interpolate(predict_f0, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f3 = F.upsample(predict_f3, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f2 = F.upsample(predict_f2, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f1 = F.upsample(predict_f1, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f0 = F.upsample(predict_f0, size=x.size()[2:], mode='bilinear', align_corners=True)
 
-        predict_b3 = F.interpolate(predict_b3, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_b2 = F.interpolate(predict_b2, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_b1 = F.interpolate(predict_b1, size=x.size()[2:], mode='bilinear', align_corners=True)
-        predict_b0 = F.interpolate(predict_b0, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b3 = F.upsample(predict_b3, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b2 = F.upsample(predict_b2, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b1 = F.upsample(predict_b1, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b0 = F.upsample(predict_b0, size=x.size()[2:], mode='bilinear', align_corners=True)
 
-        predict_e = F.interpolate(predict_e, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_e = F.upsample(predict_e, size=x.size()[2:], mode='bilinear', align_corners=True)
 
-        predict_fb = F.interpolate(predict_fb, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_fb = F.upsample(predict_fb, size=x.size()[2:], mode='bilinear', align_corners=True)
 
         if self.training:
             return predict_f3, predict_f2, predict_f1, predict_f0, \

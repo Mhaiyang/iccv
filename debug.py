@@ -11,11 +11,3 @@
 import torch
 import torch.nn.functional as F
 
-a = torch.ones(3, 2)
-b = torch.ones(1, 2)
-
-print(a)
-print(b)
-
-c = torch.cat([a, b], 0)
-print(c)

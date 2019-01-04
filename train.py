@@ -20,7 +20,8 @@ from model.edge import EDGE
 
 cudnn.benchmark = True
 
-device_ids = [2, 3, 4, 5]
+device_ids = [0]
+# device_ids = [2, 3, 4, 5]
 # device_ids = [0, 1]
 
 ckpt_path = './ckpt'
@@ -29,15 +30,15 @@ exp_name = 'EDGE'
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
     'iter_num': 10000,
-    'train_batch_size': 16,
+    'train_batch_size': 12,
     'last_iter': 0,
-    'lr': 5e-3,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 416,
-    'add_graph': True
+    'add_graph': False
 }
 
 check_mkdir(ckpt_path)
@@ -181,7 +182,7 @@ def train(net, optimizer):
             open(log_path, 'a').write(log + '\n')
 
             if curr_iter >= args['iter_num']:
-                torch.save(net.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % curr_iter))
+                torch.save(net.module.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % curr_iter))
                 torch.save(optimizer.state_dict(), os.path.join(ckpt_path, exp_name, '%d_optim.pth' % curr_iter))
                 print("Optimization Have Done!")
                 return

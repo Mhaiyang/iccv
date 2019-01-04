@@ -10,17 +10,17 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.mhy import MHY
+from model.edge import EDGE
 
 torch.cuda.set_device(0)
 
 ckpt_path = './ckpt'
-exp_name = 'MHY'
+exp_name = 'EDGE'
 args = {
-    'snapshot': '10000',
+    'snapshot': '100',
     'scale': 416,
     'crf': True,
-    'multi_gpu': True
+    'multi_gpu': False
 }
 
 img_transform = transforms.Compose([
@@ -35,7 +35,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = MHY().cuda()
+    net = EDGE().cuda()
     if args['multi_gpu']:
         net = nn.DataParallel(net)
 
@@ -55,15 +55,19 @@ def main():
                 img = Image.open(os.path.join(root, 'image', img_name))
                 w, h = img.size
                 img_var = Variable(img_transform(img).unsqueeze(0)).cuda()
-                res = net(img_var)
+                edge, res = net(img_var)
+                edge = np.array(transforms.Resize((h, w))(to_pil(edge.data.squeeze(0).cpu())))
                 prediction = np.array(transforms.Resize((h, w))(to_pil(res.data.squeeze(0).cpu())))
                 if args['crf']:
                     prediction = crf_refine(np.array(img.convert('RGB')), prediction)
 
+                Image.fromarray(edge).save(
+                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + "_edge.png"))
                 Image.fromarray(prediction).save(
                     os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))
+
 
 if __name__ == '__main__':
     main()

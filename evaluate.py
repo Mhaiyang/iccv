@@ -15,7 +15,8 @@ from misc import *
 from config import msd_testing_root
 
 ckpt_path = 'ckpt'
-exp_name = 'MHY'
+
+exp_name = 'EDGE'
 args = {
     'snapshot': '10000',
     'type': 0
@@ -25,8 +26,8 @@ args = {
 ROOT_DIR = os.getcwd()
 IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
-# PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
-PREDICT_DIR = os.path.join(ROOT_DIR, "other_methods", "mask_rcnn")
+PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
+# PREDICT_DIR = os.path.join(ROOT_DIR, "other_methods", "mask_rcnn")
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/types", str(args['type']))

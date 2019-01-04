@@ -17,10 +17,9 @@ torch.cuda.set_device(0)
 ckpt_path = './ckpt'
 exp_name = 'EDGE'
 args = {
-    'snapshot': '100',
+    'snapshot': '10000',
     'scale': 416,
-    'crf': True,
-    'multi_gpu': False
+    'crf': True
 }
 
 img_transform = transforms.Compose([
@@ -36,8 +35,6 @@ to_pil = transforms.ToPILImage()
 
 def main():
     net = EDGE().cuda()
-    if args['multi_gpu']:
-        net = nn.DataParallel(net)
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

@@ -2,7 +2,6 @@ import datetime
 import os
 
 import torch
-import torch.nn.functional as F
 from torch import nn
 from torch import optim
 from torch.autograd import Variable
@@ -12,25 +11,26 @@ from torchvision import transforms
 from tensorboardX import SummaryWriter
 
 import joint_transforms
-from config import msd_training_root
+from config import msd_training_root, msd_testing_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.edge import EDGE
+from model.edge_cbam import EDGE_CBAM
 
 cudnn.benchmark = True
 
-device_ids = [0]
+# device_ids = [0]
 # device_ids = [2, 3, 4, 5]
-# device_ids = [0, 1]
+device_ids = [0, 1]
 
 ckpt_path = './ckpt'
-exp_name = 'EDGE'
+exp_name = 'EDGE_CBAM'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'iter_num': 5000,
+    'iter_num': 10000,
     'train_batch_size': 12,
+    'val_batch_size': 8,
     'last_iter': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,
@@ -41,12 +41,15 @@ args = {
     'add_graph': True
 }
 
+# Path.
 check_mkdir(ckpt_path)
 check_mkdir(os.path.join(ckpt_path, exp_name))
 vis_path = os.path.join(ckpt_path, exp_name, 'log')
 check_mkdir(vis_path)
+log_path = os.path.join(ckpt_path, exp_name, str(datetime.datetime.now()) + '.txt')
 writer = SummaryWriter(log_dir=vis_path, comment=exp_name)
 
+# Transform Data.
 joint_transform = joint_transforms.Compose([
     joint_transforms.RandomRotate(),
     joint_transforms.Resize((args['scale'], args['scale']))
@@ -60,19 +63,23 @@ img_transform = transforms.Compose([
 ])
 target_transform = transforms.ToTensor()
 
+# Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
-print(train_set.__len__())
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
+print("Train set: {}".format(train_set.__len__()))
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=8, shuffle=True)
+val_set = ImageFolder(msd_testing_root, val_joint_transform, img_transform, target_transform)
+print("Validation Set: {}".format(val_set.__len__()))
+val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)
 
+# Loss Functions.
 bce = nn.BCELoss().cuda(device_ids[0])
 bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
-log_path = os.path.join(ckpt_path, exp_name, str(datetime.datetime.now()) + '.txt')
 
 
 def main():
     print(args)
 
-    net = EDGE(backbone_path).cuda(device_ids[0]).train()
+    net = EDGE_CBAM(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -140,7 +147,7 @@ def train(net, optimizer):
             loss_fb = bce_logit(predict_fb, labels)
 
             loss = loss_f3 + loss_f2 + loss_f1 + loss_f0 + \
-                   loss_b3 + loss_b2 + loss_b1 + loss_b0 + 10*loss_e + loss_fb
+                   loss_b3 + loss_b2 + loss_b1 + loss_b0 + 10*loss_e + 8*loss_fb
 
             loss.backward()
 
@@ -182,12 +189,33 @@ def train(net, optimizer):
             print(log)
             open(log_path, 'a').write(log + '\n')
 
+            # if curr_iter % 5 == 0:
+            #     net.eval()
+            #     validate(net, curr_iter, 128)
+            #     net.train()
+
             if curr_iter >= args['iter_num']:
+                net.cpu()
                 torch.save(net.module.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % curr_iter))
-                torch.save(optimizer.state_dict(), os.path.join(ckpt_path, exp_name, '%d_optim.pth' % curr_iter))
+                # torch.save(optimizer.state_dict(), os.path.join(ckpt_path, exp_name, '%d_optim.pth' % curr_iter))
                 print("Optimization Have Done!")
                 return
 
+
+def validate(net, curr_iter, total_iter):
+    loss_record = AvgMeter()
+    for x in range(total_iter):
+        for y, data in enumerate(val_loader):
+            inputs, labels, _ = data
+            batch_size = inputs.size(0)
+            inputs = Variable(inputs).cuda(device_ids[0])
+            labels = Variable(labels).cuda(device_ids[0])
+
+            _, predict = net(inputs)
+            loss = bce(predict, labels)
+            loss_record.update(loss.data, batch_size)
+    print("Validation Loss: {}".format(loss_record.avg))
+    writer.add_scalar('val loss', loss_record.avg, curr_iter)
 
 if __name__ == '__main__':
     main()

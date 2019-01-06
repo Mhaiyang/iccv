@@ -9,12 +9,12 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.edge_cbam import EDGE_CBAM
+from model.edge_cbam_cross import EDGE_CBAM_CROSS
 
 torch.cuda.set_device(0)
 
 ckpt_path = './ckpt'
-exp_name = 'EDGE_CBAM'
+exp_name = 'EDGE_CBAM_CROSS'
 args = {
     'snapshot': '10000',
     'scale': 416,
@@ -33,7 +33,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = EDGE_CBAM().cuda()
+    net = EDGE_CBAM_CROSS().cuda()
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

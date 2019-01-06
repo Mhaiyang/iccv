@@ -15,21 +15,21 @@ from config import msd_training_root, msd_testing_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.edge_cbam import EDGE_CBAM
+from model.edge_cbam_cross import EDGE_CBAM_CROSS
 
 cudnn.benchmark = True
 
 # device_ids = [0]
 # device_ids = [2, 3, 4, 5]
-device_ids = [0, 1]
+device_ids = [0]
 
 ckpt_path = './ckpt'
-exp_name = 'EDGE_CBAM'
+exp_name = 'EDGE_CBAM_CROSS'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
     'iter_num': 10000,
-    'train_batch_size': 12,
+    'train_batch_size': 6,
     'val_batch_size': 8,
     'last_iter': 0,
     'lr': 1e-3,
@@ -38,7 +38,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 416,
-    'add_graph': True
+    'add_graph': False
 }
 
 # Path.
@@ -79,7 +79,7 @@ bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 def main():
     print(args)
 
-    net = EDGE_CBAM(backbone_path).cuda(device_ids[0]).train()
+    net = EDGE_CBAM_CROSS(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -216,6 +216,7 @@ def validate(net, curr_iter, total_iter):
             loss_record.update(loss.data, batch_size)
     print("Validation Loss: {}".format(loss_record.avg))
     writer.add_scalar('val loss', loss_record.avg, curr_iter)
+
 
 if __name__ == '__main__':
     main()

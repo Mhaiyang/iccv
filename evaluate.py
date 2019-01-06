@@ -16,7 +16,7 @@ from config import msd_testing_root
 
 ckpt_path = 'ckpt'
 
-exp_name = 'EDGE_CBAM'
+exp_name = 'EDGE_CBAM_CROSS'
 args = {
     'snapshot': '10000',
     'type': 0

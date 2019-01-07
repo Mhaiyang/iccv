@@ -3,4 +3,4 @@ __pycache__/
 ckpt/
 excel/
 
-backbone/resnet101.pth
+backbone/

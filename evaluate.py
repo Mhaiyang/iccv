@@ -27,7 +27,7 @@ ROOT_DIR = os.getcwd()
 IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
-# PREDICT_DIR = os.path.join(ROOT_DIR, "other_methods", "mask_rcnn")
+# PREDICT_DIR = os.path.join(ROOT_DIR, "other_methods", "PSPNet_20")
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/types", str(args['type']))

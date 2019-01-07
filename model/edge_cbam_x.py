@@ -1,18 +1,19 @@
 """
-  @Time    : 2019-1-3 22:07
+  @Time    : 2019-1-6 18:35
   @Author  : TaylorMei
   @Email   : mhy845879017@gmail.com
-
+  
   @Project : iccv
-  @File    : edge_cbam.py
-  @Function:
-
+  @File    : edge_cbam_x.py
+  @Function: 
+  
 """
+
 import torch
 import torch.nn.functional as F
 from torch import nn
 
-from backbone.resnet.resnet import ResNet, Bottleneck
+from backbone.resnext.resnext101_regular import ResNeXt101
 
 
 ###################################################################
@@ -189,24 +190,20 @@ class Fuse(nn.Module):
         return fuse
 
 
-class EDGE_CBAM(nn.Module):
+class EDGE_CBAM_X(nn.Module):
     def __init__(self, backbone_path=None):
-        super(EDGE_CBAM, self).__init__()
-        resnet101 = ResNet(Bottleneck, [3, 4, 23, 3])
-        if backbone_path is not None:
-            resnet101.load_state_dict(torch.load(backbone_path))
-            print("{}\nLoad Pre-trained Weights Succeed!".format(backbone_path))
+        super(EDGE_CBAM_X, self).__init__()
+        resnext = ResNeXt101()
+        self.layer0 = resnext.layer0
+        self.layer1 = resnext.layer1
+        self.layer2 = resnext.layer2
+        self.layer3 = resnext.layer3
+        self.layer4 = resnext.layer4
 
         self.cbam512 = CBAM(512)
         self.cbam256 = CBAM(256)
         self.cbam128 = CBAM(128)
         self.cbam64 = CBAM(64)
-
-        self.layer0 = nn.Sequential(resnet101.conv1, resnet101.bn1, resnet101.relu)
-        self.layer1 = nn.Sequential(resnet101.maxpool, resnet101.layer1)
-        self.layer2 = resnet101.layer2
-        self.layer3 = resnet101.layer3
-        self.layer4 = resnet101.layer4
 
         self.f3 = Up(2048, 512, 1024, 512)
         self.f2 = Up(512, 256, 512, 256)

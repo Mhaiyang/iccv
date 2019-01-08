@@ -15,16 +15,16 @@ from config import msd_training_root, msd_testing_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.edge_cbam_x import EDGE_CBAM_X
+from model.fuse import FUSE
 
 cudnn.benchmark = True
 
 # device_ids = [0]
 # device_ids = [2, 3, 4, 5]
-device_ids = [0]
+device_ids = [0, 1]
 
 ckpt_path = './ckpt'
-exp_name = 'EDGE_CBAM_X'
+exp_name = 'FUSE'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
@@ -79,7 +79,7 @@ bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 def main():
     print(args)
 
-    net = EDGE_CBAM_X(backbone_path).cuda(device_ids[0]).train()
+    net = FUSE().cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

@@ -32,7 +32,7 @@ cudnn.benchmark = True
 
 # device_ids = [0]
 # device_ids = [2, 3, 4, 5]
-device_ids = [0, 1]
+device_ids = [1, 0]
 
 ckpt_path = './ckpt'
 exp_name = 'DSC_FULL'
@@ -189,12 +189,16 @@ def train(net, optimizer):
 
             curr_iter += 1
 
-        if epoch in args['save_point'] or epoch >= args['epoch_num']:
+        if epoch in args['save_point']:
+            net.cpu()
+            torch.save(net.module.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
+            net.cuda(device_ids[0])
+
+        if epoch >= args['epoch_num']:
             net.cpu()
             torch.save(net.module.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
             print("Optimization Have Done!")
             return
-
 
 if __name__ == '__main__':
     main()

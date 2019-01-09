@@ -49,9 +49,9 @@ class IRNN_Layer(nn.Module):
 
 
 class Attention(nn.Module):
-    def __init__(self, in_channels):
+    def __init__(self, in_channels, out_channels):
         super(Attention, self).__init__()
-        self.out_channels = int(in_channels / 2)
+        self.out_channels = out_channels
         self.conv1 = nn.Conv2d(in_channels, self.out_channels, kernel_size=3, padding=1, stride=1)
         self.relu1 = nn.ReLU()
         self.conv2 = nn.Conv2d(self.out_channels, self.out_channels, kernel_size=3, padding=1, stride=1)
@@ -84,7 +84,7 @@ class DSC_Module(nn.Module):
         self.relu2 = nn.ReLU(True)
         self.attention = attention
         if self.attention:
-            self.attention_layer = Attention(in_channels)
+            self.attention_layer = Attention(in_channels, out_channels)
         self.conv_out = conv1x1(self.out_channels, 1)
         self.sigmod = nn.Sigmoid()
 
@@ -163,7 +163,7 @@ class Predict(nn.Module):
 # Network Class
 class DSC_FULL(nn.Module):
     def __init__(self):
-        super(DSC, self).__init__()
+        super(DSC_FULL, self).__init__()
         resnext = ResNeXt101()
         self.layer0 = resnext.layer0
         self.layer1 = resnext.layer1
@@ -233,7 +233,7 @@ class DSC_FULL(nn.Module):
 
         layer3_conv1 = self.layer3_conv1(layer3)
         layer3_conv2 = self.layer3_conv2(layer3_conv1)
-        layer3_dsc = self.layer4_dsc(layer3_conv2)
+        layer3_dsc = self.layer3_dsc(layer3_conv2)
         layer3_context = torch.cat((layer3_conv2, layer3_dsc), 1)
         layer3_conv3 = self.layer3_conv3(layer3_context)
         layer3_up = F.upsample(layer3_conv3, size=x.size()[2:], mode='bilinear', align_corners=True)

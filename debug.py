@@ -8,9 +8,9 @@
   @Function: 
   
 """
-a = [5, 6]
+import torch
+import torch.nn.functional as F
 
-for i in range(10):
-    if i in a:
-        print(i)
+for i in range(1, 21):
+    print(i)
 

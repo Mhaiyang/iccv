@@ -30,9 +30,9 @@ from model.dsc import DSC
 
 cudnn.benchmark = True
 
-device_ids = [0]
+# device_ids = [0]
 # device_ids = [2, 3, 4, 5]
-# device_ids = [0, 1]
+device_ids = [0, 1]
 
 ckpt_path = './ckpt'
 exp_name = 'DSC'
@@ -40,17 +40,17 @@ exp_name = 'DSC'
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
     'epoch_num': 20,
-    'train_batch_size': 6,
+    'train_batch_size': 8,
     'val_batch_size': 8,
     'last_epoch': 0,
-    'lr': 1e-8,
+    'lr': 1e-4,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 416,
     'save_point': [18, 19],
-    'add_graph': False,
+    'add_graph': True,
     'poly_train': False
 }
 

@@ -8,13 +8,9 @@
   @Function: 
   
 """
-import skimage.io
-import numpy as np
+a = [5, 6]
 
-input_path = "/home/iccd/data/MSD9/test/image/4614_512x640.jpg"
-image = skimage.io.imread(input_path)
-image = image/255.0
-output = image * image
-output = (output *255)
-skimage.io.imsave('/home/iccd/Desktop/output.jpg', output)
-print(np.max(image))
+for i in range(10):
+    if i in a:
+        print(i)
+

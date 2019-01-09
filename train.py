@@ -19,12 +19,12 @@ from model.fuse import FUSE
 
 cudnn.benchmark = True
 
-# device_ids = [0]
+device_ids = [0]
 # device_ids = [2, 3, 4, 5]
-device_ids = [0, 1]
+# device_ids = [0, 1]
 
 ckpt_path = './ckpt'
-exp_name = 'FUSE'
+exp_name = 'DSC'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
@@ -32,13 +32,14 @@ args = {
     'train_batch_size': 8,
     'val_batch_size': 8,
     'last_iter': 0,
-    'lr': 1e-3,
+    'lr': 1e-8,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 416,
-    'add_graph': False
+    'add_graph': False,
+    'poly_train': False
 }
 
 # Path.
@@ -59,7 +60,7 @@ val_joint_transform = joint_transforms.Compose([
 ])
 img_transform = transforms.Compose([
     transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # maybe can optimized.
 ])
 target_transform = transforms.ToTensor()
 
@@ -79,7 +80,7 @@ bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 def main():
     print(args)
 
-    net = FUSE().cuda(device_ids[0]).train()
+    net = DSC().cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -99,7 +100,6 @@ def main():
         optimizer.param_groups[0]['lr'] = 2 * args['lr']
         optimizer.param_groups[1]['lr'] = args['lr']
 
-
     open(log_path, 'w').write(str(args) + '\n\n')
     train(net, optimizer)
     writer.close()
@@ -115,11 +115,11 @@ def train(net, optimizer):
                          AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter()
 
         for i, data in enumerate(train_loader):
-            # Poly Strategy.
-            optimizer.param_groups[0]['lr'] = 2 * args['lr'] * (1 - float(curr_iter) / args['iter_num']
+            if args['poly_train']:
+                optimizer.param_groups[0]['lr'] = 2 * args['lr'] * (1 - float(curr_iter) / args['iter_num']
+                                                                    ) ** args['lr_decay']
+                optimizer.param_groups[1]['lr'] = args['lr'] * (1 - float(curr_iter) / args['iter_num']
                                                                 ) ** args['lr_decay']
-            optimizer.param_groups[1]['lr'] = args['lr'] * (1 - float(curr_iter) / args['iter_num']
-                                                            ) ** args['lr_decay']
 
             inputs, labels, edges = data
             batch_size = inputs.size(0)

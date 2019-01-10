@@ -26,21 +26,21 @@ from config import msd_training_root, msd_testing_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.dsc import DSC
+from model.base import BASE
 
 cudnn.benchmark = True
 
 # device_ids = [0]
-device_ids = [2, 3, 4, 5]
-# device_ids = [1, 0]
+# device_ids = [2, 3, 4, 8]
+device_ids = [1, 0]
 
 ckpt_path = './ckpt'
-exp_name = 'DSC'
+exp_name = 'BASE'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'epoch_num': 60,
-    'train_batch_size': 8,
+    'epoch_num': 80,
+    'train_batch_size': 16,
     'val_batch_size': 8,
     'last_epoch': 0,
     'lr': 5e-3,
@@ -50,8 +50,8 @@ args = {
     'snapshot': '',
     'scale': 416,
     'save_point': [40, 50],
-    'add_graph': True,
-    'poly_train': False
+    'add_graph': False,
+    'poly_train': True
 }
 
 # Path.
@@ -85,13 +85,13 @@ print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)
 
 # Loss Functions.
-bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
+bce = nn.BCELoss().cuda(device_ids[0])
 
 
 def main():
     print(args)
 
-    net = DSC().cuda(device_ids[0]).train()
+    net = BASE().cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -137,12 +137,11 @@ def train(net, optimizer):
         train_iterator = tqdm(train_loader, total=len(train_loader))
         for data in train_iterator:
             if args['poly_train']:
-                optimizer.param_groups[0]['lr'] = 2 * args['lr'] * \
-                                                  (1 - float(curr_iter) / (args['epoch_num'] * len(train_loader))) \
-                                                  ** args['lr_decay']
-                optimizer.param_groups[1]['lr'] = args['lr'] * \
-                                                  (1 - float(curr_iter) / (args['epoch_num'] * len(train_loader))) \
-                                                  ** args['lr_decay']
+                base_lr = args['lr'] * (1 - float(curr_iter) / (args['epoch_num'] * len(train_loader))) ** args['lr_decay']
+                optimizer.param_groups[0]['lr'] = 2 * base_lr
+                optimizer.param_groups[1]['lr'] = 0.2 * base_lr
+                optimizer.param_groups[2]['lr'] = 1 * base_lr
+                optimizer.param_groups[3]['lr'] = 0.1 * base_lr
 
             inputs, labels = data
             batch_size = inputs.size(0)
@@ -153,13 +152,13 @@ def train(net, optimizer):
 
             predict_4, predict_3, predict_2, predict_1, predict_0, predict_g, predict_f = net(inputs)
 
-            loss_4 = bce_logit(predict_4, labels)
-            loss_3 = bce_logit(predict_3, labels)
-            loss_2 = bce_logit(predict_2, labels)
-            loss_1 = bce_logit(predict_1, labels)
-            loss_0 = bce_logit(predict_0, labels)
-            loss_g = bce_logit(predict_g, labels)
-            loss_f = bce_logit(predict_f, labels)
+            loss_4 = bce(predict_4, labels)
+            loss_3 = bce(predict_3, labels)
+            loss_2 = bce(predict_2, labels)
+            loss_1 = bce(predict_1, labels)
+            loss_0 = bce(predict_0, labels)
+            loss_g = bce(predict_g, labels)
+            loss_f = bce(predict_f, labels)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_0 + loss_g + loss_f
 
@@ -186,9 +185,9 @@ def train(net, optimizer):
                 writer.add_scalar('loss_g', loss_g, curr_iter)
                 writer.add_scalar('loss_f', loss_f, curr_iter)
 
-            log = '[Epoch: %2d], [Iter: %5d], [Sum: %.5f], [L4: %.5f], [L3: %.5f], [L2: %.5f], [L1: %.5f] ' \
+            log = '[Epoch: %2d], [%.7f], [Sum: %.5f], [L4: %.5f], [L3: %.5f], [L2: %.5f], [L1: %.5f] ' \
                   '[L0: %.5f], [Lg: %.5f], [Lf: %.5f]' % \
-                  (epoch, curr_iter, loss_record.avg, loss_4_record.avg, loss_3_record.avg, loss_2_record.avg,
+                  (epoch, base_lr, loss_record.avg, loss_4_record.avg, loss_3_record.avg, loss_2_record.avg,
                    loss_1_record.avg, loss_0_record.avg, loss_g_record.avg, loss_f_record.avg)
             train_iterator.set_description(log)
             open(log_path, 'a').write(log + '\n')
@@ -205,6 +204,7 @@ def train(net, optimizer):
             torch.save(net.module.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
             print("Optimization Have Done!")
             return
+
 
 if __name__ == '__main__':
     main()

@@ -11,6 +11,7 @@
 import torch
 import torch.nn.functional as F
 
-a = torch.ones(2, 2)/2
-print(a)
+a = torch.ones(2, 2)
+b = torch.ones(2, 2)/3
+print(a - b)
 

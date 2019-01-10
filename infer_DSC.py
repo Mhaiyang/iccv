@@ -21,7 +21,7 @@ from config import msd_testing_root
 from misc import check_mkdir, crf_refine
 from model.dsc import DSC
 
-device_ids = [0]
+device_ids = [2]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'

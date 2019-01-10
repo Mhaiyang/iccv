@@ -40,7 +40,7 @@ exp_name = 'BASE'
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
     'epoch_num': 80,
-    'train_batch_size': 16,
+    'train_batch_size': 4,
     'val_batch_size': 8,
     'last_epoch': 0,
     'lr': 5e-3,
@@ -50,7 +50,7 @@ args = {
     'snapshot': '',
     'scale': 416,
     'save_point': [40, 50],
-    'add_graph': False,
+    'add_graph': True,
     'poly_train': True
 }
 

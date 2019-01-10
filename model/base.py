@@ -128,7 +128,7 @@ class CCL(nn.Module):
         self.input_conv = nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1, padding=0)
         self.output_conv = nn.Conv2d(out_planes * 4, out_planes, kernel_size=1, stride=1, padding=0)
         self.local = nn.Conv2d(out_planes, out_planes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context = nn.Conv2d(out_planes, out_planes, kernel_size=3, stride=1, padding=1, dilation=5)
+        self.context = nn.Conv2d(out_planes, out_planes, kernel_size=3, stride=1, padding=5, dilation=5)
         self.bn = nn.BatchNorm2d(out_planes)
         self.relu = nn.ReLU()
 
@@ -219,23 +219,23 @@ class BASE(nn.Module):
         self.activation_0 = Activation(128)
 
         self.layer4_feature = nn.Sequential(
-            nn.Conv2d(512, 32, 3, 1, 1),
+            nn.ConvTranspose2d(512, 32, 64, 32, 16),
             nn.BatchNorm2d(32),
             nn.ReLU())
         self.layer3_feature = nn.Sequential(
-            nn.Conv2d(512, 32, 3, 1, 1),
+            nn.ConvTranspose2d(512, 32, 32, 16, 8),
             nn.BatchNorm2d(32),
             nn.ReLU())
         self.layer2_feature = nn.Sequential(
-            nn.Conv2d(256, 32, 3, 1, 1),
+            nn.ConvTranspose2d(256, 32, 16, 8, 4),
             nn.BatchNorm2d(32),
             nn.ReLU())
         self.layer1_feature = nn.Sequential(
-            nn.Conv2d(256, 32, 3, 1, 1),
+            nn.ConvTranspose2d(256, 32, 8, 4, 2),
             nn.BatchNorm2d(32),
             nn.ReLU())
         self.layer0_feature = nn.Sequential(
-            nn.Conv2d(128, 32, 3, 1, 1),
+            nn.ConvTranspose2d(128, 32, 4, 2, 1),
             nn.BatchNorm2d(32),
             nn.ReLU())
 
@@ -245,7 +245,7 @@ class BASE(nn.Module):
         self.layer1_predict = nn.Conv2d(32, 1, 1)
         self.layer0_predict = nn.Conv2d(32, 1, 1)
 
-        self.global_predict = nn.Conv2d(160, 32, 1)
+        self.global_predict = nn.Conv2d(160, 1, 1)
 
         self.fusion_predict = nn.Conv2d(5, 1, 1)
 

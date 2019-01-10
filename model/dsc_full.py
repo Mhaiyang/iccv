@@ -212,9 +212,9 @@ class DSC_FULL(nn.Module):
         self.global_predict = Predict(32, 1, 1)
         self.fusion_predict = Predict(6, 1, 1)
 
-        for m in self.modules():
-            if isinstance(m, nn.ReLU):
-                m.inplace = True
+        # for m in self.modules():
+        #     if isinstance(m, nn.ReLU):
+        #         m.inplace = True
 
     def forward(self, x):
         layer0 = self.layer0(x)

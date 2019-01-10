@@ -31,25 +31,25 @@ from model.dsc_full import DSC_FULL
 cudnn.benchmark = True
 
 # device_ids = [0]
-# device_ids = [2, 3, 4, 5]
-device_ids = [1, 0]
+device_ids = [2, 3, 4, 5, 7, 8]
+# device_ids = [1, 0]
 
 ckpt_path = './ckpt'
 exp_name = 'DSC_FULL'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'epoch_num': 40,
-    'train_batch_size': 8,
+    'epoch_num': 60,
+    'train_batch_size': 24,
     'val_batch_size': 8,
     'last_epoch': 0,
-    'lr': 1e-4,
+    'lr': 5e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 416,
-    'save_point': [20, 30],
+    'save_point': [40, 50],
     'add_graph': True,
     'poly_train': False
 }
@@ -107,6 +107,12 @@ def main():
         {'params': [param for name, param in net.named_parameters() if name[-4] != 'bias' and 'predict' in name],
          'lr': 0.1 * args['lr'], 'weight_decay': args['weight_decay']},
     ], momentum=args['momentum'])
+
+    # for name, param in net.named_parameters():
+    #     print(name)
+
+    for m in net.modules():
+        print(m)
 
     if len(args['snapshot']) > 0:
         print('training resumes from \'%s\'' % args['snapshot'])

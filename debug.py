@@ -11,6 +11,6 @@
 import torch
 import torch.nn.functional as F
 
-for i in range(1, 21):
-    print(i)
+a = torch.ones(2, 2)/2
+print(a)
 

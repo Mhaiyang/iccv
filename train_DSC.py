@@ -31,7 +31,7 @@ from model.dsc import DSC
 cudnn.benchmark = True
 
 # device_ids = [0]
-device_ids = [2, 3]
+device_ids = [2, 3, 4, 5]
 # device_ids = [1, 0]
 
 ckpt_path = './ckpt'
@@ -40,7 +40,7 @@ exp_name = 'DSC'
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
     'epoch_num': 60,
-    'train_batch_size': 4,
+    'train_batch_size': 8,
     'val_batch_size': 8,
     'last_epoch': 0,
     'lr': 5e-3,
@@ -79,7 +79,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=8, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 val_set = ImageFolder(msd_testing_root, val_joint_transform, img_transform, target_transform)
 print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)

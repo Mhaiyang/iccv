@@ -49,7 +49,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 416,
-    'save_point': [40, 50],
+    'save_point': [60, 70],
     'add_graph': True,
     'poly_train': True
 }

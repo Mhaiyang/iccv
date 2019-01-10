@@ -40,7 +40,7 @@ exp_name = 'DSC_FULL'
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
     'epoch_num': 60,
-    'train_batch_size': 24,
+    'train_batch_size': 18,
     'val_batch_size': 8,
     'last_epoch': 0,
     'lr': 5e-3,

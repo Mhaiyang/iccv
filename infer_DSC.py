@@ -19,15 +19,15 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.dsc_full import DSC_FULL
+from model.dsc import DSC
 
-device_ids = [1, 0]
+device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'DSC_FULL'
+exp_name = 'DSC'
 args = {
-    'snapshot': '40',
+    'snapshot': '60',
     'scale': 416,
     'crf': True
 }
@@ -44,7 +44,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = DSC_FULL().cuda(device_ids[0])
+    net = DSC().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

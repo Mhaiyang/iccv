@@ -31,8 +31,8 @@ from model.dsc_full import DSC_FULL
 cudnn.benchmark = True
 
 # device_ids = [0]
-device_ids = [2, 3, 4, 5, 7, 8]
-# device_ids = [1, 0]
+# device_ids = [2, 3, 4, 5, 7, 8]
+device_ids = [1, 0]
 
 ckpt_path = './ckpt'
 exp_name = 'DSC_FULL'
@@ -111,8 +111,8 @@ def main():
     # for name, param in net.named_parameters():
     #     print(name)
 
-    for m in net.modules():
-        print(m)
+    # for m in net.modules():
+    #     print(m)
 
     if len(args['snapshot']) > 0:
         print('training resumes from \'%s\'' % args['snapshot'])

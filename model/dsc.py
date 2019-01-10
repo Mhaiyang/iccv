@@ -96,11 +96,12 @@ class DSC(nn.Module):
         self.global_conv = GlobalConv(160, 32, 1, 1, 0, True)
 
         self.layer4_predict = Predict(32, 1, 1)
-        self.layer3_predict = Predict(32, 1, 1)
+        self.layer3_predict_ori = Predict(32, 1, 1)
+        self.layer3_predict = Predict(2, 1, 1)
         self.layer2_predict_ori = Predict(32, 1, 1)
         self.layer2_predict = Predict(3, 1, 1)
         self.layer1_predict_ori = Predict(32, 1, 1)
-        self.layer1_predict = Predict(3, 1, 1)
+        self.layer1_predict = Predict(4, 1, 1)
         self.layer0_predict_ori = Predict(32, 1, 1)
         self.layer0_predict = Predict(5, 1, 1)
         self.global_predict = Predict(32, 1, 1)
@@ -152,19 +153,21 @@ class DSC(nn.Module):
 
         layer4_predict = self.layer4_predict(layer4_up)
 
-        layer3_predict = self.layer3_predict(layer3_up)
+        layer3_predict_ori = self.layer3_predict_ori(layer3_up)
+        layer3_concat = torch.cat((layer3_predict_ori, layer4_predict), 1)
+        layer3_predict = self.layer3_predict(layer3_concat)
 
         layer2_predict_ori = self.layer2_predict_ori(layer2_up)
-        layer2_concat = torch.cat((layer2_predict_ori, layer3_predict, layer4_predict), 1)
+        layer2_concat = torch.cat((layer2_predict_ori, layer3_predict_ori, layer4_predict), 1)
         layer2_predict = self.layer2_predict(layer2_concat)
 
         layer1_predict_ori = self.layer1_predict_ori(layer1_up)
-        layer1_concat = torch.cat((layer1_predict_ori, layer3_predict, layer4_predict), 1)
+        layer1_concat = torch.cat((layer1_predict_ori, layer2_predict_ori, layer3_predict_ori, layer4_predict), 1)
         layer1_predict = self.layer1_predict(layer1_concat)
 
         layer0_predict_ori = self.layer0_predict_ori(layer0_up)
         layer0_concat = torch.cat((layer0_predict_ori, layer1_predict_ori, layer2_predict_ori,
-                                   layer3_predict, layer4_predict), 1)
+                                   layer3_predict_ori, layer4_predict), 1)
         layer0_predict = self.layer0_predict(layer0_concat)
 
         global_predict = self.global_predict(global_conv)

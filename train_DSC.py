@@ -26,21 +26,21 @@ from config import msd_training_root, msd_testing_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.dsc_full import DSC_FULL
+from model.dsc import DSC
 
 cudnn.benchmark = True
 
 # device_ids = [0]
-# device_ids = [2, 3, 4, 5, 7, 8]
-device_ids = [1, 0]
+device_ids = [2, 3, 4, 5, 7, 8]
+# device_ids = [1, 0]
 
 ckpt_path = './ckpt'
-exp_name = 'DSC_FULL'
+exp_name = 'DSC'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
     'epoch_num': 60,
-    'train_batch_size': 6,
+    'train_batch_size': 24,
     'val_batch_size': 8,
     'last_epoch': 0,
     'lr': 5e-3,
@@ -91,7 +91,7 @@ bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 def main():
     print(args)
 
-    net = DSC_FULL().cuda(device_ids[0]).train()
+    net = DSC().cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

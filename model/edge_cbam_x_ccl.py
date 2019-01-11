@@ -407,6 +407,20 @@ class EDGE_CBAM_X_CCL(nn.Module):
 
         predict_fb = predict_fe - predict_be
 
+        predict_f4 = F.upsample(predict_f4, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f3 = F.upsample(predict_f3, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f2 = F.upsample(predict_f2, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_f1 = F.upsample(predict_f1, size=x.size()[2:], mode='bilinear', align_corners=True)
+
+        predict_b4 = F.upsample(predict_b4, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b3 = F.upsample(predict_b3, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b2 = F.upsample(predict_b2, size=x.size()[2:], mode='bilinear', align_corners=True)
+        predict_b1 = F.upsample(predict_b1, size=x.size()[2:], mode='bilinear', align_corners=True)
+
+        predict_e = F.upsample(predict_e, size=x.size()[2:], mode='bilinear', align_corners=True)
+
+        predict_fb = F.upsample(predict_fb, size=x.size()[2:], mode='bilinear', align_corners=True)
+
         if self.training:
             return predict_f4, predict_f3, predict_f2, predict_f1, \
                    predict_b4, predict_b3, predict_b2, predict_b1, \

@@ -296,13 +296,13 @@ class EDGE_CBAM_X_CCL(nn.Module):
         self.f3_predict = Predict(256)
         self.f2_predict = Predict(128)
         self.f1_predict = Predict(64)
-        self.fe_predict = Predict(64)
+        self.fe_predict = Predict(128)
 
         self.b4_predict = Predict(512)
         self.b3_predict = Predict(256)
         self.b2_predict = Predict(128)
         self.b1_predict = Predict(64)
-        self.be_predict = Predict(64)
+        self.be_predict = Predict(128)
 
         self.e_predict = Predict(64)
 

@@ -30,15 +30,16 @@ exp_name = 'EDGE_CBAM_X_CCL'
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
     'epoch_num': 100,
-    'train_batch_size': 6,
+    'train_batch_size': 4,
     'val_batch_size': 8,
-    'last_iter': 0,
+    'last_epoch': 0,
     'lr': 1e-4,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
+    'save_point': [60, 80],
     'add_graph': True,
     'poly_train': True
 }
@@ -127,6 +128,7 @@ def train(net, optimizer):
             batch_size = inputs.size(0)
             inputs = Variable(inputs).cuda(device_ids[0])
             labels = Variable(labels).cuda(device_ids[0])
+            edges = Variable(labels).cuda(device_ids[0])
 
             optimizer.zero_grad()
 
@@ -179,9 +181,9 @@ def train(net, optimizer):
                 writer.add_scalar('e loss', loss_e, curr_iter)
                 writer.add_scalar('fb loss', loss_fb, curr_iter)
 
-            log = '[iter %d], [sum %.5f],  [f4 %.5f], [f3 %.5f], [f2 %.5f], [f1 %.5f] ' \
+            log = '[Epoch %d], [f4 %.5f], [f3 %.5f], [f2 %.5f], [f1 %.5f] ' \
                   '[b4 %.5f], [b3 %.5f], [b2 %.5f], [b1 %.5f], [e %.5f], [fb %.5f], [lr %.5f]' % \
-                  (curr_iter, loss_record.avg,
+                  (epoch,
                    loss_f4_record.avg, loss_f3_record.avg, loss_f2_record.avg, loss_f1_record.avg,
                    loss_b4_record.avg, loss_b3_record.avg, loss_b2_record.avg, loss_b1_record.avg,
                    loss_e_record.avg, loss_fb_record.avg, base_lr)

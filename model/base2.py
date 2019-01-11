@@ -214,19 +214,19 @@ class BASE2(nn.Module):
 
         self.layer4_fusion = nn.Sequential(
             nn.Conv2d(1024, 512, 1),
-            nn.BatchNorm2d(512, nn.ReLU())
+            nn.BatchNorm2d(512), nn.ReLU()
         )
         self.layer3_fusion = nn.Sequential(
             nn.Conv2d(512, 256, 1),
-            nn.BatchNorm2d(256, nn.ReLU())
+            nn.BatchNorm2d(256), nn.ReLU()
         )
         self.layer2_fusion = nn.Sequential(
             nn.Conv2d(256, 128, 1),
-            nn.BatchNorm2d(128, nn.ReLU())
+            nn.BatchNorm2d(128), nn.ReLU()
         )
         self.layer1_fusion = nn.Sequential(
             nn.Conv2d(128, 64, 1),
-            nn.BatchNorm2d(64, nn.ReLU())
+            nn.BatchNorm2d(64), nn.ReLU()
         )
 
         self.cbam_4 = CBAM(512)

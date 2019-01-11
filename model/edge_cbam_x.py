@@ -270,7 +270,6 @@ class EDGE_CBAM_X(nn.Module):
 
         predict_e = self.predict_edge(e0)
 
-
         predict_f3 = self.predict_f3(f3)
         predict_f2 = self.predict_f2(f2)
         predict_f1 = self.predict_f1(f1)

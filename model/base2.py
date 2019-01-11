@@ -245,7 +245,7 @@ class BASE2(nn.Module):
         self.layer2_predict = Predict(128)
         self.layer1_predict = Predict(64)
 
-        self.layer4_predict = Predict(256)
+        self.fusion_predict = Predict(256)
 
         for m in self.modules():
             if isinstance(m, nn.ReLU):

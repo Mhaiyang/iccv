@@ -297,5 +297,13 @@ class BASE2(nn.Module):
 
         fusion_predict = self.fusion_predict(fusion_attention)
 
+        layer4_predict = F.upsample(layer4_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
+        layer3_predict = F.upsample(layer3_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
+        layer2_predict = F.upsample(layer2_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
+        layer1_predict = F.upsample(layer1_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
+
+        fusion_predict = F.upsample(fusion_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
+
+
         return layer4_predict, layer3_predict, layer2_predict, layer1_predict, fusion_predict
 

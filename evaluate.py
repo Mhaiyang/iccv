@@ -16,9 +16,9 @@ from config import msd_testing_root
 
 ckpt_path = 'ckpt'
 
-exp_name = 'DSC'
+exp_name = 'BASE'
 args = {
-    'snapshot': '60',
+    'snapshot': '80',
     'type': 0
 }
 

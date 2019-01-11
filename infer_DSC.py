@@ -19,15 +19,15 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.dsc import DSC
+from model.base import BASE
 
-device_ids = [2]
+device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'DSC'
+exp_name = 'BASE'
 args = {
-    'snapshot': '60',
+    'snapshot': '80',
     'scale': 416,
     'crf': True
 }
@@ -44,7 +44,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = DSC().cuda(device_ids[0])
+    net = BASE().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))
@@ -63,7 +63,8 @@ def main():
                 w, h = img.size
                 img_var = Variable(img_transform(img).unsqueeze(0)).cuda()
                 _, _, _, _, _, g, f = net(img_var)
-                output = (g.data.squeeze(0).cpu() + f.data.squeeze(0).cpu()) / 2
+                # output = (g.data.squeeze(0).cpu() + f.data.squeeze(0).cpu()) / 2
+                output = g.data.squeeze(0).cpu()
                 prediction = np.array(transforms.Resize((h, w))(to_pil(output)))
                 if args['crf']:
                     prediction = crf_refine(np.array(img.convert('RGB')), prediction)

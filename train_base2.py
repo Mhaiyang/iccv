@@ -31,7 +31,7 @@ from model.base2 import BASE2
 cudnn.benchmark = True
 
 # device_ids = [0]
-device_ids = [0, 1, 5, 7, 9]
+device_ids = [0, 1]
 # device_ids = [1, 0]
 
 ckpt_path = './ckpt'
@@ -40,7 +40,7 @@ exp_name = 'BASE2'
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
     'epoch_num': 100,
-    'train_batch_size': 20,
+    'train_batch_size': 12,
     'val_batch_size': 8,
     'last_epoch': 0,
     'lr': 1e-3,

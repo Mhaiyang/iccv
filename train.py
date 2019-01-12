@@ -20,12 +20,12 @@ from model.edge_cbam_x_ccl_wl import EDGE_CBAM_X_CCL
 
 cudnn.benchmark = True
 
-# device_ids = [6, 7]
+device_ids = [6, 7]
 # device_ids = [2, 3, 4, 5]
-device_ids = [1, 0]
+# device_ids = [1, 0]
 
 ckpt_path = './ckpt'
-exp_name = 'EDGE_CBAM_X_CCL'
+exp_name = 'EDGE_CBAM_X_CCL_WL'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {

@@ -20,7 +20,7 @@ from model.edge_cbam_x_ccl import EDGE_CBAM_X_CCL
 
 cudnn.benchmark = True
 
-device_ids = [1]
+device_ids = [6, 7]
 # device_ids = [2, 3, 4, 5]
 # device_ids = [0, 1]
 
@@ -30,7 +30,7 @@ exp_name = 'EDGE_CBAM_X_CCL'
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
     'epoch_num': 100,
-    'train_batch_size': 4,
+    'train_batch_size': 8,
     'val_batch_size': 8,
     'last_epoch': 0,
     'lr': 1e-4,
@@ -82,7 +82,7 @@ bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 def main():
     print(args)
 
-    net = EDGE_CBAM_X_CCL().cuda(device_ids[0]).train()
+    net = EDGE_CBAM_X_CCL().cuda().train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -126,9 +126,9 @@ def train(net, optimizer):
 
             inputs, labels, edges = data
             batch_size = inputs.size(0)
-            inputs = Variable(inputs).cuda(device_ids[0])
-            labels = Variable(labels).cuda(device_ids[0])
-            edges = Variable(edges).cuda(device_ids[0])
+            inputs = Variable(inputs).cuda()
+            labels = Variable(labels).cuda()
+            edges = Variable(edges).cuda()
 
             optimizer.zero_grad()
 
@@ -181,8 +181,8 @@ def train(net, optimizer):
                 writer.add_scalar('e loss', loss_e, curr_iter)
                 writer.add_scalar('fb loss', loss_fb, curr_iter)
 
-            log = '[Epoch %d], [f4 %.5f], [f3 %.5f], [f2 %.5f], [f1 %.5f] ' \
-                  '[b4 %.5f], [b3 %.5f], [b2 %.5f], [b1 %.5f], [e %.5f], [fb %.5f], [lr %.5f]' % \
+            log = '[%3d], [f4 %.5f], [f3 %.5f], [f2 %.5f], [f1 %.5f] ' \
+                  '[b4 %.5f], [b3 %.5f], [b2 %.5f], [b1 %.5f], [e %.5f], [fb %.5f], [lr %.6f]' % \
                   (epoch,
                    loss_f4_record.avg, loss_f3_record.avg, loss_f2_record.avg, loss_f1_record.avg,
                    loss_b4_record.avg, loss_b3_record.avg, loss_b2_record.avg, loss_b1_record.avg,

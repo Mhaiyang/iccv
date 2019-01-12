@@ -75,8 +75,8 @@ print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)
 
 # Loss Functions.
-bce = nn.BCELoss().cuda(device_ids[0])
-bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
+bce = nn.BCELoss().cuda()
+bce_logit = nn.BCEWithLogitsLoss().cuda()
 
 
 def main():

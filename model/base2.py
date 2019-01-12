@@ -304,6 +304,8 @@ class BASE2(nn.Module):
 
         fusion_predict = F.upsample(fusion_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
 
+        if self.training:
+            return layer4_predict, layer3_predict, layer2_predict, layer1_predict, fusion_predict
 
-        return layer4_predict, layer3_predict, layer2_predict, layer1_predict, fusion_predict
-
+        return F.sigmoid(layer4_predict), F.sigmoid(layer3_predict), F.sigmoid(layer2_predict), \
+               F.sigmoid(layer1_predict), F.sigmoid(fusion_predict)

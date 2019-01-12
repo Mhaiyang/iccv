@@ -128,7 +128,7 @@ def train(net, optimizer):
             batch_size = inputs.size(0)
             inputs = Variable(inputs).cuda(device_ids[0])
             labels = Variable(labels).cuda(device_ids[0])
-            edges = Variable(labels).cuda(device_ids[0])
+            edges = Variable(edges).cuda(device_ids[0])
 
             optimizer.zero_grad()
 

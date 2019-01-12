@@ -9,15 +9,15 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.fuse import FUSE
+from model.edge_cbam_x_ccl import EDGE_CBAM_X_CCL
 
 torch.cuda.set_device(0)
 
 ckpt_path = './ckpt'
-exp_name = 'FUSE'
+exp_name = 'EDGE_CBAM_X_CCL'
 args = {
-    'snapshot': '12000',
-    'scale': 416,
+    'snapshot': '100',
+    'scale': 512,
     'crf': True
 }
 
@@ -33,7 +33,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = FUSE().cuda()
+    net = EDGE_CBAM_X_CCL().cuda()
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

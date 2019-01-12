@@ -19,16 +19,16 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.base import BASE
+from model.edge_cbam_x_ccl import EDGE_CBAM_X_CCL
 
-device_ids = [1]
+device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'BASE'
+exp_name = 'EDGE_CBAM_X_CCL'
 args = {
-    'snapshot': '80',
-    'scale': 416,
+    'snapshot': '100',
+    'scale': 512,
     'crf': True
 }
 
@@ -44,7 +44,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = BASE().cuda(device_ids[0])
+    net = EDGE_CBAM_X_CCL().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))
@@ -62,9 +62,9 @@ def main():
                 img = Image.open(os.path.join(root, 'image', img_name))
                 w, h = img.size
                 img_var = Variable(img_transform(img).unsqueeze(0)).cuda()
-                _, _, _, _, _, g, f = net(img_var)
+                _, _, _, _, f = net(img_var)
                 # output = (g.data.squeeze(0).cpu() + f.data.squeeze(0).cpu()) / 2
-                output = g.data.squeeze(0).cpu()
+                output = f.data.squeeze(0).cpu()
                 prediction = np.array(transforms.Resize((h, w))(to_pil(output)))
                 if args['crf']:
                     prediction = crf_refine(np.array(img.convert('RGB')), prediction)

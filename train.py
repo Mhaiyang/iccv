@@ -29,17 +29,17 @@ exp_name = 'EDGE_CBAM_X_CCL'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'epoch_num': 50,
+    'epoch_num': 60,
     'train_batch_size': 8,
     'val_batch_size': 8,
     'last_epoch': 0,
-    'lr': 1e-3,
+    'lr': 1e-4,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [30, 40],
+    'save_point': [40, 50],
     'add_graph': True,
     'poly_train': True
 }

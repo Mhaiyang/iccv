@@ -75,14 +75,14 @@ print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)
 
 # Loss Functions.
-bce = nn.BCELoss().cuda()
-bce_logit = nn.BCEWithLogitsLoss().cuda()
+bce = nn.BCELoss().cuda(device_ids[0])
+bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 
 
 def main():
     print(args)
 
-    net = EDGE_CBAM_X_CCL().cuda().train()
+    net = EDGE_CBAM_X_CCL().cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -126,9 +126,9 @@ def train(net, optimizer):
 
             inputs, labels, edges = data
             batch_size = inputs.size(0)
-            inputs = Variable(inputs).cuda()
-            labels = Variable(labels).cuda()
-            edges = Variable(edges).cuda()
+            inputs = Variable(inputs).cuda(device_ids[0])
+            labels = Variable(labels).cuda(device_ids[0])
+            edges = Variable(edges).cuda(device_ids[0])
 
             optimizer.zero_grad()
 

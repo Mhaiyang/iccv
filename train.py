@@ -79,6 +79,45 @@ bce = nn.BCELoss().cuda(device_ids[0])
 bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 
 
+class WL(nn.Module):
+    def __init__(self):
+        super(WL, self).__init__()
+
+    def forward(self, pred, truth):
+        # n c h w
+        N_p = torch.tensor(torch.sum(torch.sum(truth, -1), -1), dtype=torch.float)
+        N = torch.tensor(torch.numel(truth[0, :, :, :]), dtype=torch.float).expand_as(N_p)
+        N_n = N - N_p
+
+        pred_p = torch.where(pred > 0.5, torch.tensor(1.), torch.tensor(2.))
+        TP_mask = torch.where(pred_p == truth, torch.tensor(1.), torch.tensor(0.))
+        TP = torch.tensor(torch.sum(torch.sum(TP_mask, -1), -1), dtype=torch.float)
+
+        pred_n = torch.where(pred < 0.5, torch.tensor(1.), torch.tensor(2.))
+        TN_mask = torch.where(pred_n == (1 - truth), torch.tensor(1.), torch.tensor(0.))
+        TN = torch.tensor(torch.sum(torch.sum(TN_mask, -1), -1), dtype=torch.float)
+
+        L1 = -(N_n / N) * truth * torch.log(pred) - (N_p / N) * (1 - truth) * torch.log(1 - pred)
+        L2 = -(1 - TP / N_p) * truth * torch.log(pred) - (1 - TN / N_n) * (1 - truth) * torch.log(1 - pred)
+
+        return L1.mean() + L2.mean()
+
+
+class EL(nn.Module):
+    def __init__(self):
+        super(EL, self).__init__()
+
+    def forward(self, pred, truth):
+
+        L = -10 * truth * torch.log(pred) - (1 - truth) * torch.log(1 - pred)
+
+        return L.mean()
+
+
+wl = WL().cuda(device_ids[0])
+el = EL().cuda(device_ids[0])
+
+
 def main():
     print(args)
 
@@ -135,22 +174,22 @@ def train(net, optimizer):
             predict_f4, predict_f3, predict_f2, predict_f1, \
             predict_b4, predict_b3, predict_b2, predict_b1, predict_e, predict_fb = net(inputs)
 
-            loss_f4 = bce_logit(predict_f4, labels)
-            loss_f3 = bce_logit(predict_f3, labels)
-            loss_f2 = bce_logit(predict_f2, labels)
-            loss_f1 = bce_logit(predict_f1, labels)
+            loss_f4 = wl(predict_f4, labels)
+            loss_f3 = wl(predict_f3, labels)
+            loss_f2 = wl(predict_f2, labels)
+            loss_f1 = wl(predict_f1, labels)
 
-            loss_b4 = bce(1 - torch.sigmoid(predict_b4), labels)
-            loss_b3 = bce(1 - torch.sigmoid(predict_b3), labels)
-            loss_b2 = bce(1 - torch.sigmoid(predict_b2), labels)
-            loss_b1 = bce(1 - torch.sigmoid(predict_b1), labels)
+            loss_b4 = wl(1 - torch.sigmoid(predict_b4), labels)
+            loss_b3 = wl(1 - torch.sigmoid(predict_b3), labels)
+            loss_b2 = wl(1 - torch.sigmoid(predict_b2), labels)
+            loss_b1 = wl(1 - torch.sigmoid(predict_b1), labels)
 
-            loss_e = bce_logit(predict_e, edges)
+            loss_e = el(predict_e, edges)
 
-            loss_fb = bce_logit(predict_fb, labels)
+            loss_fb = wl(predict_fb, labels)
 
             loss = loss_f4 + loss_f3 + loss_f2 + loss_f1 + \
-                   loss_b4 + loss_b3 + loss_b2 + loss_b1 + 10 * loss_e + 8 * loss_fb
+                   loss_b4 + loss_b3 + loss_b2 + loss_b1 + loss_e + 8 * loss_fb
 
             loss.backward()
 

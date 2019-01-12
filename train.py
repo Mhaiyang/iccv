@@ -16,30 +16,30 @@ from config import msd_training_root, msd_testing_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.edge_cbam_x_ccl import EDGE_CBAM_X_CCL
+from model.edge_cbam_x_ccl_wl import EDGE_CBAM_X_CCL
 
 cudnn.benchmark = True
 
-device_ids = [6, 7]
+# device_ids = [6, 7]
 # device_ids = [2, 3, 4, 5]
-# device_ids = [0, 1]
+device_ids = [1, 0]
 
 ckpt_path = './ckpt'
 exp_name = 'EDGE_CBAM_X_CCL'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'epoch_num': 100,
+    'epoch_num': 50,
     'train_batch_size': 8,
     'val_batch_size': 8,
     'last_epoch': 0,
-    'lr': 1e-4,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [60, 80],
+    'save_point': [30, 40],
     'add_graph': True,
     'poly_train': True
 }
@@ -69,7 +69,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=8, shuffle=True)
 val_set = ImageFolder(msd_testing_root, val_joint_transform, img_transform, target_transform)
 print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)
@@ -85,20 +85,20 @@ class WL(nn.Module):
 
     def forward(self, pred, truth):
         # n c h w
-        N_p = torch.tensor(torch.sum(torch.sum(truth, -1), -1), dtype=torch.float)
-        N = torch.tensor(torch.numel(truth[0, :, :, :]), dtype=torch.float).expand_as(N_p)
+        N_p = torch.tensor(torch.sum(torch.sum(truth, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
+        N = torch.tensor(torch.numel(truth[0, :, :, :]), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(N_p)
         N_n = N - N_p
 
-        pred_p = torch.where(pred > 0.5, torch.tensor(1.), torch.tensor(2.))
-        TP_mask = torch.where(pred_p == truth, torch.tensor(1.), torch.tensor(0.))
-        TP = torch.tensor(torch.sum(torch.sum(TP_mask, -1), -1), dtype=torch.float)
+        pred_p = torch.where(pred.cpu() >= 0.5, torch.tensor(1.), torch.tensor(2.))
+        TP_mask = torch.where(pred_p == truth.cpu(), torch.tensor(1.), torch.tensor(0.))
+        TP = torch.tensor(torch.sum(torch.sum(TP_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
 
-        pred_n = torch.where(pred < 0.5, torch.tensor(1.), torch.tensor(2.))
-        TN_mask = torch.where(pred_n == (1 - truth), torch.tensor(1.), torch.tensor(0.))
-        TN = torch.tensor(torch.sum(torch.sum(TN_mask, -1), -1), dtype=torch.float)
+        pred_n = torch.where(pred.cpu() < 0.5, torch.tensor(1.), torch.tensor(2.))
+        TN_mask = torch.where(pred_n == (1 - truth.cpu()), torch.tensor(1.), torch.tensor(0.))
+        TN = torch.tensor(torch.sum(torch.sum(TN_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
 
-        L1 = -(N_n / N) * truth * torch.log(pred) - (N_p / N) * (1 - truth) * torch.log(1 - pred)
-        L2 = -(1 - TP / N_p) * truth * torch.log(pred) - (1 - TN / N_n) * (1 - truth) * torch.log(1 - pred)
+        L1 = -(N_n / N) * (truth.cpu() * torch.log(pred.cpu())) - (N_p / N) * ((1 - truth.cpu()) * torch.log(1 - pred.cpu()))
+        L2 = -(1 - TP / N_p) * truth.cpu() * torch.log(pred.cpu()) - (1 - TN / N_n) * (1 - truth.cpu()) * torch.log(1 - pred.cpu())
 
         return L1.mean() + L2.mean()
 
@@ -109,7 +109,7 @@ class EL(nn.Module):
 
     def forward(self, pred, truth):
 
-        L = -10 * truth * torch.log(pred) - (1 - truth) * torch.log(1 - pred)
+        L = -10 * truth.cpu() * torch.log(pred.cpu()) - (1 - truth.cpu()) * torch.log(1 - pred.cpu())
 
         return L.mean()
 
@@ -179,10 +179,15 @@ def train(net, optimizer):
             loss_f2 = wl(predict_f2, labels)
             loss_f1 = wl(predict_f1, labels)
 
-            loss_b4 = wl(1 - torch.sigmoid(predict_b4), labels)
-            loss_b3 = wl(1 - torch.sigmoid(predict_b3), labels)
-            loss_b2 = wl(1 - torch.sigmoid(predict_b2), labels)
-            loss_b1 = wl(1 - torch.sigmoid(predict_b1), labels)
+            # loss_b4 = wl(1 - torch.sigmoid(predict_b4), labels)
+            # loss_b3 = wl(1 - torch.sigmoid(predict_b3), labels)
+            # loss_b2 = wl(1 - torch.sigmoid(predict_b2), labels)
+            # loss_b1 = wl(1 - torch.sigmoid(predict_b1), labels)
+
+            loss_b4 = wl(1 - predict_b4, labels)
+            loss_b3 = wl(1 - predict_b3, labels)
+            loss_b2 = wl(1 - predict_b2, labels)
+            loss_b1 = wl(1 - predict_b1, labels)
 
             loss_e = el(predict_e, edges)
 

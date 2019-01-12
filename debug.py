@@ -22,15 +22,8 @@ import torch.nn.functional as F
 # print(N_n)
 
 truth = torch.rand(3, 1, 4, 4)
-print(truth)
-print(1 - truth)
 
-pred = torch.rand(3, 1, 4, 4)
-truth_mask = torch.where(truth > 0.5, torch.tensor(1.), torch.tensor(0.))
-pred_mask = torch.where(pred > 0.5, torch.tensor(1.), torch.tensor(2.))
+N_p = torch.tensor(torch.sum(torch.sum(truth, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
 
-TP = torch.where(pred_mask == truth_mask, torch.tensor(1.), torch.tensor(0.))
-
-print(truth_mask)
-print(pred_mask)
-print(TP)
+print(N_p)
+print(N_p.shape)

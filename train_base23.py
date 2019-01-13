@@ -39,7 +39,7 @@ exp_name = 'BASE3'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'epoch_num': 100,
+    'epoch_num': 60,
     'train_batch_size': 8,
     'val_batch_size': 8,
     'last_epoch': 0,
@@ -49,7 +49,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [60, 80],
+    'save_point': [40, 50],
     'add_graph': True,
     'poly_train': True
 }
@@ -79,7 +79,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=8, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=16, shuffle=True)
 val_set = ImageFolder(msd_testing_root, val_joint_transform, img_transform, target_transform)
 print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)
@@ -173,7 +173,7 @@ def train(net, optimizer):
             loss_1 = bce_logit(predict_1, labels)
             loss_f = bce_logit(predict_f, labels)
 
-            loss = loss_4 + loss_3 + loss_2 + loss_1 + 4 * loss_f
+            loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f
 
             loss.backward()
 

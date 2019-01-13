@@ -9,14 +9,14 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.edge_cbam_x_ccl import EDGE_CBAM_X_CCL
+from model.edge_cbam_x_ccl_wl import EDGE_CBAM_X_CCL
 
 torch.cuda.set_device(0)
 
 ckpt_path = './ckpt'
 exp_name = 'EDGE_CBAM_X_CCL'
 args = {
-    'snapshot': '100',
+    'snapshot': '40',
     'scale': 512,
     'crf': True
 }

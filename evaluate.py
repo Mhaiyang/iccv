@@ -18,7 +18,7 @@ ckpt_path = 'ckpt'
 
 exp_name = 'EDGE_CBAM_X_CCL'
 args = {
-    'snapshot': '100',
+    'snapshot': '40',
     'type': 0
 }
 

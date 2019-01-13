@@ -32,7 +32,7 @@ cudnn.benchmark = True
 
 # device_ids = [0]
 # device_ids = [7]
-device_ids = [5, 6]
+device_ids = [1, 0]
 
 ckpt_path = './ckpt'
 exp_name = 'BASE3'
@@ -43,7 +43,7 @@ args = {
     'train_batch_size': 8,
     'val_batch_size': 8,
     'last_epoch': 0,
-    'lr': 1e-4,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
@@ -79,38 +79,40 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=8, shuffle=True)
 val_set = ImageFolder(msd_testing_root, val_joint_transform, img_transform, target_transform)
 print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)
 
 
 # Loss Functions.
-class WL(nn.Module):
-    def __init__(self):
-        super(WL, self).__init__()
+# class WL(nn.Module):
+#     def __init__(self):
+#         super(WL, self).__init__()
+#
+#     def forward(self, pred, truth):
+#         # n c h w
+#         N_p = torch.tensor(torch.sum(torch.sum(truth, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
+#         N = torch.tensor(torch.numel(truth[0, :, :, :]), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(N_p).cuda(device_ids[0])
+#         N_n = N - N_p.cuda(device_ids[0])
+#
+#         pred_p = torch.where(pred >= 0.5, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(2.).cuda(device_ids[0]))
+#         TP_mask = torch.where(pred_p == truth, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(0.).cuda(device_ids[0]))
+#         TP = torch.tensor(torch.sum(torch.sum(TP_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
+#
+#         pred_n = torch.where(pred < 0.5, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(2.).cuda(device_ids[0]))
+#         TN_mask = torch.where(pred_n == (1 - truth), torch.tensor(1.).cuda(device_ids[0]), torch.tensor(0.).cuda(device_ids[0]))
+#         TN = torch.tensor(torch.sum(torch.sum(TN_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
+#
+#         L1 = -(N_n / N) * (truth * torch.log(pred)) - (N_p / N) * ((1 - truth) * torch.log(1 - pred))
+#         L2 = -(1 - TP / N_p) * truth * torch.log(pred) - (1 - TN / N_n) * (1 - truth) * torch.log(1 - pred)
+#
+#         return L1.mean() + L2.mean()
+#
+#
+# wl = WL().cuda(device_ids[0])
 
-    def forward(self, pred, truth):
-        # n c h w
-        N_p = torch.tensor(torch.sum(torch.sum(truth, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
-        N = torch.tensor(torch.numel(truth[0, :, :, :]), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(N_p).cuda(device_ids[0])
-        N_n = N - N_p.cuda(device_ids[0])
-
-        pred_p = torch.where(pred >= 0.5, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(2.).cuda(device_ids[0]))
-        TP_mask = torch.where(pred_p == truth, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(0.).cuda(device_ids[0]))
-        TP = torch.tensor(torch.sum(torch.sum(TP_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
-
-        pred_n = torch.where(pred < 0.5, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(2.).cuda(device_ids[0]))
-        TN_mask = torch.where(pred_n == (1 - truth), torch.tensor(1.).cuda(device_ids[0]), torch.tensor(0.).cuda(device_ids[0]))
-        TN = torch.tensor(torch.sum(torch.sum(TN_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
-
-        L1 = -(N_n / N) * (truth * torch.log(pred)) - (N_p / N) * ((1 - truth) * torch.log(1 - pred))
-        L2 = -(1 - TP / N_p) * truth * torch.log(pred) - (1 - TN / N_n) * (1 - truth) * torch.log(1 - pred)
-
-        return L1.mean() + L2.mean()
-
-
-wl = WL().cuda(device_ids[0])
+bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 
 
 def main():
@@ -165,11 +167,11 @@ def train(net, optimizer):
 
             predict_4, predict_3, predict_2, predict_1, predict_f = net(inputs)
 
-            loss_4 = wl(predict_4, labels)
-            loss_3 = wl(predict_3, labels)
-            loss_2 = wl(predict_2, labels)
-            loss_1 = wl(predict_1, labels)
-            loss_f = wl(predict_f, labels)
+            loss_4 = bce_logit(predict_4, labels)
+            loss_3 = bce_logit(predict_3, labels)
+            loss_2 = bce_logit(predict_2, labels)
+            loss_1 = bce_logit(predict_1, labels)
+            loss_f = bce_logit(predict_f, labels)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + 4 * loss_f
 

@@ -39,7 +39,7 @@ exp_name = 'BASE3'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'epoch_num': 80,
+    'epoch_num': 100,
     'train_batch_size': 8,
     'val_batch_size': 8,
     'last_epoch': 0,
@@ -49,7 +49,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [40, 60],
+    'save_point': [60, 80],
     'add_graph': True,
     'poly_train': True
 }
@@ -92,17 +92,17 @@ class WL(nn.Module):
 
     def forward(self, pred, truth):
         # n c h w
-        N_p = torch.tensor(torch.sum(torch.sum(truth, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
-        N = torch.tensor(torch.numel(truth[0, :, :, :]), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(N_p)
-        N_n = N - N_p
+        N_p = torch.tensor(torch.sum(torch.sum(truth, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
+        N = torch.tensor(torch.numel(truth[0, :, :, :]), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(N_p).cuda(device_ids[0])
+        N_n = N - N_p.cuda(device_ids[0])
 
-        pred_p = torch.where(pred >= 0.5, torch.tensor(1.).cuda(), torch.tensor(2.).cuda())
-        TP_mask = torch.where(pred_p == truth, torch.tensor(1.).cuda(), torch.tensor(0.).cuda())
-        TP = torch.tensor(torch.sum(torch.sum(TP_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
+        pred_p = torch.where(pred >= 0.5, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(2.).cuda(device_ids[0]))
+        TP_mask = torch.where(pred_p == truth, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(0.).cuda(device_ids[0]))
+        TP = torch.tensor(torch.sum(torch.sum(TP_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
 
-        pred_n = torch.where(pred < 0.5, torch.tensor(1.), torch.tensor(2.))
-        TN_mask = torch.where(pred_n == (1 - truth), torch.tensor(1.), torch.tensor(0.))
-        TN = torch.tensor(torch.sum(torch.sum(TN_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
+        pred_n = torch.where(pred < 0.5, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(2.).cuda(device_ids[0]))
+        TN_mask = torch.where(pred_n == (1 - truth), torch.tensor(1.).cuda(device_ids[0]), torch.tensor(0.).cuda(device_ids[0]))
+        TN = torch.tensor(torch.sum(torch.sum(TN_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
 
         L1 = -(N_n / N) * (truth * torch.log(pred)) - (N_p / N) * ((1 - truth) * torch.log(1 - pred))
         L2 = -(1 - TP / N_p) * truth * torch.log(pred) - (1 - TN / N_n) * (1 - truth) * torch.log(1 - pred)

@@ -32,7 +32,7 @@ cudnn.benchmark = True
 
 # device_ids = [0]
 # device_ids = [7]
-device_ids = [1, 0]
+device_ids = [5, 6]
 
 ckpt_path = './ckpt'
 exp_name = 'BASE3'

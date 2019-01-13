@@ -16,12 +16,18 @@ class Compose(object):
 
 class RandomRotate(object):
     def __call__(self, img, mask):
-        if random.random() < 0.25:
-            return img.transpose(Image.ROTATE_90), mask.transpose(Image.ROTATE_90)
-        if random.random() < 0.5:
-            return img.transpose(Image.ROTATE_180), mask.transpose(Image.ROTATE_180)
-        if random.random() < 0.75:
-            return img.transpose(Image.ROTATE_270), mask.transpose(Image.ROTATE_270)
+        p = random.random()
+        # rotate
+        # if p < 0.25:
+        #     return img.transpose(Image.ROTATE_90), mask.transpose(Image.ROTATE_90)
+        # if p < 0.5:
+        #     return img.transpose(Image.ROTATE_180), mask.transpose(Image.ROTATE_180)
+        # if p < 0.75:
+        #     return img.transpose(Image.ROTATE_270), mask.transpose(Image.ROTATE_270)
+
+        # flip
+        if p < 0.5:
+            return img.transpose(Image.FLIP_LEFT_RIGHT), mask.transpose(Image.FLIP_LEFT_RIGHT)
 
         return img, mask
 

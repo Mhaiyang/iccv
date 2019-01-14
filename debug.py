@@ -9,7 +9,9 @@
   
 """
 import torch
-import torch.nn.functional as F
+import torch.nn as nn
+
+from torch.autograd import Variable
 
 # truth = torch.ones(3, 1, 4, 5)
 #
@@ -21,9 +23,18 @@ import torch.nn.functional as F
 # print(N)
 # print(N_n)
 
-truth = torch.rand(3, 1, 4, 4)
+# sigmoid = nn.Sigmoid()
+# target = Variable(torch.rand(3))
+#
+# weight = target.unsqueeze(-1).unsqueeze(-1).unsqueeze(-1).expand(3, 1, 4, 4)
+# print(target)
+# print(weight)
 
-N_p = torch.tensor(torch.sum(torch.sum(truth, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
+a = torch.rand(4)
+b = torch.rand(4)
+c = a * b
+print(a)
+print(b)
+print(c)
 
-print(N_p)
-print(N_p.shape)
+

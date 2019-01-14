@@ -30,9 +30,9 @@ from model.base3 import BASE3
 
 cudnn.benchmark = True
 
-device_ids = [0]
+# device_ids = [0]
 # device_ids = [7]
-# device_ids = [1, 0]
+device_ids = [1, 0]
 
 ckpt_path = './ckpt'
 exp_name = 'BASE3_WL'
@@ -42,14 +42,14 @@ args = {
     'epoch_num': 100,
     'train_batch_size': 8,
     'val_batch_size': 8,
-    'last_epoch': 60,
-    'lr': 1e-4,
+    'last_epoch': 0,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
-    'snapshot': '60',
+    'snapshot': '',
     'scale': 512,
-    'save_point': [80, 90],
+    'save_point': [40, 60, 80],
     'add_graph': True,
     'poly_train': True
 }
@@ -89,21 +89,36 @@ val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=
 class WL(nn.Module):
     def __init__(self):
         super(WL, self).__init__()
+        self.threshold = 10
 
     def forward(self, pred_logit, truth):
         pred = torch.sigmoid(pred_logit)
         batch_size =truth.size(0)
 
-        pred_flat = pred.view(batch_size, -1)
-        truth_flat = truth.view(batch_size, -1)
+        truth_flat = truth.contiguous.view(batch_size, -1)
 
         N_p = truth_flat.sum(1)
+        N_p = torch.where(N_p < self.threshold, torch.tensor(self.threshold), N_p)
         N_n = (1 - truth_flat).sum(1)
-        N = N_p + N_n
 
-        L1 = nn.BCELoss(pred, truth, weight=[N_n / N, N_p / N])
+        w1 = N_n / N_p
+        w1 = Variable(w1).cuda(device_ids[0])
+        w1 = w1.unsqueeze(-1).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
 
-        return L1.mean()
+        L1 = nn.BCELoss(w1)(pred, truth)
+
+        pred_flat = pred.contiguous.view(batch_size, -1)
+        pred_flat_bool = torch.where(pred_flat >= 0.5, torch.tensor(1.), torch.tensor(0))
+        TP = (pred_flat_bool * truth_flat).sum(1)
+        TN = ((1 - pred_flat_bool) * (1 - truth_flat)).sum(1)
+
+        w2 = (1 - (TP / N_p)) / (1 - (TN / N_n))
+        w2 = Variable(w2).cuda(device_ids[0])
+        w2 = w2.unsqueeze(-1).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
+
+        L2 = nn.BCELoss(w2)(pred, truth)
+
+        return L1.mean() + L2.mean()
 
 
 wl = WL().cuda(device_ids[0])

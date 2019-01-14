@@ -107,7 +107,7 @@ class WL(nn.Module):
         L1 = nn.BCELoss(w1)(pred, truth)
 
         pred_flat = pred.contiguous().view(batch_size, -1)
-        pred_flat_bool = torch.where(pred_flat >= 0.5, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(0).cuda(device_ids[0]))
+        pred_flat_bool = torch.where(pred_flat >= 0.5, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(0.).cuda(device_ids[0]))
         TP = (pred_flat_bool * truth_flat).sum(1)
         TN = ((1 - pred_flat_bool) * (1 - truth_flat)).sum(1)
 

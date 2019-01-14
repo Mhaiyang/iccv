@@ -89,7 +89,7 @@ val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=
 class WL(nn.Module):
     def __init__(self):
         super(WL, self).__init__()
-        self.threshold = 10
+        self.threshold = 10.
 
     def forward(self, pred_logit, truth):
         pred = torch.sigmoid(pred_logit)

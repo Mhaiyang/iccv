@@ -30,12 +30,12 @@ from model.base3 import BASE3
 
 cudnn.benchmark = True
 
-# device_ids = [0]
+device_ids = [0]
 # device_ids = [7]
-device_ids = [1, 0]
+# device_ids = [1, 0]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3'
+exp_name = 'BASE3_WL'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
@@ -86,33 +86,27 @@ val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=
 
 
 # Loss Functions.
-# class WL(nn.Module):
-#     def __init__(self):
-#         super(WL, self).__init__()
-#
-#     def forward(self, pred, truth):
-#         # n c h w
-#         N_p = torch.tensor(torch.sum(torch.sum(truth, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
-#         N = torch.tensor(torch.numel(truth[0, :, :, :]), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(N_p).cuda(device_ids[0])
-#         N_n = N - N_p.cuda(device_ids[0])
-#
-#         pred_p = torch.where(pred >= 0.5, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(2.).cuda(device_ids[0]))
-#         TP_mask = torch.where(pred_p == truth, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(0.).cuda(device_ids[0]))
-#         TP = torch.tensor(torch.sum(torch.sum(TP_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
-#
-#         pred_n = torch.where(pred < 0.5, torch.tensor(1.).cuda(device_ids[0]), torch.tensor(2.).cuda(device_ids[0]))
-#         TN_mask = torch.where(pred_n == (1 - truth), torch.tensor(1.).cuda(device_ids[0]), torch.tensor(0.).cuda(device_ids[0]))
-#         TN = torch.tensor(torch.sum(torch.sum(TN_mask, -1), -1), dtype=torch.float).unsqueeze(-1).unsqueeze(-1).expand_as(truth).cuda(device_ids[0])
-#
-#         L1 = -(N_n / N) * (truth * torch.log(pred)) - (N_p / N) * ((1 - truth) * torch.log(1 - pred))
-#         L2 = -(1 - TP / N_p) * truth * torch.log(pred) - (1 - TN / N_n) * (1 - truth) * torch.log(1 - pred)
-#
-#         return L1.mean() + L2.mean()
-#
-#
-# wl = WL().cuda(device_ids[0])
+class WL(nn.Module):
+    def __init__(self):
+        super(WL, self).__init__()
 
-bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
+    def forward(self, pred_logit, truth):
+        pred = torch.sigmoid(pred_logit)
+        batch_size =truth.size(0)
+
+        pred_flat = pred.view(batch_size, -1)
+        truth_flat = truth.view(batch_size, -1)
+
+        N_p = truth_flat.sum(1)
+        N_n = (1 - truth_flat).sum(1)
+        N = N_p + N_n
+
+        L1 = nn.BCELoss(pred, truth, weight=[N_n / N, N_p / N])
+
+        return L1.mean()
+
+
+wl = WL().cuda(device_ids[0])
 
 
 def main():
@@ -168,11 +162,11 @@ def train(net, optimizer):
 
             predict_4, predict_3, predict_2, predict_1, predict_f = net(inputs)
 
-            loss_4 = bce_logit(predict_4, labels)
-            loss_3 = bce_logit(predict_3, labels)
-            loss_2 = bce_logit(predict_2, labels)
-            loss_1 = bce_logit(predict_1, labels)
-            loss_f = bce_logit(predict_f, labels)
+            loss_4 = wl(predict_4, labels)
+            loss_3 = wl(predict_3, labels)
+            loss_2 = wl(predict_2, labels)
+            loss_1 = wl(predict_1, labels)
+            loss_f = wl(predict_f, labels)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f
 

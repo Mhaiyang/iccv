@@ -39,17 +39,17 @@ exp_name = 'BASE3'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
-    'epoch_num': 60,
+    'epoch_num': 100,
     'train_batch_size': 8,
     'val_batch_size': 8,
-    'last_epoch': 0,
-    'lr': 1e-3,
+    'last_epoch': 60,
+    'lr': 1e-4,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
-    'snapshot': '',
+    'snapshot': '60',
     'scale': 512,
-    'save_point': [40, 50],
+    'save_point': [80, 90],
     'add_graph': True,
     'poly_train': True
 }
@@ -122,7 +122,6 @@ def main():
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
-    net = nn.DataParallel(net, device_ids=device_ids)
 
     optimizer = optim.SGD([
         {'params': [param for name, param in net.named_parameters() if name[-4:] == 'bias'],
@@ -132,11 +131,13 @@ def main():
     ], momentum=args['momentum'])
 
     if len(args['snapshot']) > 0:
-        print('training resumes from \'%s\'' % args['snapshot'])
+        print('Training Resumes From \'%s\'' % args['snapshot'])
         net.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '.pth')))
-        optimizer.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '_optim.pth')))
+        # optimizer.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '_optim.pth')))
         optimizer.param_groups[0]['lr'] = 2 * args['lr']
         optimizer.param_groups[1]['lr'] = args['lr']
+
+    net = nn.DataParallel(net, device_ids=device_ids)
 
     open(log_path, 'w').write(str(args) + '\n\n')
     train(net, optimizer)

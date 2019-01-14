@@ -27,9 +27,9 @@ torch.cuda.set_device(device_ids[0])
 ckpt_path = './ckpt'
 exp_name = 'BASE3'
 args = {
-    'snapshot': '60',
+    'snapshot': '100',
     'scale': 512,
-    'crf': True
+    'crf': False
 }
 
 img_transform = transforms.Compose([

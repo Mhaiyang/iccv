@@ -2,14 +2,13 @@ import torch
 from torch import nn
 
 from backbone.resnext import resnext_101_32x4d_
-from backbone.resnext.config import resnext_101_32_path
 
 
 class ResNeXt101(nn.Module):
-    def __init__(self):
+    def __init__(self, backbone_path):
         super(ResNeXt101, self).__init__()
         net = resnext_101_32x4d_.resnext_101_32x4d
-        weights = torch.load(resnext_101_32_path)
+        weights = torch.load(backbone_path)
         # del weights['0.weight']
         net.load_state_dict(weights, strict=True)
         print("Load ResNeXt Weights Succeed!")

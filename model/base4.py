@@ -236,9 +236,9 @@ class BASE4(nn.Module):
         self.cbam_1 = CBAM(128)
 
         self.conv_4to4 = nn.Sequential(nn.Conv2d(512, 1024, 1), nn.BatchNorm2d(1024), nn.ReLU())
-        self.conv_4to3 = nn.Sequential(nn.Conv2d(1024, 256, 1), nn.BatchNorm2d(256), nn.ReLU())
-        self.conv_3to2 = nn.Sequential(nn.Conv2d(512, 128, 1), nn.BatchNorm2d(128), nn.ReLU())
-        self.conv_2to1 = nn.Sequential(nn.Conv2d(256, 64, 1), nn.BatchNorm2d(64), nn.ReLU())
+        self.conv_4to3 = nn.Sequential(nn.ConvTranspose2d(1024, 256, 4, 2, 1), nn.BatchNorm2d(256), nn.ReLU())
+        self.conv_3to2 = nn.Sequential(nn.ConvTranspose2d(512, 128, 4, 2, 1), nn.BatchNorm2d(128), nn.ReLU())
+        self.conv_2to1 = nn.Sequential(nn.ConvTranspose2d(256, 64, 4, 2, 1), nn.BatchNorm2d(64), nn.ReLU())
 
         self.layer4_predict = Predict(1024)
         self.layer3_predict = Predict(512)

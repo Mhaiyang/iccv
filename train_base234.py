@@ -33,8 +33,8 @@ import loss as L
 cudnn.benchmark = True
 
 # device_ids = [0]
-device_ids = [6, 7]
-# device_ids = [1, 0]
+# device_ids = [6, 7]
+device_ids = [1, 0]
 
 ckpt_path = './ckpt'
 exp_name = 'BASE4'
@@ -90,7 +90,7 @@ val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=
 def main():
     print(args)
 
-    net = BASE3().cuda(device_ids[0]).train()
+    net = BASE4(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -105,7 +105,6 @@ def main():
     if len(args['snapshot']) > 0:
         print('Training Resumes From \'%s\'' % args['snapshot'])
         net.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '.pth')))
-        # optimizer.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '_optim.pth')))
         optimizer.param_groups[0]['lr'] = 2 * args['lr']
         optimizer.param_groups[1]['lr'] = args['lr']
 

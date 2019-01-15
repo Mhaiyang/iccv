@@ -8,10 +8,11 @@ class ResNeXt101(nn.Module):
     def __init__(self, backbone_path):
         super(ResNeXt101, self).__init__()
         net = resnext_101_32x4d_.resnext_101_32x4d
-        weights = torch.load(backbone_path)
-        # del weights['0.weight']
-        net.load_state_dict(weights, strict=True)
-        print("Load ResNeXt Weights Succeed!")
+        if backbone_path is not None:
+            weights = torch.load(backbone_path)
+            # del weights['0.weight']
+            net.load_state_dict(weights, strict=True)
+            print("Load ResNeXt Weights Succeed!")
 
         net = list(net.children())
         self.layer0 = nn.Sequential(*net[:3])

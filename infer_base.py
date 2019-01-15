@@ -25,11 +25,11 @@ device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3_WL'
+exp_name = 'BASE3_LH'
 args = {
     'snapshot': '100',
     'scale': 512,
-    'crf': False
+    'crf': True
 }
 
 img_transform = transforms.Compose([
@@ -63,7 +63,6 @@ def main():
                 w, h = img.size
                 img_var = Variable(img_transform(img).unsqueeze(0)).cuda()
                 _, _, _, _, f = net(img_var)
-                # output = (g.data.squeeze(0).cpu() + f.data.squeeze(0).cpu()) / 2
                 output = f.data.squeeze(0).cpu()
                 prediction = np.array(transforms.Resize((h, w))(to_pil(output)))
                 if args['crf']:

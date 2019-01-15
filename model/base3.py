@@ -193,7 +193,7 @@ class Predict(nn.Module):
 # ########################## NETWORK ##############################
 ###################################################################
 class BASE3(nn.Module):
-    def __init__(self, backbone_path):
+    def __init__(self, backbone_path=None):
         super(BASE3, self).__init__()
         resnext = ResNeXt101(backbone_path)
         self.layer0 = resnext.layer0

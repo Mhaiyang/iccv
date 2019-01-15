@@ -30,11 +30,13 @@ from torch.autograd import Variable
 # print(target)
 # print(weight)
 
-a = torch.rand(4)
-b = torch.rand(4)
-c = a * b
-print(a)
-print(b)
-print(c)
+logits = torch.rand((3, 4, 4))
+labels = torch.rand((3, 4, 4))
+c = labels.view(-1)
+print(c.size())
+print(logits)
+print(labels)
+for log, lab in zip(logits, labels):
+    print(log.size(), lab.size())
 
 

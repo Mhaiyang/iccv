@@ -25,7 +25,7 @@ device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3'
+exp_name = 'BASE3_WL'
 args = {
     'snapshot': '100',
     'scale': 512,

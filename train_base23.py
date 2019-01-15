@@ -95,7 +95,7 @@ class WL(nn.Module):
 
     def forward(self, pred_logit, truth):
         pred = torch.sigmoid(pred_logit)
-        batch_size =truth.size(0)
+        batch_size = truth.size(0)
 
         truth_flat = truth.contiguous().view(batch_size, -1)
 
@@ -113,8 +113,8 @@ class WL(nn.Module):
         TP = (pred_flat_bool * truth_flat).sum(1)
         TN = ((1 - pred_flat_bool) * (1 - truth_flat)).sum(1)
 
-        w2_1 = (1 - (TP / N_p)).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
-        w2_2 = (1 - (TN / N_n)).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
+        w2_1 = (1 - (TP / N_p)).unsqueeze(-1).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
+        w2_2 = (1 - (TN / N_n)).unsqueeze(-1).unsqueeze(-1).unsqueeze(-1).expand_as(truth)
 
         L2 = - w2_1 * truth * torch.log(pred) - w2_2 * (1 - truth) * torch.log(1 - pred)
 

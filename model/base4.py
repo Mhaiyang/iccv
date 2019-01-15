@@ -193,9 +193,9 @@ class Predict(nn.Module):
 ###################################################################
 # ########################## NETWORK ##############################
 ###################################################################
-class BASE3(nn.Module):
+class BASE4(nn.Module):
     def __init__(self, backbone_path):
-        super(BASE3, self).__init__()
+        super(BASE4, self).__init__()
         resnext = ResNeXt101(backbone_path)
         self.layer0 = resnext.layer0
         self.layer1 = resnext.layer1
@@ -230,27 +230,31 @@ class BASE3(nn.Module):
             nn.BatchNorm2d(64), nn.ReLU()
         )
 
-        self.up_4 = nn.Sequential(nn.ConvTranspose2d(512, 64, 16, 8, 4), nn.BatchNorm2d(64), nn.ReLU())
-        self.up_3 = nn.Sequential(nn.ConvTranspose2d(256, 64, 8, 4, 2), nn.BatchNorm2d(64), nn.ReLU())
-        self.up_2 = nn.Sequential(nn.ConvTranspose2d(128, 64, 4, 2, 1), nn.BatchNorm2d(64), nn.ReLU())
-        self.up_1 = nn.Sequential(nn.Conv2d(64, 64, 1, 1, 0), nn.BatchNorm2d(64), nn.ReLU())
+        self.cbam_4 = CBAM(1024)
+        self.cbam_3 = CBAM(512)
+        self.cbam_2 = CBAM(256)
+        self.cbam_1 = CBAM(128)
 
-        self.cbam_4 = CBAM(64)
-        self.cbam_3 = CBAM(64)
-        self.cbam_2 = CBAM(64)
-        self.cbam_1 = CBAM(64)
-        self.cbam_fusion = CBAM(256)
+        self.conv_4to4 = nn.Sequential(nn.Conv2d(512, 1024, 1), nn.BatchNorm2d(1024), nn.ReLU())
+        self.conv_4to3 = nn.Sequential(nn.Conv2d(1024, 256, 1), nn.BatchNorm2d(256), nn.ReLU())
+        self.conv_3to2 = nn.Sequential(nn.Conv2d(512, 128, 1), nn.BatchNorm2d(128), nn.ReLU())
+        self.conv_2to1 = nn.Sequential(nn.Conv2d(256, 64, 1), nn.BatchNorm2d(64), nn.ReLU())
 
-        self.layer4_predict = Predict(64)
-        self.layer3_predict = Predict(64)
-        self.layer2_predict = Predict(64)
-        self.layer1_predict = Predict(64)
+        self.layer4_predict = Predict(1024)
+        self.layer3_predict = Predict(512)
+        self.layer2_predict = Predict(256)
+        self.layer1_predict = Predict(128)
 
-        self.fusion_predict = nn.Conv2d(256, 1, 3, 1)
+        self.fusion_predict = nn.Conv2d(4, 1, 1, bias=False)
 
         for m in self.modules():
             if isinstance(m, nn.ReLU):
                 m.inplace = True
+            elif isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight.data)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
 
     def forward(self, x):
         layer0 = self.layer0(x)
@@ -279,37 +283,44 @@ class BASE3(nn.Module):
         layer1_concat = torch.cat((layer1_sc, layer1_ccl), 1)
         layer1_fusion = self.layer1_fusion(layer1_concat)
 
-        layer4_feature = self.up_4(layer4_fusion)
+        layer4_feature = self.conv_4to4(layer4_fusion)
         layer4_feature = self.cbam_4(layer4_feature)
 
-        layer3_feature = self.up_3(layer3_fusion)
+        layer4_feature_for_concat = self.conv_4to3(layer4_feature)
+        layer3_feature = torch.cat((layer3_fusion, layer4_feature_for_concat), 1)
         layer3_feature = self.cbam_3(layer3_feature)
 
-        layer2_feature = self.up_2(layer2_fusion)
+        layer3_feature_for_concat = self.conv_3to2(layer3_feature)
+        layer2_feature = torch.cat((layer2_fusion, layer3_feature_for_concat), 1)
         layer2_feature = self.cbam_2(layer2_feature)
 
-        layer1_feature = self.up_1(layer1_fusion)
+        layer2_feature_for_concat = self.conv_2to1(layer2_feature)
+        layer1_feature = torch.cat((layer1_fusion, layer2_feature_for_concat), 1)
         layer1_feature = self.cbam_1(layer1_feature)
-
-        fusion_feature = torch.cat((layer1_feature, layer2_feature, layer3_feature, layer4_feature), 1)
-        fusion_feature = self.cbam_fusion(fusion_feature)
 
         layer4_predict = self.layer4_predict(layer4_feature)
         layer3_predict = self.layer3_predict(layer3_feature)
         layer2_predict = self.layer2_predict(layer2_feature)
         layer1_predict = self.layer1_predict(layer1_feature)
 
+        layer4_predict_128 = F.upsample(layer4_predict, size=(128, 128), mode='bilinear', align_corners=True)
+        layer3_predict_128 = F.upsample(layer3_predict, size=(128, 128), mode='bilinear', align_corners=True)
+        layer2_predict_128 = F.upsample(layer2_predict, size=(128, 128), mode='bilinear', align_corners=True)
+        layer1_predict_128 = layer1_predict
+
+        fusion_feature = torch.cat((layer1_predict_128, layer2_predict_128, layer3_predict_128, layer4_predict_128), 1)
+
         fusion_predict = self.fusion_predict(fusion_feature)
 
-        layer4_predict = F.upsample(layer4_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
-        layer3_predict = F.upsample(layer3_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
-        layer2_predict = F.upsample(layer2_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
-        layer1_predict = F.upsample(layer1_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
+        layer4_predict_512 = F.upsample(layer4_predict_128, size=x.size()[2:], mode='bilinear', align_corners=True)
+        layer3_predict_512 = F.upsample(layer3_predict_128, size=x.size()[2:], mode='bilinear', align_corners=True)
+        layer2_predict_512 = F.upsample(layer2_predict_128, size=x.size()[2:], mode='bilinear', align_corners=True)
+        layer1_predict_512 = F.upsample(layer1_predict_128, size=x.size()[2:], mode='bilinear', align_corners=True)
 
-        fusion_predict = F.upsample(fusion_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
+        fusion_predict_512 = F.upsample(fusion_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
 
         if self.training:
-            return layer4_predict, layer3_predict, layer2_predict, layer1_predict, fusion_predict
+            return layer4_predict_512, layer3_predict_512, layer2_predict_512, layer1_predict_512, fusion_predict_512
 
-        return F.sigmoid(layer4_predict), F.sigmoid(layer3_predict), F.sigmoid(layer2_predict), \
-               F.sigmoid(layer1_predict), F.sigmoid(fusion_predict)
+        return F.sigmoid(layer4_predict_512), F.sigmoid(layer3_predict_512), F.sigmoid(layer2_predict_512), \
+               F.sigmoid(layer1_predict_512), F.sigmoid(fusion_predict_512)

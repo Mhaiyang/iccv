@@ -37,7 +37,7 @@ cudnn.benchmark = True
 device_ids = [1, 0]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE4'
+exp_name = 'BASE4_LH'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
@@ -139,11 +139,11 @@ def train(net, optimizer):
 
             predict_4, predict_3, predict_2, predict_1, predict_f = net(inputs)
 
-            loss_4 = L.mixed_loss(predict_4, labels)
-            loss_3 = L.mixed_loss(predict_3, labels)
-            loss_2 = L.mixed_loss(predict_2, labels)
-            loss_1 = L.mixed_loss(predict_1, labels)
-            loss_f = L.mixed_loss(predict_f, labels)
+            loss_4 = L.lovasz_hinge(predict_4, labels)
+            loss_3 = L.lovasz_hinge(predict_3, labels)
+            loss_2 = L.lovasz_hinge(predict_2, labels)
+            loss_1 = L.lovasz_hinge(predict_1, labels)
+            loss_f = L.lovasz_hinge(predict_f, labels)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f
 

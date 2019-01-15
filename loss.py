@@ -13,6 +13,7 @@ from __future__ import print_function, division
 
 import torch
 from torch.autograd import Variable
+import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
@@ -80,6 +81,19 @@ def iou(preds, labels, C, EMPTY=1., ignore=None, per_image=False):
 
 
 # --------------------------- BINARY LOSSES ---------------------------
+def mixed_loss(logits, labels, per_image=True, ignore=None):
+    bce_loss = nn.BCEWithLogitsLoss()(logits, labels)
+
+    logits = logits.squeeze(1)
+    labels = labels.squeeze(1)
+
+    if per_image:
+        lh_loss = mean(lovasz_hinge_flat(*flatten_binary_scores(log.unsqueeze(0), lab.unsqueeze(0), ignore))
+                    for log, lab in zip(logits, labels))
+    else:
+        lh_loss = lovasz_hinge_flat(*flatten_binary_scores(logits, labels, ignore))
+
+    return bce_loss + lh_loss
 
 
 def lovasz_hinge(logits, labels, per_image=True, ignore=None):

@@ -27,7 +27,7 @@ torch.cuda.set_device(device_ids[0])
 ckpt_path = './ckpt'
 exp_name = 'BASE4_LH'
 args = {
-    'snapshot': '100',
+    'snapshot': '60',
     'scale': 512,
     'crf': True
 }

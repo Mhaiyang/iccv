@@ -18,7 +18,7 @@ ckpt_path = 'ckpt'
 
 exp_name = 'BASE4_LH'
 args = {
-    'snapshot': '100',
+    'snapshot': '60',
     'type': 0
 }
 

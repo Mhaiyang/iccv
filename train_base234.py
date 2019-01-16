@@ -45,7 +45,7 @@ args = {
     'train_batch_size': 8,
     'val_batch_size': 8,
     'last_epoch': 0,
-    'lr': 1e-2,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
@@ -81,7 +81,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=64, shuffle=True)
 val_set = ImageFolder(msd_testing_root, val_joint_transform, img_transform, target_transform)
 print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)

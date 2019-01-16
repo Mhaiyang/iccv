@@ -26,7 +26,7 @@ from config import msd_training_root, msd_testing_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.base4 import BASE4
+from model.base4_noccl import BASE4_NOCCL
 
 import loss as L
 
@@ -37,7 +37,7 @@ cudnn.benchmark = True
 device_ids = [1, 0]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE4_LH'
+exp_name = 'BASE4_LH_NOCCL'
 
 # batch size of 8 with resolution of 416*416 is exactly OK for the GTX 1080Ti GPU
 args = {
@@ -90,7 +90,7 @@ val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=
 def main():
     print(args)
 
-    net = BASE4(backbone_path).cuda(device_ids[0]).train()
+    net = BASE4_NOCCL(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

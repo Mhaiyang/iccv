@@ -19,13 +19,13 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.base3 import BASE3
+from model.base4 import BASE4
 
 device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3_ML'
+exp_name = 'BASE4_LH'
 args = {
     'snapshot': '100',
     'scale': 512,
@@ -44,7 +44,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = BASE3().cuda(device_ids[0])
+    net = BASE4().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

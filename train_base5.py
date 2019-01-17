@@ -144,7 +144,7 @@ def train(net, optimizer):
             loss_c = L.lovasz_hinge(predict_c, labels)
             loss_o = L.lovasz_hinge(predict_o, labels)
 
-            loss = 10 * loss_b + loss_c + loss_o
+            loss = 100 * loss_b + loss_c + loss_o
 
             loss.backward()
 

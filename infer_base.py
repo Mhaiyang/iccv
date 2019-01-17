@@ -19,15 +19,15 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.base4 import BASE4
+from model.base4_noccl import BASE4_NOCCL
 
 device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'BASE4_LH'
+exp_name = 'BASE4_LH_NOCCL'
 args = {
-    'snapshot': '60',
+    'snapshot': '100',
     'scale': 512,
     'crf': True
 }
@@ -44,7 +44,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = BASE4().cuda(device_ids[0])
+    net = BASE4_NOCCL().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

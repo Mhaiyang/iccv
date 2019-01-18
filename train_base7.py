@@ -41,7 +41,7 @@ exp_name = 'BASE7'
 
 args = {
     'epoch_num': 80,
-    'train_batch_size': 8,
+    'train_batch_size': 6,
     'val_batch_size': 8,
     'last_epoch': 0,
     'lr': 1e-3,
@@ -158,7 +158,7 @@ def train(net, optimizer):
                 writer.add_scalar('loss_b', loss_b, curr_iter)
                 writer.add_scalar('loss_o', loss_o, curr_iter)
 
-            log = '[Epoch: %2d], [Iter: %5d], [%.7f], [Sum: %.5f], [Lb: %.5f], [Lc: %.5f], [Lo: %.5f]' % \
+            log = '[Epoch: %2d], [Iter: %5d], [%.7f], [Sum: %.5f], [Lf: %.5f], [Lb: %.5f], [Lo: %.5f]' % \
                   (epoch, curr_iter, base_lr, loss_record.avg, loss_f_record.avg, loss_b_record.avg, loss_o_record.avg)
             train_iterator.set_description(log)
             open(log_path, 'a').write(log + '\n')

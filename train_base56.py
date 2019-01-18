@@ -32,8 +32,8 @@ import loss as L
 
 cudnn.benchmark = True
 
-# device_ids = [0]
-device_ids = [4, 5]
+device_ids = [0]
+# device_ids = [4, 5]
 # device_ids = [1, 0]
 
 ckpt_path = './ckpt'
@@ -51,7 +51,7 @@ args = {
     'snapshot': '',
     'scale': 512,
     'save_point': [40, 60, 70],
-    'add_graph': True,
+    'add_graph': False,
     'poly_train': True
 }
 

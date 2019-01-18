@@ -4,7 +4,7 @@
   @Email   : mhy845879017@gmail.com
   
   @Project : iccv
-  @File    : train_base5.py
+  @File    : train_base56.py
   @Function: 
   
 """
@@ -26,22 +26,22 @@ from config import msd_training_root, msd_testing_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.base5 import BASE5
+from model.base6 import BASE6
 
 import loss as L
 
 cudnn.benchmark = True
 
 # device_ids = [0]
-device_ids = [4, 5]
-# device_ids = [1, 0]
+# device_ids = [4, 5]
+device_ids = [1, 0]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE5'
+exp_name = 'BASE6'
 
 args = {
-    'epoch_num': 100,
-    'train_batch_size': 6,
+    'epoch_num': 80,
+    'train_batch_size': 8,
     'val_batch_size': 8,
     'last_epoch': 0,
     'lr': 1e-3,
@@ -50,7 +50,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [40, 60, 80],
+    'save_point': [40, 60, 70],
     'add_graph': True,
     'poly_train': True
 }
@@ -91,7 +91,7 @@ bce = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 def main():
     print(args)
 
-    net = BASE5(backbone_path).cuda(device_ids[0]).train()
+    net = BASE6(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -140,11 +140,11 @@ def train(net, optimizer):
 
             predict_c, predict_b, predict_o = net(inputs)
 
-            loss_b = bce(predict_b, edges)
+            loss_b = 100 * bce(predict_b, edges)
             loss_c = L.lovasz_hinge(predict_c, labels)
             loss_o = L.lovasz_hinge(predict_o, labels)
 
-            loss = 100 * loss_b + loss_c + loss_o
+            loss = loss_b + loss_c + loss_o
 
             loss.backward()
 

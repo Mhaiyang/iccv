@@ -191,15 +191,15 @@ class BASE6(nn.Module):
         self.ccl_1 = CCL(256, 64, 5)
         self.ccl_0 = CCL(64, 32, 6)
 
-        self.context_fixed_4 = nn.Sequential(nn.BatchNorm1d(512), nn.ReLU(), nn.ConvTranspose2d(512, 64, 16, 8, 4),
+        self.context_fixed_4 = nn.Sequential(nn.BatchNorm2d(512), nn.ReLU(), nn.ConvTranspose2d(512, 64, 16, 8, 4),
                                              nn.BatchNorm2d(64), nn.ReLU())
-        self.context_fixed_3 = nn.Sequential(nn.BatchNorm1d(256), nn.ReLU(), nn.ConvTranspose2d(256, 64, 8, 4, 2),
+        self.context_fixed_3 = nn.Sequential(nn.BatchNorm2d(256), nn.ReLU(), nn.ConvTranspose2d(256, 64, 8, 4, 2),
                                              nn.BatchNorm2d(64), nn.ReLU())
-        self.context_fixed_2 = nn.Sequential(nn.BatchNorm1d(128), nn.ReLU(), nn.ConvTranspose2d(128, 64, 4, 2, 1),
+        self.context_fixed_2 = nn.Sequential(nn.BatchNorm2d(128), nn.ReLU(), nn.ConvTranspose2d(128, 64, 4, 2, 1),
                                              nn.BatchNorm2d(64), nn.ReLU())
-        self.context_fixed_1 = nn.Sequential(nn.BatchNorm1d(64), nn.ReLU(), nn.Conv2d(64, 64, 3, 1, 1),
+        self.context_fixed_1 = nn.Sequential(nn.BatchNorm2d(64), nn.ReLU(), nn.Conv2d(64, 64, 3, 1, 1),
                                              nn.BatchNorm2d(64), nn.ReLU())
-        self.context_fixed_0 = nn.Sequential(nn.BatchNorm1d(32), nn.ReLU(), nn.Conv2d(32, 64, 4, 2, 1),
+        self.context_fixed_0 = nn.Sequential(nn.BatchNorm2d(32), nn.ReLU(), nn.Conv2d(32, 64, 4, 2, 1),
                                              nn.BatchNorm2d(64), nn.ReLU())
         self.context_attention = CBAM(320)
 
@@ -212,15 +212,15 @@ class BASE6(nn.Module):
         self.boundary_conv_1 = nn.Conv2d(256, 64, 3, 1, 1)
         self.boundary_conv_0 = nn.Conv2d(64, 32, 3, 1, 1)
 
-        self.boundary_fixed_4 = nn.Sequential(nn.BatchNorm1d(512), nn.ReLU(), nn.ConvTranspose2d(512, 32, 16, 8, 4),
+        self.boundary_fixed_4 = nn.Sequential(nn.BatchNorm2d(512), nn.ReLU(), nn.ConvTranspose2d(512, 32, 16, 8, 4),
                                              nn.BatchNorm2d(32), nn.ReLU())
-        self.boundary_fixed_3 = nn.Sequential(nn.BatchNorm1d(512), nn.ReLU(), nn.ConvTranspose2d(512, 32, 16, 8, 4),
+        self.boundary_fixed_3 = nn.Sequential(nn.BatchNorm2d(512), nn.ReLU(), nn.ConvTranspose2d(512, 32, 16, 8, 4),
                                              nn.BatchNorm2d(32), nn.ReLU())
-        self.boundary_fixed_2 = nn.Sequential(nn.BatchNorm1d(512), nn.ReLU(), nn.ConvTranspose2d(512, 32, 16, 8, 4),
+        self.boundary_fixed_2 = nn.Sequential(nn.BatchNorm2d(512), nn.ReLU(), nn.ConvTranspose2d(512, 32, 16, 8, 4),
                                              nn.BatchNorm2d(32), nn.ReLU())
-        self.boundary_fixed_1 = nn.Sequential(nn.BatchNorm1d(512), nn.ReLU(), nn.ConvTranspose2d(512, 32, 16, 8, 4),
+        self.boundary_fixed_1 = nn.Sequential(nn.BatchNorm2d(512), nn.ReLU(), nn.ConvTranspose2d(512, 32, 16, 8, 4),
                                              nn.BatchNorm2d(32), nn.ReLU())
-        self.boundary_fixed_0 = nn.Sequential(nn.BatchNorm1d(512), nn.ReLU(), nn.ConvTranspose2d(512, 32, 16, 8, 4),
+        self.boundary_fixed_0 = nn.Sequential(nn.BatchNorm2d(512), nn.ReLU(), nn.ConvTranspose2d(512, 32, 16, 8, 4),
                                              nn.BatchNorm2d(32), nn.ReLU())
 
         self.boundary_attention = CBAM(160)

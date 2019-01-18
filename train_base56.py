@@ -33,8 +33,8 @@ import loss as L
 cudnn.benchmark = True
 
 # device_ids = [0]
-# device_ids = [4, 5]
-device_ids = [1, 0]
+device_ids = [4, 5]
+# device_ids = [1, 0]
 
 ckpt_path = './ckpt'
 exp_name = 'BASE6'
@@ -140,7 +140,7 @@ def train(net, optimizer):
 
             predict_c, predict_b, predict_o = net(inputs)
 
-            loss_b = 100 * bce(predict_b, edges)
+            loss_b = bce(predict_b, edges)
             loss_c = L.lovasz_hinge(predict_c, labels)
             loss_o = L.lovasz_hinge(predict_o, labels)
 

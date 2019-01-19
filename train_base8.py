@@ -34,7 +34,7 @@ cudnn.benchmark = True
 
 # device_ids = [0]
 # device_ids = [4, 5]
-device_ids = [1, 0]
+device_ids = [1]
 
 ckpt_path = './ckpt'
 exp_name = 'BASE8'
@@ -80,7 +80,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=64, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 val_set = ImageFolder(msd_testing_root, val_joint_transform, img_transform, target_transform)
 print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)
@@ -185,8 +185,8 @@ def train(net, optimizer):
                 writer.add_scalar('loss_b', loss_b, curr_iter)
                 writer.add_scalar('loss_o', loss_o, curr_iter)
 
-            log = '[%3d], [%5d], [%.5f], [%.5f], [f4:%.5f], [f3:%.5f],[f2:%.5f],[f1:%.5f],[f:%.5f], ' \
-                  '[b4:%.5f], [b3:%.5f],[b2:%.5f],[b1:%.5f],[b:%.5f], [o:%.5f]' % \
+            log = '[%3d], [%5d], [%.5f], [%.5f], [f4:%.5f], [f3:%.5f], [f2:%.5f], [f1:%.5f], [f:%.5f], ' \
+                  '[b4:%.5f], [b3:%.5f], [b2:%.5f], [b1:%.5f], [b:%.5f], [o:%.5f]' % \
                   (epoch, curr_iter, base_lr, loss_record.avg,
                    loss_f_4_record.avg, loss_f_3_record.avg, loss_f_2_record.avg, loss_f_1_record.avg, loss_f_record.avg,
                    loss_b_4_record.avg, loss_b_3_record.avg, loss_b_2_record.avg, loss_b_1_record.avg, loss_b_record.avg,

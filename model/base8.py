@@ -191,19 +191,19 @@ class BASE8(nn.Module):
         self.f_ccl_1 = CCL(256, 64, 5)
 
         self.f_sc_4 = nn.Conv2d(2048, 512, 1)
-        self.f_sc_3 = nn.Conv2d(2048, 512, 1)
-        self.f_sc_2 = nn.Conv2d(2048, 512, 1)
-        self.f_sc_1 = nn.Conv2d(2048, 512, 1)
+        self.f_sc_3 = nn.Conv2d(1024, 256, 1)
+        self.f_sc_2 = nn.Conv2d(512, 128, 1)
+        self.f_sc_1 = nn.Conv2d(256, 64, 1)
 
         self.f_fusion_4 = nn.Sequential(nn.Conv2d(1024, 512, 1), nn.BatchNorm2d(512), nn.ReLU())
-        self.f_fusion_3 = nn.Sequential(nn.Conv2d(1024, 512, 1), nn.BatchNorm2d(512), nn.ReLU())
-        self.f_fusion_2 = nn.Sequential(nn.Conv2d(1024, 512, 1), nn.BatchNorm2d(512), nn.ReLU())
-        self.f_fusion_1 = nn.Sequential(nn.Conv2d(1024, 512, 1), nn.BatchNorm2d(512), nn.ReLU())
+        self.f_fusion_3 = nn.Sequential(nn.Conv2d(512, 256, 1), nn.BatchNorm2d(256), nn.ReLU())
+        self.f_fusion_2 = nn.Sequential(nn.Conv2d(256, 128, 1), nn.BatchNorm2d(128), nn.ReLU())
+        self.f_fusion_1 = nn.Sequential(nn.Conv2d(128, 64, 1), nn.BatchNorm2d(64), nn.ReLU())
 
         self.f_up_4 = nn.Sequential(nn.ConvTranspose2d(512, 64, 16, 8, 4), nn.BatchNorm2d(64), nn.ReLU())
         self.f_up_3 = nn.Sequential(nn.ConvTranspose2d(256, 64, 8, 4, 2), nn.BatchNorm2d(64), nn.ReLU())
         self.f_up_2 = nn.Sequential(nn.ConvTranspose2d(128, 64, 4, 2, 1), nn.BatchNorm2d(64), nn.ReLU())
-        self.f_up_1 = nn.Sequential(nn.Conv2d(64, 64, 1, 1, 1), nn.BatchNorm2d(64), nn.ReLU())
+        self.f_up_1 = nn.Sequential(nn.Conv2d(64, 64, 1, 1, 0), nn.BatchNorm2d(64), nn.ReLU())
 
         self.f_cbam_4 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
         self.f_cbam_3 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
@@ -224,19 +224,19 @@ class BASE8(nn.Module):
         self.b_ccl_1 = CCL(256, 64, 5)
 
         self.b_sc_4 = nn.Conv2d(2048, 512, 1)
-        self.b_sc_3 = nn.Conv2d(2048, 512, 1)
-        self.b_sc_2 = nn.Conv2d(2048, 512, 1)
-        self.b_sc_1 = nn.Conv2d(2048, 512, 1)
+        self.b_sc_3 = nn.Conv2d(1024, 256, 1)
+        self.b_sc_2 = nn.Conv2d(512, 128, 1)
+        self.b_sc_1 = nn.Conv2d(256, 64, 1)
 
         self.b_fusion_4 = nn.Sequential(nn.Conv2d(1024, 512, 1), nn.BatchNorm2d(512), nn.ReLU())
-        self.b_fusion_3 = nn.Sequential(nn.Conv2d(1024, 512, 1), nn.BatchNorm2d(512), nn.ReLU())
-        self.b_fusion_2 = nn.Sequential(nn.Conv2d(1024, 512, 1), nn.BatchNorm2d(512), nn.ReLU())
-        self.b_fusion_1 = nn.Sequential(nn.Conv2d(1024, 512, 1), nn.BatchNorm2d(512), nn.ReLU())
+        self.b_fusion_3 = nn.Sequential(nn.Conv2d(512, 256, 1), nn.BatchNorm2d(256), nn.ReLU())
+        self.b_fusion_2 = nn.Sequential(nn.Conv2d(256, 128, 1), nn.BatchNorm2d(128), nn.ReLU())
+        self.b_fusion_1 = nn.Sequential(nn.Conv2d(128, 64, 1), nn.BatchNorm2d(64), nn.ReLU())
 
         self.b_up_4 = nn.Sequential(nn.ConvTranspose2d(512, 64, 16, 8, 4), nn.BatchNorm2d(64), nn.ReLU())
         self.b_up_3 = nn.Sequential(nn.ConvTranspose2d(256, 64, 8, 4, 2), nn.BatchNorm2d(64), nn.ReLU())
         self.b_up_2 = nn.Sequential(nn.ConvTranspose2d(128, 64, 4, 2, 1), nn.BatchNorm2d(64), nn.ReLU())
-        self.b_up_1 = nn.Sequential(nn.Conv2d(64, 64, 1, 1, 1), nn.BatchNorm2d(64), nn.ReLU())
+        self.b_up_1 = nn.Sequential(nn.Conv2d(64, 64, 1, 1, 0), nn.BatchNorm2d(64), nn.ReLU())
 
         self.b_cbam_4 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
         self.b_cbam_3 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
@@ -251,7 +251,7 @@ class BASE8(nn.Module):
         self.b_predict_concat = nn.Conv2d(256, 1, 3, 1, 1)
 
         # Feature Mosaic
-        self.output_predict = nn.Sequential(nn.BatchNorm2d(256), nn.ReLU(), nn.Conv2d(256, 1, 3, 1, 1))
+        self.output_predict = nn.Conv2d(256, 1, 3, 1, 1)
 
         for m in self.modules():
             if isinstance(m, nn.ReLU):
@@ -271,9 +271,9 @@ class BASE8(nn.Module):
         f_ccl_1 = self.f_ccl_1(layer1)
 
         f_sc_4 = self.f_sc_4(layer4)
-        f_sc_3 = self.f_sc_3(layer4)
-        f_sc_2 = self.f_sc_2(layer4)
-        f_sc_1 = self.f_sc_1(layer4)
+        f_sc_3 = self.f_sc_3(layer3)
+        f_sc_2 = self.f_sc_2(layer2)
+        f_sc_1 = self.f_sc_1(layer1)
 
         f_fusion_4 = self.f_fusion_4(torch.cat((f_sc_4, f_ccl_4), 1))
         f_fusion_3 = self.f_fusion_3(torch.cat((f_sc_3, f_ccl_3), 1))
@@ -306,9 +306,9 @@ class BASE8(nn.Module):
         b_ccl_1 = self.b_ccl_1(layer1)
 
         b_sc_4 = self.b_sc_4(layer4)
-        b_sc_3 = self.b_sc_3(layer4)
-        b_sc_2 = self.b_sc_2(layer4)
-        b_sc_1 = self.b_sc_1(layer4)
+        b_sc_3 = self.b_sc_3(layer3)
+        b_sc_2 = self.b_sc_2(layer2)
+        b_sc_1 = self.b_sc_1(layer1)
 
         b_fusion_4 = self.b_fusion_4(torch.cat((b_sc_4, b_ccl_4), 1))
         b_fusion_3 = self.b_fusion_3(torch.cat((b_sc_3, b_ccl_3), 1))

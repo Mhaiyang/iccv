@@ -33,24 +33,24 @@ import loss as L
 cudnn.benchmark = True
 
 # device_ids = [0]
-# device_ids = [4, 5]
-device_ids = [1, 0]
+device_ids = [4, 5]
+# device_ids = [1, 0]
 
 ckpt_path = './ckpt'
 exp_name = 'BASE7'
 
 args = {
-    'epoch_num': 80,
+    'epoch_num': 60,
     'train_batch_size': 6,
     'val_batch_size': 8,
     'last_epoch': 0,
-    'lr': 1e-3,
+    'lr': 5e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [40, 60, 70],
+    'save_point': [30, 40, 50],
     'add_graph': True,
     'poly_train': True
 }
@@ -80,7 +80,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=64, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 val_set = ImageFolder(msd_testing_root, val_joint_transform, img_transform, target_transform)
 print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)

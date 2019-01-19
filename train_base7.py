@@ -139,7 +139,7 @@ def train(net, optimizer):
 
             loss_f = L.lovasz_hinge(predict_f, labels)
             loss_b = L.lovasz_hinge(predict_b, 1 - labels)
-            loss_o = L.lovasz_hinge(predict_o, labels)
+            loss_o = 2 * L.lovasz_hinge(predict_o, labels)
 
             loss = loss_f + loss_b + loss_o
 

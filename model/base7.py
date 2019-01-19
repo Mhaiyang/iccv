@@ -203,7 +203,8 @@ class BASE7(nn.Module):
                                        nn.BatchNorm2d(64), nn.ReLU())
         self.f_attention = CBAM(320)
 
-        self.f_predict = nn.Sequential(nn.BatchNorm2d(320), nn.ReLU(), nn.Conv2d(320, 1, 3, 1, 1))
+        self.f_predict = nn.Conv2d(320, 1, 3, 1, 1)
+        # self.f_predict = nn.Sequential(nn.BatchNorm2d(320), nn.ReLU(), nn.Conv2d(320, 1, 3, 1, 1))
 
         # Non-Mirror Region Stream
         self.b_ccl_4 = CCL(2048, 512, 2)
@@ -224,10 +225,12 @@ class BASE7(nn.Module):
                                        nn.BatchNorm2d(64), nn.ReLU())
         self.b_attention = CBAM(320)
 
-        self.b_predict = nn.Sequential(nn.BatchNorm2d(320), nn.ReLU(), nn.Conv2d(320, 1, 3, 1, 1))
+        self.b_predict = nn.Conv2d(320, 1, 3, 1, 1)
+        # self.b_predict = nn.Sequential(nn.BatchNorm2d(320), nn.ReLU(), nn.Conv2d(320, 1, 3, 1, 1))
 
         # Feature Mosaic
-        self.output_predict = nn.Sequential(nn.BatchNorm2d(320), nn.ReLU(), nn.Conv2d(320, 1, 3, 1, 1))
+        self.output_predict = nn.Conv2d(320, 1, 1)
+        # self.output_predict = nn.Sequential(nn.BatchNorm2d(320), nn.ReLU(), nn.Conv2d(320, 1, 3, 1, 1))
 
         for m in self.modules():
             if isinstance(m, nn.ReLU):

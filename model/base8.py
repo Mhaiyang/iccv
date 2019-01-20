@@ -357,7 +357,6 @@ class BASE8(nn.Module):
         #                  b_predict_concat.mul(torch.sigmoid(b_predict_concat)).mul(1 - torch.sigmoid(f_predict_concat))
         output_predict = f_predict_concat - b_predict_concat
 
-
         # Upsample
         f_predict_4 = F.interpolate(f_predict_4, size=x.size()[2:], mode='bilinear', align_corners=True)
         f_predict_3 = F.interpolate(f_predict_3, size=x.size()[2:], mode='bilinear', align_corners=True)

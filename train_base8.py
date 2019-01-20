@@ -34,10 +34,10 @@ cudnn.benchmark = True
 
 # device_ids = [0]
 # device_ids = [4, 5]
-device_ids = [1]
+device_ids = [0]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE8'
+exp_name = 'BASE8_bce'
 
 args = {
     'epoch_num': 100,
@@ -142,29 +142,29 @@ def train(net, optimizer):
             predict_f_4, predict_f_3, predict_f_2, predict_f_1, predict_f, \
             predict_b_4, predict_b_3, predict_b_2, predict_b_1, predict_b, predict_o = net(inputs)
 
-            loss_f_4 = L.lovasz_hinge(predict_f_4, labels)
-            loss_f_3 = L.lovasz_hinge(predict_f_3, labels)
-            loss_f_2 = L.lovasz_hinge(predict_f_2, labels)
-            loss_f_1 = L.lovasz_hinge(predict_f_1, labels)
-            loss_f = L.lovasz_hinge(predict_f, labels)
-            loss_b_4 = L.lovasz_hinge(predict_b_4, 1 - labels)
-            loss_b_3 = L.lovasz_hinge(predict_b_3, 1 - labels)
-            loss_b_2 = L.lovasz_hinge(predict_b_2, 1 - labels)
-            loss_b_1 = L.lovasz_hinge(predict_b_1, 1 - labels)
-            loss_b = L.lovasz_hinge(predict_b, 1 - labels)
-            loss_o = L.lovasz_hinge(predict_o, labels)
-
-            # loss_f_4 = bce(predict_f_4, labels)
-            # loss_f_3 = bce(predict_f_3, labels)
-            # loss_f_2 = bce(predict_f_2, labels)
-            # loss_f_1 = bce(predict_f_1, labels)
-            # loss_f = bce(predict_f, labels)
-            # loss_b_4 = bce(predict_b_4, 1 - labels)
-            # loss_b_3 = bce(predict_b_3, 1 - labels)
-            # loss_b_2 = bce(predict_b_2, 1 - labels)
-            # loss_b_1 = bce(predict_b_1, 1 - labels)
-            # loss_b = bce(predict_b, 1 - labels)
+            # loss_f_4 = L.lovasz_hinge(predict_f_4, labels)
+            # loss_f_3 = L.lovasz_hinge(predict_f_3, labels)
+            # loss_f_2 = L.lovasz_hinge(predict_f_2, labels)
+            # loss_f_1 = L.lovasz_hinge(predict_f_1, labels)
+            # loss_f = L.lovasz_hinge(predict_f, labels)
+            # loss_b_4 = L.lovasz_hinge(predict_b_4, 1 - labels)
+            # loss_b_3 = L.lovasz_hinge(predict_b_3, 1 - labels)
+            # loss_b_2 = L.lovasz_hinge(predict_b_2, 1 - labels)
+            # loss_b_1 = L.lovasz_hinge(predict_b_1, 1 - labels)
+            # loss_b = L.lovasz_hinge(predict_b, 1 - labels)
             # loss_o = L.lovasz_hinge(predict_o, labels)
+
+            loss_f_4 = bce(predict_f_4, labels)
+            loss_f_3 = bce(predict_f_3, labels)
+            loss_f_2 = bce(predict_f_2, labels)
+            loss_f_1 = bce(predict_f_1, labels)
+            loss_f = bce(predict_f, labels)
+            loss_b_4 = bce(predict_b_4, 1 - labels)
+            loss_b_3 = bce(predict_b_3, 1 - labels)
+            loss_b_2 = bce(predict_b_2, 1 - labels)
+            loss_b_1 = bce(predict_b_1, 1 - labels)
+            loss_b = bce(predict_b, 1 - labels)
+            loss_o = L.lovasz_hinge(predict_o, labels)
 
             loss = loss_f_4 + loss_f_3 + loss_f_2 + loss_f_1 + loss_f + \
                    loss_b_4 + loss_b_3 + loss_b_2 + loss_b_1 + loss_b + loss_o

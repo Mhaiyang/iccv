@@ -169,6 +169,24 @@ class CCL(nn.Module):
 ###################################################################
 # ########################## MHY ##################################
 ###################################################################
+class Predict(nn.Module):
+
+    def __init__(self, in_planes):
+        super(Predict, self).__init__()
+        self.in_planes = in_planes
+        self.out_planes = int(in_planes / 8)
+        self.predict = nn.Sequential(
+            nn.Conv2d(in_planes, self.out_planes, 3, padding=1, bias=False),
+            nn.BatchNorm2d(self.out_planes),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            nn.Conv2d(self.out_planes, 1, 1)
+        )
+
+    def forward(self, x):
+        output = self.predict(x)
+
+        return output
 
 
 ###################################################################
@@ -205,16 +223,16 @@ class BASE8(nn.Module):
         self.f_up_2 = nn.Sequential(nn.ConvTranspose2d(128, 64, 4, 2, 1), nn.BatchNorm2d(64), nn.ReLU())
         self.f_up_1 = nn.Sequential(nn.Conv2d(64, 64, 1, 1, 0), nn.BatchNorm2d(64), nn.ReLU())
 
-        self.f_cbam_4 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
-        self.f_cbam_3 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
-        self.f_cbam_2 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
-        self.f_cbam_1 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
-        self.f_cbam_concat = nn.Sequential(CBAM(256), nn.BatchNorm2d(256), nn.ReLU())
+        self.f_cbam_4 = CBAM(64)
+        self.f_cbam_3 = CBAM(64)
+        self.f_cbam_2 = CBAM(64)
+        self.f_cbam_1 = CBAM(64)
+        self.f_cbam_concat = CBAM(256)
 
-        self.f_predict_4 = nn.Conv2d(64, 1, 3, 1, 1)
-        self.f_predict_3 = nn.Conv2d(64, 1, 3, 1, 1)
-        self.f_predict_2 = nn.Conv2d(64, 1, 3, 1, 1)
-        self.f_predict_1 = nn.Conv2d(64, 1, 3, 1, 1)
+        self.f_predict_4 = Predict(64)
+        self.f_predict_3 = Predict(64)
+        self.f_predict_2 = Predict(64)
+        self.f_predict_1 = Predict(64)
         self.f_predict_concat = nn.Conv2d(256, 1, 3, 1, 1)
 
         # Non-Mirror Region Stream
@@ -238,16 +256,16 @@ class BASE8(nn.Module):
         self.b_up_2 = nn.Sequential(nn.ConvTranspose2d(128, 64, 4, 2, 1), nn.BatchNorm2d(64), nn.ReLU())
         self.b_up_1 = nn.Sequential(nn.Conv2d(64, 64, 1, 1, 0), nn.BatchNorm2d(64), nn.ReLU())
 
-        self.b_cbam_4 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
-        self.b_cbam_3 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
-        self.b_cbam_2 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
-        self.b_cbam_1 = nn.Sequential(CBAM(64), nn.BatchNorm2d(64), nn.ReLU())
-        self.b_cbam_concat = nn.Sequential(CBAM(256), nn.BatchNorm2d(256), nn.ReLU())
+        self.b_cbam_4 = CBAM(64)
+        self.b_cbam_3 = CBAM(64)
+        self.b_cbam_2 = CBAM(64)
+        self.b_cbam_1 = CBAM(64)
+        self.b_cbam_concat = CBAM(256)
 
-        self.b_predict_4 = nn.Conv2d(64, 1, 3, 1, 1)
-        self.b_predict_3 = nn.Conv2d(64, 1, 3, 1, 1)
-        self.b_predict_2 = nn.Conv2d(64, 1, 3, 1, 1)
-        self.b_predict_1 = nn.Conv2d(64, 1, 3, 1, 1)
+        self.b_predict_4 = Predict(64)
+        self.b_predict_3 = Predict(64)
+        self.b_predict_2 = Predict(64)
+        self.b_predict_1 = Predict(64)
         self.b_predict_concat = nn.Conv2d(256, 1, 3, 1, 1)
 
         # Feature Mosaic

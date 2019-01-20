@@ -353,8 +353,10 @@ class BASE8(nn.Module):
         b_predict_concat = self.b_predict_concat(b_cbam_concat)
 
         # Feature Mosaic
-        output_predict = f_predict_concat.mul(torch.sigmoid(f_predict_concat)).mul(1 - torch.sigmoid(b_predict_concat)) - \
-                         b_predict_concat.mul(torch.sigmoid(b_predict_concat)).mul(1 - torch.sigmoid(f_predict_concat))
+        # output_predict = f_predict_concat.mul(torch.sigmoid(f_predict_concat)).mul(1 - torch.sigmoid(b_predict_concat)) - \
+        #                  b_predict_concat.mul(torch.sigmoid(b_predict_concat)).mul(1 - torch.sigmoid(f_predict_concat))
+        output_predict = f_predict_concat - b_predict_concat
+
 
         # Upsample
         f_predict_4 = F.interpolate(f_predict_4, size=x.size()[2:], mode='bilinear', align_corners=True)

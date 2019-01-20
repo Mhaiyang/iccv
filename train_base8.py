@@ -86,6 +86,9 @@ print("Validation Set: {}".format(val_set.__len__()))
 val_loader = DataLoader(val_set, batch_size=args['val_batch_size'], num_workers=8, shuffle=False)
 
 
+bce = nn.BCEWithLogitsLoss().cuda(device_ids[0])
+
+
 def main():
     print(args)
 
@@ -150,6 +153,18 @@ def train(net, optimizer):
             loss_b_1 = L.lovasz_hinge(predict_b_1, 1 - labels)
             loss_b = L.lovasz_hinge(predict_b, 1 - labels)
             loss_o = L.lovasz_hinge(predict_o, labels)
+
+            # loss_f_4 = bce(predict_f_4, labels)
+            # loss_f_3 = bce(predict_f_3, labels)
+            # loss_f_2 = bce(predict_f_2, labels)
+            # loss_f_1 = bce(predict_f_1, labels)
+            # loss_f = bce(predict_f, labels)
+            # loss_b_4 = bce(predict_b_4, 1 - labels)
+            # loss_b_3 = bce(predict_b_3, 1 - labels)
+            # loss_b_2 = bce(predict_b_2, 1 - labels)
+            # loss_b_1 = bce(predict_b_1, 1 - labels)
+            # loss_b = bce(predict_b, 1 - labels)
+            # loss_o = L.lovasz_hinge(predict_o, labels)
 
             loss = loss_f_4 + loss_f_3 + loss_f_2 + loss_f_1 + loss_f + \
                    loss_b_4 + loss_b_3 + loss_b_2 + loss_b_1 + loss_b + loss_o

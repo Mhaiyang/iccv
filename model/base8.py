@@ -269,7 +269,7 @@ class BASE8(nn.Module):
         self.b_predict_concat = nn.Conv2d(256, 1, 3, 1, 1)
 
         # Feature Mosaic
-        self.output_predict = nn.Conv2d(256, 1, 3, 1, 1)
+        # self.output_predict = nn.Conv2d(256, 1, 3, 1, 1)
 
         for m in self.modules():
             if isinstance(m, nn.ReLU):
@@ -353,10 +353,8 @@ class BASE8(nn.Module):
         b_predict_concat = self.b_predict_concat(b_cbam_concat)
 
         # Feature Mosaic
-        output_feature = f_cbam_concat.mul(torch.sigmoid(f_predict_concat)).mul(1 - torch.sigmoid(b_predict_concat)) - \
-                         b_cbam_concat.mul(torch.sigmoid(b_predict_concat)).mul(1 - torch.sigmoid(f_predict_concat))
-
-        output_predict = self.output_predict(output_feature)
+        output_predict = f_predict_concat.mul(torch.sigmoid(f_predict_concat)).mul(1 - torch.sigmoid(b_predict_concat)) - \
+                         b_predict_concat.mul(torch.sigmoid(b_predict_concat)).mul(1 - torch.sigmoid(f_predict_concat))
 
         # Upsample
         f_predict_4 = F.interpolate(f_predict_4, size=x.size()[2:], mode='bilinear', align_corners=True)

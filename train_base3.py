@@ -41,7 +41,7 @@ exp_name = 'BASE3_PLUS'
 
 args = {
     'epoch_num': 100,
-    'train_batch_size': 6,
+    'train_batch_size': 4,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,

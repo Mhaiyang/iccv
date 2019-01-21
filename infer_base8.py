@@ -21,13 +21,13 @@ from config import msd_testing_root
 from misc import check_mkdir, crf_refine
 from model.base8 import BASE8
 
-device_ids = [0]
+device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
 exp_name = 'BASE8'
 args = {
-    'snapshot': '60',
+    'snapshot': '100',
     'scale': 512,
     'crf': True
 }

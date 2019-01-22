@@ -1,5 +1,3 @@
-torch>=0.4.0
-torchvision
 Cython
 scikit-image
 tensorboardX==1.4

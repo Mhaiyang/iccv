@@ -26,13 +26,13 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.base3 import BASE3
+from model.base3_nocl import BASE3_NOCL
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [9]
+device_ids = [8]
 
 ckpt_path = './ckpt'
 exp_name = 'BASE3'
@@ -80,7 +80,7 @@ train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_wo
 def main():
     print(args)
 
-    net = BASE3(backbone_path).cuda(device_ids[0]).train()
+    net = BASE3_NOCL(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

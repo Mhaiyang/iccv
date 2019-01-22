@@ -55,7 +55,7 @@ class ChannelGate(nn.Module):
         self.pool_types = pool_types
 
     def forward(self, x):
-        channel_att_sum = True
+        channel_att_sum = None
         for pool_type in self.pool_types:
             if pool_type == 'avg':
                 avg_pool = F.avg_pool2d(x, (x.size(2), x.size(3)), stride=(x.size(2), x.size(3)))
@@ -212,22 +212,10 @@ class BASE3(nn.Module):
         self.sc_2 = nn.Conv2d(512, 128, 1)
         self.sc_1 = nn.Conv2d(256, 64, 1)
 
-        self.layer4_fusion = nn.Sequential(
-            nn.Conv2d(1024, 512, 1),
-            nn.BatchNorm2d(512), nn.ReLU()
-        )
-        self.layer3_fusion = nn.Sequential(
-            nn.Conv2d(512, 256, 1),
-            nn.BatchNorm2d(256), nn.ReLU()
-        )
-        self.layer2_fusion = nn.Sequential(
-            nn.Conv2d(256, 128, 1),
-            nn.BatchNorm2d(128), nn.ReLU()
-        )
-        self.layer1_fusion = nn.Sequential(
-            nn.Conv2d(128, 64, 1),
-            nn.BatchNorm2d(64), nn.ReLU()
-        )
+        self.layer4_fusion = nn.Sequential(nn.Conv2d(1024, 512, 1), nn.BatchNorm2d(512), nn.ReLU())
+        self.layer3_fusion = nn.Sequential(nn.Conv2d(512, 256, 1), nn.BatchNorm2d(256), nn.ReLU())
+        self.layer2_fusion = nn.Sequential(nn.Conv2d(256, 128, 1), nn.BatchNorm2d(128), nn.ReLU())
+        self.layer1_fusion = nn.Sequential(nn.Conv2d(128, 64, 1), nn.BatchNorm2d(64), nn.ReLU())
 
         self.up_4 = nn.Sequential(nn.ConvTranspose2d(512, 64, 16, 8, 4), nn.BatchNorm2d(64), nn.ReLU())
         self.up_3 = nn.Sequential(nn.ConvTranspose2d(256, 64, 8, 4, 2), nn.BatchNorm2d(64), nn.ReLU())
@@ -245,7 +233,7 @@ class BASE3(nn.Module):
         self.layer2_predict = Predict(64)
         self.layer1_predict = Predict(64)
 
-        self.fusion_predict = nn.Conv2d(256, 1, 3, 1)
+        self.fusion_predict = nn.Conv2d(256, 1, 3, 1, 1)
 
         for m in self.modules():
             if isinstance(m, nn.ReLU):
@@ -258,25 +246,20 @@ class BASE3(nn.Module):
         layer3 = self.layer3(layer2)
         layer4 = self.layer4(layer3)
 
-        layer4_ccl = self.ccl_4(layer4)
-        layer4_sc = self.sc_4(layer4)
-        layer4_concat = torch.cat((layer4_sc, layer4_ccl), 1)
-        layer4_fusion = self.layer4_fusion(layer4_concat)
+        ccl_4 = self.ccl_4(layer4)
+        ccl_3 = self.ccl_3(layer3)
+        ccl_2 = self.ccl_2(layer2)
+        ccl_1 = self.ccl_1(layer1)
 
-        layer3_ccl = self.ccl_3(layer3)
-        layer3_sc = self.sc_3(layer3)
-        layer3_concat = torch.cat((layer3_sc, layer3_ccl), 1)
-        layer3_fusion = self.layer3_fusion(layer3_concat)
+        sc_4 = self.sc_4(layer4)
+        sc_3 = self.sc_3(layer3)
+        sc_2 = self.sc_2(layer2)
+        sc_1 = self.sc_1(layer1)
 
-        layer2_ccl = self.ccl_2(layer2)
-        layer2_sc = self.sc_2(layer2)
-        layer2_concat = torch.cat((layer2_sc, layer2_ccl), 1)
-        layer2_fusion = self.layer2_fusion(layer2_concat)
-
-        layer1_ccl = self.ccl_1(layer1)
-        layer1_sc = self.sc_1(layer1)
-        layer1_concat = torch.cat((layer1_sc, layer1_ccl), 1)
-        layer1_fusion = self.layer1_fusion(layer1_concat)
+        layer4_fusion = self.layer4_fusion(torch.cat((sc_4, ccl_4), 1))
+        layer3_fusion = self.layer3_fusion(torch.cat((sc_3, ccl_3), 1))
+        layer2_fusion = self.layer2_fusion(torch.cat((sc_2, ccl_2), 1))
+        layer1_fusion = self.layer1_fusion(torch.cat((sc_1, ccl_1), 1))
 
         layer4_feature = self.up_4(layer4_fusion)
         layer4_feature = self.cbam_4(layer4_feature)

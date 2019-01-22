@@ -10,16 +10,13 @@
 """
 import torch
 import torch.nn as nn
+import random
+
+print(random.random())
 
 from torch.autograd import Variable
 
-a = torch.ones(3, 2, 4, 4)
-b = torch.ones(3, 2, 4, 4) * 5
-c = torch.ones(3, 2, 4, 4) * 2
 
-print(a)
-print(b)
-print(a.mul(1 - b).mul(c))
 
 
 

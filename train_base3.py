@@ -22,26 +22,24 @@ from tensorboardX import SummaryWriter
 from tqdm import tqdm
 
 import joint_transforms
-from config import msd_training_root, msd_testing_root
+from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.base3_plus import BASE3_PLUS
+from model.base3 import BASE3
 
 import loss as L
 
 cudnn.benchmark = True
 
-# device_ids = [0]
-# device_ids = [6, 7]
-device_ids = [1]
+device_ids = [9]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3_PLUS'
+exp_name = 'BASE3'
 
 args = {
     'epoch_num': 100,
-    'train_batch_size': 4,
+    'train_batch_size': 12,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,
@@ -67,9 +65,6 @@ joint_transform = joint_transforms.Compose([
     joint_transforms.RandomRotate(),
     joint_transforms.Resize((args['scale'], args['scale']))
 ])
-val_joint_transform = joint_transforms.Compose([
-    joint_transforms.Resize((args['scale'], args['scale']))
-])
 img_transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # maybe can optimized.
@@ -85,7 +80,7 @@ train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_wo
 def main():
     print(args)
 
-    net = BASE3_PLUS(backbone_path).cuda(device_ids[0]).train()
+    net = BASE3(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -138,7 +133,7 @@ def train(net, optimizer):
             loss_3 = L.lovasz_hinge(predict_3, labels)
             loss_2 = L.lovasz_hinge(predict_2, labels)
             loss_1 = L.lovasz_hinge(predict_1, labels)
-            loss_f = 2 * L.lovasz_hinge(predict_f, labels)
+            loss_f = L.lovasz_hinge(predict_f, labels)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f
 

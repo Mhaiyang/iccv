@@ -1,10 +1,10 @@
 """
- @Time    : 201/10/19 09:34
+ @Time    : 201/22/19 09:11
  @Author  : TaylorMei
  @Email   : mhy845879017@gmail.com
  
  @Project : iccv
- @File    : infer_DSC.py
+ @File    : infer_base9.py
  @Function:
  
 """
@@ -19,15 +19,15 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.base3_plus import BASE3_PLUS
+from model.base9 import BASE9
 
-device_ids = [0]
+device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3_PLUS'
+exp_name = 'BASE9'
 args = {
-    'snapshot': '100',
+    'snapshot': '60',
     'scale': 512,
     'crf': True
 }
@@ -44,7 +44,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = BASE3_PLUS().cuda(device_ids[0])
+    net = BASE9().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))
@@ -62,14 +62,24 @@ def main():
                 img = Image.open(os.path.join(root, 'image', img_name))
                 w, h = img.size
                 img_var = Variable(img_transform(img).unsqueeze(0)).cuda()
-                _, _, _, _, f = net(img_var)
-                output = f.data.squeeze(0).cpu()
-                prediction = np.array(transforms.Resize((h, w))(to_pil(output)))
+                c, b, o = net(img_var)
+                context = c.data.squeeze(0).cpu()
+                boundary = b.data.squeeze(0).cpu()
+                output = o.data.squeeze(0).cpu()
+                prediction_c = np.array(transforms.Resize((h, w))(to_pil(context)))
+                prediction_b = np.array(transforms.Resize((h, w))(to_pil(boundary)))
+                prediction_o = np.array(transforms.Resize((h, w))(to_pil(output)))
                 if args['crf']:
-                    prediction = crf_refine(np.array(img.convert('RGB')), prediction)
+                    prediction_c = crf_refine(np.array(img.convert('RGB')), prediction_c)
+                    prediction_b = crf_refine(np.array(img.convert('RGB')), prediction_b)
+                    prediction_o = crf_refine(np.array(img.convert('RGB')), prediction_o)
 
-                Image.fromarray(prediction).save(
-                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
+                Image.fromarray(prediction_c).save(
+                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + "_c.png"))
+                Image.fromarray(prediction_b).save(
+                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + "_b.png"))
+                Image.fromarray(prediction_o).save(
+                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + "_o.png"))
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))
 

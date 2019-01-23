@@ -39,7 +39,7 @@ exp_name = 'BASE3_DENSE_NOA'
 
 args = {
     'epoch_num': 160,
-    'train_batch_size': 8,
+    'train_batch_size': 6,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,

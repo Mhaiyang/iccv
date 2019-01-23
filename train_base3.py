@@ -38,7 +38,7 @@ ckpt_path = './ckpt'
 exp_name = 'BASE3_DENSE'
 
 args = {
-    'epoch_num': 120,
+    'epoch_num': 160,
     'train_batch_size': 8,
     'last_epoch': 0,
     'lr': 5e-4,
@@ -47,7 +47,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [40, 60, 80, 100],
+    'save_point': [80, 100, 120, 140],
     'add_graph': True,
     'poly_train': True
 }

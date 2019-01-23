@@ -26,28 +26,28 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.base3 import BASE3
+from model.base3_dense_noa import BASE3_DENSE_NOA
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [3]
+device_ids = [0]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3'
+exp_name = 'BASE3_DENSE_NOA'
 
 args = {
-    'epoch_num': 200,
+    'epoch_num': 160,
     'train_batch_size': 8,
     'last_epoch': 0,
-    'lr': 5e-4,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [100, 120, 140, 160, 180],
+    'save_point': [120, 140],
     'add_graph': True,
     'poly_train': True
 }
@@ -74,14 +74,14 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=64, shuffle=True)
 
 
 def main():
     print(args)
     print(exp_name)
 
-    net = BASE3(backbone_path).cuda(device_ids[0]).train()
+    net = BASE3_DENSE_NOA(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

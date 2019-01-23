@@ -26,28 +26,28 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.base3_dense import BASE3_DENSE
+from model.base3 import BASE3
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [6]
+device_ids = [3]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3_DENSE'
+exp_name = 'BASE3_'
 
 args = {
-    'epoch_num': 160,
-    'train_batch_size': 6,
+    'epoch_num': 200,
+    'train_batch_size': 8,
     'last_epoch': 0,
-    'lr': 1e-3,
+    'lr': 1e-4,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [80, 100, 120, 140],
+    'save_point': [100, 120, 140, 160, 180],
     'add_graph': True,
     'poly_train': True
 }
@@ -81,7 +81,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = BASE3_DENSE(backbone_path).cuda(device_ids[0]).train()
+    net = BASE3(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

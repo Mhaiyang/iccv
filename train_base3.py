@@ -79,6 +79,7 @@ train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_wo
 
 def main():
     print(args)
+    print(exp_name)
 
     net = BASE3_DENSE(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:

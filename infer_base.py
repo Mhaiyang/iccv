@@ -4,7 +4,7 @@
  @Email   : mhy845879017@gmail.com
  
  @Project : iccv
- @File    : infer_DSC.py
+ @File    : infer_base.py
  @Function:
  
 """
@@ -19,15 +19,15 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.base3_plus import BASE3_PLUS
+from model.base3_nocla import BASE3_NOCLA
 
 device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3_PLUS'
+exp_name = 'BASE3_NOCLA'
 args = {
-    'snapshot': '100',
+    'snapshot': '80',
     'scale': 512,
     'crf': True
 }
@@ -44,7 +44,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = BASE3_PLUS().cuda(device_ids[0])
+    net = BASE3_NOCLA().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

@@ -26,28 +26,28 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.base3_nocla import BASE3_NOCLA
+from model.base3_dense import BASE3_DENSE
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [3]
+device_ids = [1]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3_NOCLA'
+exp_name = 'BASE3_DENSE'
 
 args = {
-    'epoch_num': 100,
+    'epoch_num': 120,
     'train_batch_size': 8,
     'last_epoch': 0,
-    'lr': 1e-3,
+    'lr': 5e-4,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [40, 60, 80],
+    'save_point': [40, 60, 80, 100],
     'add_graph': True,
     'poly_train': True
 }
@@ -80,7 +80,7 @@ train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_wo
 def main():
     print(args)
 
-    net = BASE3_NOCLA(backbone_path).cuda(device_ids[0]).train()
+    net = BASE3_DENSE(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -95,10 +95,9 @@ def main():
     if len(args['snapshot']) > 0:
         print('Training Resumes From \'%s\'' % args['snapshot'])
         net.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '.pth')))
-        optimizer.param_groups[0]['lr'] = 2 * args['lr']
-        optimizer.param_groups[1]['lr'] = args['lr']
 
     net = nn.DataParallel(net, device_ids=device_ids)
+    print("Using {} GPU(s) to Train.".format(len(device_ids)))
 
     open(log_path, 'w').write(str(args) + '\n\n')
     train(net, optimizer)
@@ -156,8 +155,7 @@ def train(net, optimizer):
                 writer.add_scalar('loss_1', loss_1, curr_iter)
                 writer.add_scalar('loss_f', loss_f, curr_iter)
 
-            log = '[%3d], [%5d], [%.6f], [%.5f], [L4: %.5f], [L3: %.5f], ' \
-                  '[L2: %.5f], [L1: %.5f], [Lf: %.5f]' % \
+            log = '[%3d], [%6d], [%.6f], [%.5f], [L4: %.5f], [L3: %.5f], [L2: %.5f], [L1: %.5f], [Lf: %.5f]' % \
                   (epoch, curr_iter, base_lr, loss_record.avg, loss_4_record.avg, loss_3_record.avg, loss_2_record.avg,
                    loss_1_record.avg, loss_f_record.avg)
             train_iterator.set_description(log)

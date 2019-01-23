@@ -39,7 +39,7 @@ exp_name = 'BASE3_DENSE'
 
 args = {
     'epoch_num': 160,
-    'train_batch_size': 8,
+    'train_batch_size': 6,
     'last_epoch': 0,
     'lr': 5e-4,
     'lr_decay': 0.9,

@@ -1,10 +1,10 @@
 """
- @Time    : 201/21/19 10:41
+ @Time    : 201/23/19 20:10
  @Author  : TaylorMei
  @Email   : mhy845879017@gmail.com
  
  @Project : iccv
- @File    : train_base3.py
+ @File    : train_base3_dense_onesv.py
  @Function:
  
 """
@@ -26,28 +26,28 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.base3 import BASE3
+from model.base3_dense import BASE3_DENSE
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [3]
+device_ids = [5]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3'
+exp_name = 'BASE3_DENSE_onesv'
 
 args = {
-    'epoch_num': 200,
-    'train_batch_size': 8,
+    'epoch_num': 160,
+    'train_batch_size': 6,
     'last_epoch': 0,
-    'lr': 1e-4,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [100, 120, 140, 160, 180],
+    'save_point': [100, 120, 140],
     'add_graph': True,
     'poly_train': True
 }
@@ -81,7 +81,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = BASE3(backbone_path).cuda(device_ids[0]).train()
+    net = BASE3_DENSE(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -129,36 +129,35 @@ def train(net, optimizer):
 
             predict_4, predict_3, predict_2, predict_1, predict_f = net(inputs)
 
-            loss_4 = L.lovasz_hinge(predict_4, labels)
-            loss_3 = L.lovasz_hinge(predict_3, labels)
-            loss_2 = L.lovasz_hinge(predict_2, labels)
-            loss_1 = L.lovasz_hinge(predict_1, labels)
+            # loss_4 = L.lovasz_hinge(predict_4, labels)
+            # loss_3 = L.lovasz_hinge(predict_3, labels)
+            # loss_2 = L.lovasz_hinge(predict_2, labels)
+            # loss_1 = L.lovasz_hinge(predict_1, labels)
             loss_f = L.lovasz_hinge(predict_f, labels)
 
-            loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f
+            loss = loss_f
 
             loss.backward()
 
             optimizer.step()
 
             loss_record.update(loss.data, batch_size)
-            loss_4_record.update(loss_4.data, batch_size)
-            loss_3_record.update(loss_3.data, batch_size)
-            loss_2_record.update(loss_2.data, batch_size)
-            loss_1_record.update(loss_1.data, batch_size)
+            # loss_4_record.update(loss_4.data, batch_size)
+            # loss_3_record.update(loss_3.data, batch_size)
+            # loss_2_record.update(loss_2.data, batch_size)
+            # loss_1_record.update(loss_1.data, batch_size)
             loss_f_record.update(loss_f.data, batch_size)
 
             if curr_iter % 50 == 0:
                 writer.add_scalar('loss', loss, curr_iter)
-                writer.add_scalar('loss_4', loss_4, curr_iter)
-                writer.add_scalar('loss_3', loss_3, curr_iter)
-                writer.add_scalar('loss_2', loss_2, curr_iter)
-                writer.add_scalar('loss_1', loss_1, curr_iter)
+                # writer.add_scalar('loss_4', loss_4, curr_iter)
+                # writer.add_scalar('loss_3', loss_3, curr_iter)
+                # writer.add_scalar('loss_2', loss_2, curr_iter)
+                # writer.add_scalar('loss_1', loss_1, curr_iter)
                 writer.add_scalar('loss_f', loss_f, curr_iter)
 
-            log = '[%3d], [%6d], [%.6f], [%.5f], [L4: %.5f], [L3: %.5f], [L2: %.5f], [L1: %.5f], [Lf: %.5f]' % \
-                  (epoch, curr_iter, base_lr, loss_record.avg, loss_4_record.avg, loss_3_record.avg, loss_2_record.avg,
-                   loss_1_record.avg, loss_f_record.avg)
+            log = '[%3d], [%6d], [%.6f], [%.5f], [Lf: %.5f]' % \
+                  (epoch, curr_iter, base_lr, loss_record.avg, loss_f_record.avg)
             train_iterator.set_description(log)
             open(log_path, 'a').write(log + '\n')
 

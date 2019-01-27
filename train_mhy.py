@@ -82,7 +82,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = MHY1(backbone_path).cuda(device_ids[0]).train()
+    net = MHY1_NOA(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

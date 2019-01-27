@@ -26,19 +26,19 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.base3_dense_noa import BASE3_DENSE_NOA
+from model.base3 import BASE3
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [2]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3_DENSE_NOA'
+exp_name = 'BASE3'
 
 args = {
-    'epoch_num': 160,
+    'epoch_num': 100,
     'train_batch_size': 6,
     'last_epoch': 0,
     'lr': 1e-3,
@@ -47,9 +47,10 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 512,
-    'save_point': [120, 140],
+    'save_point': [60, 80, 90],
     'add_graph': True,
-    'poly_train': True
+    'poly_train': True,
+    'optimizer': 'Adam'
 }
 
 # Path.
@@ -74,24 +75,34 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=64, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 
 
 def main():
     print(args)
     print(exp_name)
 
-    net = BASE3_DENSE_NOA(backbone_path).cuda(device_ids[0]).train()
+    net = BASE3(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
 
-    optimizer = optim.SGD([
-        {'params': [param for name, param in net.named_parameters() if name[-4:] == 'bias'],
-         'lr': 2 * args['lr']},
-        {'params': [param for name, param in net.named_parameters() if name[-4:] != 'bias'],
-         'lr': 1 * args['lr'], 'weight_decay': args['weight_decay']}
-    ], momentum=args['momentum'])
+    if args['optimizer'] == 'Adam':
+        print("Adam")
+        optimizer = optim.Adam([
+            {'params': [param for name, param in net.named_parameters() if name[-4:] == 'bias'],
+             'lr': 2 * args['lr']},
+            {'params': [param for name, param in net.named_parameters() if name[-4:] != 'bias'],
+             'lr': 1 * args['lr'], 'weight_decay': args['weight_decay']}
+    ])
+    else:
+        print("SGD")
+        optimizer = optim.SGD([
+            {'params': [param for name, param in net.named_parameters() if name[-4:] == 'bias'],
+             'lr': 2 * args['lr']},
+            {'params': [param for name, param in net.named_parameters() if name[-4:] != 'bias'],
+             'lr': 1 * args['lr'], 'weight_decay': args['weight_decay']}
+        ], momentum=args['momentum'])
 
     if len(args['snapshot']) > 0:
         print('Training Resumes From \'%s\'' % args['snapshot'])

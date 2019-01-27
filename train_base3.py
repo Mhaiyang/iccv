@@ -32,25 +32,25 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [2]
+device_ids = [6]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3'
+exp_name = 'BASE3_SGD_16'
 
 args = {
     'epoch_num': 100,
-    'train_batch_size': 6,
+    'train_batch_size': 16,
     'last_epoch': 0,
-    'lr': 1e-2,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
-    'scale': 512,
+    'scale': 384,
     'save_point': [60, 80, 90],
     'add_graph': True,
     'poly_train': True,
-    'optimizer': 'Adam'
+    'optimizer': 'SGD'
 }
 
 # Path.

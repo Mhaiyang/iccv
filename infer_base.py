@@ -19,15 +19,15 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.base3_nocla import BASE3_NOCLA
+from model.base3_dense_noa import BASE3_DENSE_NOA
 
 device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3_NOCLA'
+exp_name = 'BASE3_DENSE_NOA'
 args = {
-    'snapshot': '80',
+    'snapshot': '160',
     'scale': 512,
     'crf': True
 }
@@ -44,7 +44,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = BASE3_NOCLA().cuda(device_ids[0])
+    net = BASE3_DENSE_NOA().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

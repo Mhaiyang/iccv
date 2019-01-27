@@ -16,9 +16,9 @@ from config import msd_testing_root
 
 ckpt_path = 'ckpt'
 
-exp_name = 'BASE3_NOCLA'
+exp_name = 'BASE3_DENSE_NOA'
 args = {
-    'snapshot': '80',
+    'snapshot': '160',
     'type': 0
 }
 

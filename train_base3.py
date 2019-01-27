@@ -39,7 +39,7 @@ exp_name = 'BASE3_SGD_16'
 
 args = {
     'epoch_num': 100,
-    'train_batch_size': 16,
+    'train_batch_size': 14,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,

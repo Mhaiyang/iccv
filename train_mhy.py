@@ -32,16 +32,16 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [3]
+device_ids = [1]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY1_SGD_12'
+exp_name = 'MHY1'
 
 args = {
     'epoch_num': 100,
     'train_batch_size': 12,
     'last_epoch': 0,
-    'lr': 1e-3,
+    'lr': 5e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,

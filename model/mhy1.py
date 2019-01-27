@@ -135,14 +135,14 @@ class CCL(nn.Module):
         self.local_1 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
         self.context_1 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
 
-        self.local_2 = nn.Conv2d(2 * planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_2 = nn.Conv2d(2 * planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
+        self.local_2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
+        self.context_2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
 
-        self.local_3 = nn.Conv2d(3 * planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_3 = nn.Conv2d(3 * planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
+        self.local_3 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
+        self.context_3 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
 
-        self.local_4 = nn.Conv2d(3 * planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_4 = nn.Conv2d(3 * planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
+        self.local_4 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
+        self.context_4 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
 
         self.bn = nn.BatchNorm2d(planes)
         self.relu = nn.ReLU()

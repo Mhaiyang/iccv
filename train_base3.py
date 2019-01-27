@@ -35,7 +35,7 @@ cudnn.benchmark = True
 device_ids = [6]
 
 ckpt_path = './ckpt'
-exp_name = 'BASE3_SGD_16'
+exp_name = 'BASE3_SGD_14'
 
 args = {
     'epoch_num': 100,

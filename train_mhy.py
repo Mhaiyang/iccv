@@ -32,25 +32,25 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [1]
+device_ids = [3]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY1'
+exp_name = 'MHY1_SGD_12'
 
 args = {
     'epoch_num': 100,
-    'train_batch_size': 6,
+    'train_batch_size': 12,
     'last_epoch': 0,
-    'lr': 1e-2,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
-    'scale': 512,
+    'scale': 384,
     'save_point': [40, 60, 80, 90],
     'add_graph': True,
     'poly_train': True,
-    'optimizer': 'Adam'
+    'optimizer': 'SGD'
 }
 
 # Path.

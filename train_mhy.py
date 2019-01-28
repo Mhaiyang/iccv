@@ -40,7 +40,7 @@ exp_name = 'MHY1_12_1e-3'
 args = {
     'epoch_num': 140,
     'train_batch_size': 12,
-    'last_epoch': 0,
+    'last_epoch': 100,
     'lr': 5e-5,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,

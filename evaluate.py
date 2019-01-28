@@ -16,9 +16,9 @@ from config import msd_testing_root
 
 ckpt_path = 'ckpt'
 
-exp_name = 'MHY1_NOA'
+exp_name = 'MHY1_12_1e-3'
 args = {
-    'snapshot': '100',
+    'snapshot': '80',
     'type': 0
 }
 

@@ -26,7 +26,7 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.mhy1_noa import MHY1_NOA
+from model.mhy1 import MHY1
 
 import loss as L
 
@@ -41,7 +41,7 @@ args = {
     'epoch_num': 140,
     'train_batch_size': 12,
     'last_epoch': 0,
-    'lr': 1e-4,
+    'lr': 5e-5,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
@@ -77,12 +77,14 @@ train_set = ImageFolder(msd_training_root, joint_transform, img_transform, targe
 print("Train set: {}".format(train_set.__len__()))
 train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=64, shuffle=True)
 
+total_epoch = args['epoch_num'] * len(train_loader)
+
 
 def main():
     print(args)
     print(exp_name)
 
-    net = MHY1_NOA(backbone_path).cuda(device_ids[0]).train()
+    net = MHY1(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -107,6 +109,9 @@ def main():
     if len(args['snapshot']) > 0:
         print('Training Resumes From \'%s\'' % args['snapshot'])
         net.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '.pth')))
+        total_epoch = args['epoch_num'] - int(args['snapshot'])
+
+    print(total_epoch)
 
     net = nn.DataParallel(net, device_ids=device_ids)
     print("Using {} GPU(s) to Train.".format(len(device_ids)))
@@ -126,8 +131,7 @@ def train(net, optimizer):
         train_iterator = tqdm(train_loader, total=len(train_loader))
         for data in train_iterator:
             if args['poly_train']:
-                base_lr = args['lr'] * (1 - float(curr_iter) / (args['epoch_num'] * len(train_loader))) ** args[
-                    'lr_decay']
+                base_lr = args['lr'] * (1 - float(curr_iter) / float(total_epoch)) ** args['lr_decay']
                 optimizer.param_groups[0]['lr'] = 2 * base_lr
                 optimizer.param_groups[1]['lr'] = 1 * base_lr
 

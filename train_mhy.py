@@ -109,7 +109,7 @@ def main():
     if len(args['snapshot']) > 0:
         print('Training Resumes From \'%s\'' % args['snapshot'])
         net.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '.pth')))
-        total_epoch = args['epoch_num'] - int(args['snapshot'])
+        total_epoch = (args['epoch_num'] - int(args['snapshot'])) * len(train_loader)
 
     print(total_epoch)
 

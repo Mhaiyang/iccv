@@ -32,22 +32,22 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [1]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY1_NOA'
+exp_name = 'MHY1_12_1e-3'
 
 args = {
-    'epoch_num': 100,
+    'epoch_num': 140,
     'train_batch_size': 12,
     'last_epoch': 0,
-    'lr': 1e-3,
+    'lr': 1e-4,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
-    'snapshot': '',
+    'snapshot': '100',
     'scale': 384,
-    'save_point': [60, 80],
+    'save_point': [110, 120, 130],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'

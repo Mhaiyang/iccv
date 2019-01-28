@@ -28,7 +28,7 @@ IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
 # PREDICT_DIR = os.path.join(ROOT_DIR, "other_methods", "PSPNet_20")
-PREDICT_DIR = "/media/iccd/TAYLORMEI/holiday/visual/MSD9_DSC"
+PREDICT_DIR = "/media/iccd/TAYLORMEI/holiday/visual/MHY1_12_1e-3_80"
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/types", str(args['type']))

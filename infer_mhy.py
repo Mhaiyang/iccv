@@ -68,8 +68,9 @@ def main():
                 if args['crf']:
                     prediction = crf_refine(np.array(img.convert('RGB')), prediction)
 
-                Image.fromarray(prediction).save(
-                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
+                # Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
+                check_mkdir(os.path.join(msd_testing_root, 'mirror_map'))
+                Image.fromarray(prediction).save(os.path.join(msd_testing_root, 'mirror_map', img_name[:-4] + ".png"))
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))
 

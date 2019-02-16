@@ -37,7 +37,6 @@ for i, imgname in enumerate(imglist):
     mirror_area = np.sum(mask)
     proportion = mirror_area / total_area
     output.append(proportion)
-
 data_write('./proportion.xlsx', [output])
 
 

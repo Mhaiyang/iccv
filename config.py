@@ -5,7 +5,7 @@
 
 msd_training_root = "/home/iccd/data/MSD9/train"
 # msd_testing_root = "/home/iccd/data/MSD9/test"
-msd_testing_root = "/home/iccd/iccv/ldj"
+msd_testing_root = "/home/iccd/Desktop/22"
 backbone_path = '/home/iccd/iccv/backbone/resnext/resnext_101_32x4d.pth'
 # backbone_path = "/home/iccd/iccv/backbone/resnet101.pth"
 

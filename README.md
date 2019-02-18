@@ -16,6 +16,17 @@ git clone https://github.com/Mhaiyang/dss_crf.git
 sudo python setup.py install
 ```
 
+### Make Dataset
+- zerorenameresize
+- labelme 
+```
+sudo apt-get install  python3-poppler-qt5  pyqt5-dev-tools 
+sudo pip3 install labelme
+```
+- firstjsontodataset
+- secondtransform
+- thirdmakemask
+
 # License
 * For academic and non-commercial use only.
 * For commercial use, please contact [mhy845879017@gmail.com](https://www.google.com/gmail/).

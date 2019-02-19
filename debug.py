@@ -8,10 +8,17 @@
   @Function: 
   
 """
-import skimage.io
+# import skimage.io
+#
+# path = '/media/iccd/TAYLORMEI/ikea_beforerename/IMG_20190217_091047.jpg'
+#
+# image = skimage.io.imread(path)
+#
+# print(image.shape)
 
-path = '/media/iccd/TAYLORMEI/ikea_beforerename/IMG_20190217_091047.jpg'
+import numpy as np
 
-image = skimage.io.imread(path)
-
-print(image.shape)
+a = np.ones([3, 3])
+b = a - np.max(a)*0.6
+print(a)
+print(b)

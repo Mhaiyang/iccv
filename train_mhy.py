@@ -32,22 +32,22 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [1]
+device_ids = [0]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY1_12_1e-3'
+exp_name = 'MHY1_msd1'
 
 args = {
-    'epoch_num': 140,
+    'epoch_num': 100,
     'train_batch_size': 12,
-    'last_epoch': 100,
-    'lr': 5e-5,
+    'last_epoch': 0,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
-    'snapshot': '100',
+    'snapshot': '',
     'scale': 384,
-    'save_point': [110, 120, 130],
+    'save_point': [70, 80, 90, 100],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'
@@ -110,8 +110,7 @@ def main():
         print('Training Resumes From \'%s\'' % args['snapshot'])
         net.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '.pth')))
         total_epoch = (args['epoch_num'] - int(args['snapshot'])) * len(train_loader)
-
-    print(total_epoch)
+        print(total_epoch)
 
     net = nn.DataParallel(net, device_ids=device_ids)
     print("Using {} GPU(s) to Train.".format(len(device_ids)))

@@ -87,17 +87,17 @@ def data_write(file_path, datas):
     f.save(file_path)
 
 
-def get_mask_directly(imgname, MASK_DIR):
+def get_gt_mask(imgname, MASK_DIR):
     filestr = imgname.split(".")[0]
     mask_folder = MASK_DIR
     mask_path = mask_folder + "/" + filestr + ".png"
     mask = skimage.io.imread(mask_path)
-    mask = np.where(mask == 255, 1, 0).astype(np.uint8)
+    mask = np.where(mask == 255, 1, 0).astype(np.float32)
 
     return mask
 
 
-def get_predict_mask(imgname, PREDICT_MASK_DIR):
+def get_normalized_predict_mask(imgname, PREDICT_MASK_DIR):
     """Get mask by specified single image name"""
     filestr = imgname.split(".")[0]
     mask_folder = PREDICT_MASK_DIR
@@ -105,7 +105,22 @@ def get_predict_mask(imgname, PREDICT_MASK_DIR):
     if not os.path.exists(mask_path):
         print("{} has no label8.png")
     mask = skimage.io.imread(mask_path)
-    mask = np.where(mask > 127, 1, 0).astype(np.uint8)
+    mask = mask.astype(np.float32)
+    if np.max(mask) > 0:
+        mask = (mask - np.min(mask))/(np.max(mask) - np.min(mask))
+    mask = mask.astype(np.float32)
+
+    return mask
+
+def get_binary_predict_mask(imgname, PREDICT_MASK_DIR):
+    """Get mask by specified single image name"""
+    filestr = imgname.split(".")[0]
+    mask_folder = PREDICT_MASK_DIR
+    mask_path = mask_folder + "/" + filestr + ".png"
+    if not os.path.exists(mask_path):
+        print("{} has no label8.png")
+    mask = skimage.io.imread(mask_path)
+    mask = np.where(mask >= 127.5, 1, 0).astype(np.float32)
 
     return mask
 
@@ -156,31 +171,31 @@ def compute_iou(predict_mask, gt_mask):
     return iou_
 
 
-def f_score(predict_mask, gt_mask):
-
-    check_size(predict_mask, gt_mask)
-
-    N_p = np.sum(gt_mask)
-    N_n = np.sum(np.logical_not(gt_mask))
-    if N_p + N_n != 640 * 512:
-        raise Exception("Check if mask shape is correct!")
-
-    TP = np.sum(np.logical_and(predict_mask, gt_mask))
-    TN = np.sum(np.logical_and(np.logical_not(predict_mask), np.logical_not(gt_mask)))
-
-    precision = TP/N_p
-    if np.sum(predict_mask):
-        recall = TP/np.sum(predict_mask)
-    else:
-        recall = 0
-    alpha = 0.3
-
-    if precision == 0 and recall == 0:
-        f_score_ = 0
-    else:
-        f_score_ = (1.3*precision*recall)/(0.3*precision+recall)
-
-    return f_score_
+# def f_score(predict_mask, gt_mask):
+#
+#     check_size(predict_mask, gt_mask)
+#
+#     N_p = np.sum(gt_mask)
+#     N_n = np.sum(np.logical_not(gt_mask))
+#     if N_p + N_n != 640 * 512:
+#         raise Exception("Check if mask shape is correct!")
+#
+#     TP = np.sum(np.logical_and(predict_mask, gt_mask))
+#     TN = np.sum(np.logical_and(np.logical_not(predict_mask), np.logical_not(gt_mask)))
+#
+#     precision = TP/N_p
+#     if np.sum(predict_mask):
+#         recall = TP/np.sum(predict_mask)
+#     else:
+#         recall = 0
+#     alpha = 0.3
+#
+#     if precision == 0 and recall == 0:
+#         f_score_ = 0
+#     else:
+#         f_score_ = (1.3*precision*recall)/(0.3*precision+recall)
+#
+#     return f_score_
 
 def compute_mae(predict_mask, gt_mask):
 
@@ -191,7 +206,7 @@ def compute_mae(predict_mask, gt_mask):
     if N_p + N_n != 640 * 512:
         raise Exception("Check if mask shape is correct!")
 
-    mae_ = np.mean(abs(predict_mask.astype(np.int) - gt_mask.astype(np.int)))
+    mae_ = np.mean(abs(predict_mask - gt_mask)).item()
 
     return mae_
 

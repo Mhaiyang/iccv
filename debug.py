@@ -16,9 +16,18 @@
 #
 # print(image.shape)
 
+# import numpy as np
+# import skimage.io
+# import skimage.transform
+#
+# PREDICT_DIR = "/home/iccd/iccv/utils/spatial_train.png"
+#
+# predict_mask = skimage.io.imread(PREDICT_DIR)
+# print(np.max(predict_mask))
+# predict_mask = skimage.transform.resize(predict_mask, [512, 512], 0)
+
 import numpy as np
 
-a = np.ones([3, 3])
-b = a - np.max(a)*0.6
+a = np.finfo(np.float).eps
 print(a)
-print(b)
+

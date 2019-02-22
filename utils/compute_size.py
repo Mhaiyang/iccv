@@ -13,8 +13,8 @@ import numpy as np
 import skimage.io
 from misc import data_write
 
-image_path = '/home/iccd/data/2019beforetrue/all_images'
-mask_json_path = '/home/iccd/data/2019beforetrue/mask_json/'
+image_path = '/home/iccd/data/2019/msd2_all/all_images'
+mask_json_path = '/home/iccd/data/2019/msd2_all/all_masks/'
 
 imglist = os.listdir(image_path)
 print(len(imglist))
@@ -25,7 +25,7 @@ for i, imgname in enumerate(imglist):
     print(i, imgname)
     name = imgname.split('.')[0]
 
-    mask = skimage.io.imread(mask_json_path + name + '_json/label8.png')
+    mask = skimage.io.imread(mask_json_path + name + '.png')
     mask = np.where(mask != 0, 1, 0).astype(np.uint8)
 
     height = mask.shape[0]

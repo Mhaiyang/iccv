@@ -16,8 +16,10 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import seaborn as sns
 
-image_path = '/home/iccd/data/2019beforetrue/all_images'
-mask_json_path = '/home/iccd/data/2019beforetrue/mask_json/'
+# image_path = '/home/iccd/data/msd2/train/image/'
+# mask_json_path = '/home/iccd/data/msd2/train/mask/'
+image_path = '/home/iccd/data/2019/msd2_all/all_images/'
+mask_json_path = '/home/iccd/data/2019/msd2_all/all_masks/'
 
 imglist = os.listdir(image_path)
 print(len(imglist))
@@ -29,12 +31,11 @@ for i, imgname in enumerate(imglist):
     print(i, imgname)
     name = imgname.split('.')[0]
 
-    mask = skimage.io.imread(mask_json_path + name + '_json/label8.png')
+    mask = skimage.io.imread(mask_json_path + name + '.png')
 
     height = mask.shape[0]
     width = mask.shape[1]
     if height > width:
-
         tall += 1
     else:
         wide += 1
@@ -43,11 +44,15 @@ for i, imgname in enumerate(imglist):
     overlap += mask
 
 overlap = overlap / len(imglist)
+overlap_binary = np.where(overlap >= 0.5, 255, 0)
+skimage.io.imsave('./msd2_all.png', (overlap*255).astype(np.uint8))
+skimage.io.imsave('./msd2_all_binary.png', overlap_binary)
+
 print(tall, wide)
 
 f, ax = plt.subplots()
 sns.set()
-ax = sns.heatmap(overlap, ax=ax, cmap=cm.summer)
+ax = sns.heatmap(overlap, ax=ax, cmap=cm.summer, cbar=False)
 ax.set_xticklabels([])
 ax.set_yticklabels([])
 plt.xticks([])

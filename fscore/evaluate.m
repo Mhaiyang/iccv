@@ -27,6 +27,8 @@ for i =1:length(dir_result)
     
     truM = double(truM);
     resS = double(resS);
+    resS = (resS-min(resS(:)))/(max(resS(:))-min(resS(:)));
+    resS = resS * 255;
     groundTruth = sum(truM(:));
    
     totalPixel = size(truM,1)*size(truM,2)*255;

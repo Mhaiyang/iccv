@@ -19,7 +19,7 @@ ckpt_path = 'ckpt'
 exp_name = 'MHY1_12_1e-3'
 args = {
     'snapshot': '70',
-    'type': 14
+    'type': 0
 }
 
 
@@ -27,7 +27,8 @@ ROOT_DIR = os.getcwd()
 IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
-PREDICT_DIR = "/home/iccd/iccv/msd4_results/msd4_BDRAR"
+# PREDICT_DIR = "/home/iccd/iccv/ckpt/MHY1_msd5/MHY1_msd5_80"
+PREDICT_DIR = "/home/iccd/iccv/msd6_results/msd6_BDRAR_2"
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/2019", str(args['type']))
@@ -79,7 +80,7 @@ for i, imgname in enumerate(imglist):
     num = imgname.split("_")[0]
     NUM.append(int(num))
 
-mean_ACC = 100 * sum(ACC)/len(ACC)
+mean_ACC = sum(ACC)/len(ACC)
 mean_IOU = 100 * sum(IOU)/len(IOU)
 # mean_F = sum(F)/len(F)
 mean_MAE = sum(MAE)/len(MAE)
@@ -91,10 +92,10 @@ print(len(IOU))
 print(len(MAE))
 print(len(BER))
 
-data_write(os.path.join('./excel', '%s_%s.xlsx' % (exp_name, args['snapshot'])), [NUM, [100*x for x in ACC],
+data_write(os.path.join('./excel', '%s_%s.xlsx' % (exp_name, args['snapshot'])), [NUM, ACC,
             [100*x for x in IOU], MAE, [100*x for x in BER]])
 
-print("{}, \n{:20} {:.2f} \n{:20} {:.2f} \n{:20} {:.3f} \n{:20} {:.2f}\n".
+print("{}, \n{:20} {:.3f} \n{:20} {:.2f} \n{:20} {:.3f} \n{:20} {:.2f}\n".
       format(PREDICT_DIR, "mean_ACC", mean_ACC, "mean_IOU", mean_IOU,
              "mean_MAE", mean_MAE, "mean_BER", mean_BER))
 

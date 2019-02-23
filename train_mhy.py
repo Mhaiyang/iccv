@@ -32,10 +32,10 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [1]
+device_ids = [2]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY1_msd5'
+exp_name = 'MHY1_msd6'
 
 args = {
     'epoch_num': 100,

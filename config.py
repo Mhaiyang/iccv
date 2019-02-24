@@ -4,8 +4,8 @@
 # backbone_path = "/home/taylor/iccv/backbone/resnet101.pth"
 
 # msd_training_root = "/home/iccd/data/msd5/train"
-# msd_testing_root = "/home/iccd/data/msd6/test"
-# # msd_testing_root = "/home/iccd/Desktop/22"
+# msd_testing_root = "/home/iccd/data/msd7/test"
+# msd_testing_root = "/media/iccd/TAYLORMEI/google"
 # backbone_path = '/home/iccd/iccv/backbone/resnext/resnext_101_32x4d.pth'
 # backbone_path = "/home/iccd/iccv/backbone/resnet101.pth"
 

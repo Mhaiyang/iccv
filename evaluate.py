@@ -14,11 +14,8 @@ import skimage.io
 from misc import *
 from config import msd_testing_root
 
-ckpt_path = 'ckpt'
-
-exp_name = 'MHY1_12_1e-3'
 args = {
-    'snapshot': '80',
+    'exp_name': 'msd7_BDRAR_2',
     'type': 0
 }
 
@@ -28,8 +25,8 @@ IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
 # PREDICT_DIR = "/home/iccd/iccv/ckpt/MHY1_msd5/MHY1_msd5_80_crf"
-# PREDICT_DIR = "/home/iccd/iccv/msd6_results/msd6_DSC"
-PREDICT_DIR = "/root/ckpt/MHY1_msd6/MHY1_msd6_100"
+PREDICT_DIR = "/home/iccd/iccv/msd7_results/msd7_BDRAR_2"
+# PREDICT_DIR = "/root/ckpt/MHY1_msd6/MHY1_msd6_100"
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/2019", str(args['type']))
@@ -60,7 +57,7 @@ for i, imgname in enumerate(imglist):
     predict_mask_normalized = get_normalized_predict_mask(imgname, PREDICT_DIR)
     predict_mask_binary = get_binary_predict_mask(imgname, PREDICT_DIR)
 
-    acc = accuracy_image(predict_mask_binary, gt_mask)
+    acc = accuracy_mirror(predict_mask_binary, gt_mask)
     iou = compute_iou(predict_mask_binary, gt_mask)
     # f = f_score(predict_mask, gt_mask)
     mae = compute_mae(predict_mask_normalized, gt_mask)
@@ -93,7 +90,7 @@ print(len(IOU))
 print(len(MAE))
 print(len(BER))
 
-data_write(os.path.join('./excel', '%s_%s.xlsx' % (exp_name, args['snapshot'])), [NUM, ACC,
+data_write(os.path.join('./excel', '%s.xlsx' % (args['exp_name'])), [NUM, ACC,
             [100*x for x in IOU], MAE, [100*x for x in BER]])
 
 print("{}, \n{:20} {:.3f} \n{:20} {:.2f} \n{:20} {:.3f} \n{:20} {:.2f}\n".

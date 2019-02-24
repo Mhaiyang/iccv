@@ -29,7 +29,7 @@ MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
 # PREDICT_DIR = "/home/iccd/iccv/ckpt/MHY1_msd5/MHY1_msd5_80_crf"
 # PREDICT_DIR = "/home/iccd/iccv/msd6_results/msd6_DSC"
-PREDICT_DIR = "/root/ckpt/MHY1_msd6/MHY1_msd6_80"
+PREDICT_DIR = "/root/ckpt/MHY1_msd6/MHY1_msd6_90"
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/2019", str(args['type']))

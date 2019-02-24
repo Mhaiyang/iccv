@@ -1,5 +1,5 @@
 clc;clear;
-path = '/home/iccd/data/2019/ikea/mask_json/';
+path = '/home/iccd/data/2019/mhy_correct_mask/';
 
 list = dir(fullfile(path, '*_json'));
 

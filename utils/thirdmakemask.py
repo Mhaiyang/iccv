@@ -13,14 +13,13 @@ import shutil
 import numpy as np
 import skimage.io
 
-image_path = "/home/iccd/data/msd6/train/image/"
+image_path = "/home/iccd/data/msd7/test/image/"
 mask_json_path = "/home/iccd/data/2019/mask_json_true/"
-destination_path1 = "/home/iccd/data/msd6/train/mask_json/"
-destination_path2 = "/home/iccd/data/msd6/train/mask/"
-# image_path = "/home/iccd/data/2019/msd6_all/all_images/"
+destination_path1 = "/home/iccd/data/msd7/test/mask_json/"
+destination_path2 = "/home/iccd/data/msd7/test/mask/"
+# image_path = "/home/iccd/data/2019/msd7_all/all_images/"
 # mask_json_path = "/home/iccd/data/2019/mask_json_true/"
-# destination_path1 = "/home/iccd/data/msd0/test/mask_json/"
-# destination_path2 = "/home/iccd/data/2019/msd6_all/all_masks/"
+# destination_path2 = "/home/iccd/data/2019/msd7_all/all_masks/"
 
 imglist = os.listdir(image_path)
 

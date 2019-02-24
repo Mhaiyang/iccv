@@ -9,8 +9,8 @@
 # backbone_path = '/home/iccd/iccv/backbone/resnext/resnext_101_32x4d.pth'
 # backbone_path = "/home/iccd/iccv/backbone/resnet101.pth"
 
-msd_training_root = "/root/data/msd6/train"
-msd_testing_root = "/root/data/msd6/test"
+msd_training_root = "/root/data/msd7/train"
+msd_testing_root = "/root/data/msd7/test"
 backbone_path = '/root/backbone/resnext/resnext_101_32x4d.pth'
 # backbone_path = "/root/backbone/resnet101.pth"
 

@@ -32,10 +32,10 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [2]
+device_ids = [9]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY1_msd6'
+exp_name = 'MHY1_msd7'
 
 args = {
     'epoch_num': 100,
@@ -47,7 +47,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 384,
-    'save_point': [60, 70, 80, 90, 100],
+    'save_point': [70, 80, 90, 100],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'

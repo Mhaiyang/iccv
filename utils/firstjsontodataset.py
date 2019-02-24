@@ -10,7 +10,7 @@
 """
 import os
 
-json_path = '/home/iccd/data/2019/ikea/mask_json/'
+json_path = '/home/iccd/data/2019/mhy_correct_mask/'
 
 json_list = os.listdir(json_path)
 

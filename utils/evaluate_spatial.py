@@ -38,7 +38,7 @@ ROOT_DIR = os.getcwd()
 IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
-PREDICT_DIR = "/home/iccd/iccv/utils/spatial_train.png"
+PREDICT_DIR = "/home/iccd/iccv/utils/msd7_train_normalized.png"
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/2019", str(args['type']))
@@ -71,13 +71,12 @@ for i, imgname in enumerate(imglist):
     predict_mask = skimage.io.imread(PREDICT_DIR)
     predict_mask = skimage.transform.resize(predict_mask, [height, width], 0)
     predict_mask = predict_mask.astype(np.float32)
-    predict_mask_normalized = (predict_mask - np.min(predict_mask))/(np.max(predict_mask) - np.min(predict_mask))
-    predict_mask_binary = np.where(predict_mask >= 0.1, 1, 0).astype(np.float32)
+    predict_mask_binary = np.where(predict_mask >= 0.5, 1, 0).astype(np.float32)
 
-    acc = accuracy_mirror(predict_mask_binary, gt_mask)
+    acc = accuracy_image(predict_mask_binary, gt_mask)
     iou = compute_iou(predict_mask_binary, gt_mask)
     # f = f_score(predict_mask, gt_mask)
-    mae = compute_mae(predict_mask_normalized, gt_mask)
+    mae = compute_mae(predict_mask, gt_mask)
     ber = compute_ber(predict_mask_binary, gt_mask)
 
     print("acc : {}".format(acc))
@@ -95,7 +94,7 @@ for i, imgname in enumerate(imglist):
     num = imgname.split("_")[0]
     NUM.append(int(num))
 
-mean_ACC = 100 * sum(ACC)/len(ACC)
+mean_ACC = sum(ACC)/len(ACC)
 mean_IOU = 100 * sum(IOU)/len(IOU)
 # mean_F = sum(F)/len(F)
 mean_MAE = sum(MAE)/len(MAE)
@@ -108,7 +107,7 @@ print(len(MAE))
 print(len(BER))
 
 
-print("{}, \n{:20} {:.2f} \n{:20} {:.2f} \n{:20} {:.3f} \n{:20} {:.2f}\n".
+print("{}, \n{:20} {:.3f} \n{:20} {:.2f} \n{:20} {:.3f} \n{:20} {:.2f}\n".
       format(PREDICT_DIR, "mean_ACC", mean_ACC, "mean_IOU", mean_IOU,
              "mean_MAE", mean_MAE, "mean_BER", mean_BER))
 

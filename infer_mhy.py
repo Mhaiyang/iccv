@@ -25,9 +25,9 @@ device_ids = [9]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'MHY1_msd7'
+exp_name = 'MHY1_msd7_2'
 args = {
-    'snapshot': '80',
+    'snapshot': '100',
     'scale': 384,
     'crf': True
 }

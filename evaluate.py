@@ -25,8 +25,8 @@ IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
 # PREDICT_DIR = "/home/iccd/iccv/ckpt/MHY1_msd7/MHY1_msd7_100"
-# PREDICT_DIR = "/home/iccd/iccv/msd9_results/msd9_DSC"
-PREDICT_DIR = "/root/ckpt/MHY1_msd8_2/MHY1_msd8_2_100"
+PREDICT_DIR = "/home/iccd/iccv/msd9_results/MHY1_msd9_100"
+# PREDICT_DIR = "/root/ckpt/MHY1_msd9/MHY1_msd9_100"
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/2019", str(args['type']))
@@ -57,7 +57,7 @@ for i, imgname in enumerate(imglist):
     predict_mask_normalized = get_normalized_predict_mask(imgname, PREDICT_DIR)
     predict_mask_binary = get_binary_predict_mask(imgname, PREDICT_DIR)
 
-    acc = accuracy_mirror(predict_mask_binary, gt_mask)
+    acc = accuracy_image(predict_mask_binary, gt_mask)
     iou = compute_iou(predict_mask_binary, gt_mask)
     # f = f_score(predict_mask, gt_mask)
     mae = compute_mae(predict_mask_normalized, gt_mask)

@@ -21,11 +21,11 @@ from config import msd_testing_root
 from misc import check_mkdir, crf_refine
 from model.mhy1 import MHY1
 
-device_ids = [0]
+device_ids = [9]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'MHY1_msd9_2'
+exp_name = 'MHY1_msd8_2'
 args = {
     'snapshot': '100',
     'scale': 384,

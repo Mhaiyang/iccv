@@ -15,7 +15,7 @@ from misc import *
 from config import msd_testing_root
 
 args = {
-    'exp_name': 'msd9_BDRAR',
+    'exp_name': 'msd8_MHY1',
     'type': 0
 }
 
@@ -25,8 +25,8 @@ IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
 # PREDICT_DIR = "/home/iccd/iccv/ckpt/MHY1_msd7/MHY1_msd7_100"
-PREDICT_DIR = "/home/iccd/iccv/msd8_results/msd8_BDRAR"
-# PREDICT_DIR = "/root/ckpt/MHY1_msd7_2/MHY1_msd7_2_80"
+# PREDICT_DIR = "/home/iccd/iccv/msd8_results/msd8_BDRAR"
+PREDICT_DIR = "/root/ckpt/MHY1_msd8/MHY1_msd8_100"
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/2019", str(args['type']))

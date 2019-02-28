@@ -26,19 +26,19 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.mhy2 import MHY2
+from model.mhy2_ba import MHY2_BA
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [8]
+device_ids = [6]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY2_msd9_5'
+exp_name = 'MHY2_msd9_ba'
 
 args = {
-    'epoch_num': 200,
+    'epoch_num': 140,
     'train_batch_size': 12,
     'last_epoch': 0,
     'lr': 1e-3,
@@ -47,7 +47,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 384,
-    'save_point': [140, 160, 180, 190, 200],
+    'save_point': [100, 120, 130, 140],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'
@@ -84,7 +84,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = MHY2(backbone_path).cuda(device_ids[0]).train()
+    net = MHY2_BA(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

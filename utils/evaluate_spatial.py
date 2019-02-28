@@ -38,7 +38,10 @@ ROOT_DIR = os.getcwd()
 IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
-PREDICT_DIR = "/home/iccd/iccv/utils/msd7_train_normalized.png"
+PREDICT_DIR = "/home/iccd/iccv/utils/msd9_train_normalized.png"
+SAVE_PATH = "/home/iccd/iccv/msd9_results/msd9_map/"
+if not os.path.exists(SAVE_PATH):
+    os.mkdir(SAVE_PATH)
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/2019", str(args['type']))
@@ -70,10 +73,11 @@ for i, imgname in enumerate(imglist):
     width = gt_mask.shape[1]
     predict_mask = skimage.io.imread(PREDICT_DIR)
     predict_mask = skimage.transform.resize(predict_mask, [height, width], 0)
+    skimage.io.imsave(SAVE_PATH + imgname[:-4] + '.png', (predict_mask*255).astype(np.uint8))
     predict_mask = predict_mask.astype(np.float32)
     predict_mask_binary = np.where(predict_mask >= 0.5, 1, 0).astype(np.float32)
 
-    acc = accuracy_image(predict_mask_binary, gt_mask)
+    acc = accuracy_mirror(predict_mask_binary, gt_mask)
     iou = compute_iou(predict_mask_binary, gt_mask)
     # f = f_score(predict_mask, gt_mask)
     mae = compute_mae(predict_mask, gt_mask)

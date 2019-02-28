@@ -13,8 +13,8 @@ import numpy as np
 import skimage.io
 from misc import data_write
 
-image_path = '/home/iccd/data/2019/msd5_all/all_images'
-mask_json_path = '/home/iccd/data/2019/msd5_all/all_masks/'
+image_path = '/home/iccd/data/2019/msd9_all/all_images'
+mask_json_path = '/home/iccd/data/2019/msd9_all/all_masks/'
 
 imglist = os.listdir(image_path)
 print(len(imglist))
@@ -37,6 +37,6 @@ for i, imgname in enumerate(imglist):
     mirror_area = np.sum(mask)
     proportion = mirror_area / total_area
     output.append(proportion)
-data_write('./proportion.xlsx', [output])
+data_write('./msd9_size.xlsx', [output])
 
 

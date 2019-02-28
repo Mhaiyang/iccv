@@ -16,10 +16,10 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import seaborn as sns
 
-image_path = '/home/iccd/data/msd7/train/image/'
-mask_json_path = '/home/iccd/data/msd7/train/mask/'
-# image_path = '/home/iccd/data/2019/msd5_all/all_images/'
-# mask_json_path = '/home/iccd/data/2019/msd5_all/all_masks/'
+image_path = '/home/iccd/data/msd9/test/image/'
+mask_json_path = '/home/iccd/data/msd9/test/mask/'
+# image_path = '/home/iccd/data/2019/msd9_all/all_images/'
+# mask_json_path = '/home/iccd/data/2019/msd9_all/all_masks/'
 
 imglist = os.listdir(image_path)
 print(len(imglist))
@@ -45,8 +45,8 @@ for i, imgname in enumerate(imglist):
 
 overlap = overlap / len(imglist)
 overlap_normalized = (overlap - np.min(overlap)) / (np.max(overlap) - np.min(overlap))
-skimage.io.imsave('./msd7_train.png', (overlap*255).astype(np.uint8))
-skimage.io.imsave('./msd7_train_normalized.png', overlap_normalized)
+skimage.io.imsave('./msd9_test.png', (overlap*255).astype(np.uint8))
+skimage.io.imsave('./msd9_test_normalized.png', overlap_normalized)
 
 print(tall, wide)
 

@@ -11,7 +11,7 @@ clc;clear;close all;
 input_path = '/home/iccd/data/msd9/test/image/';
 truth_path = '/home/iccd/data/msd9/test/mask/';
 % result_path = '/home/iccd/iccv/ckpt/MHY2_msd9_2/MHY2_msd9_2_140/';
-result_path = '/home/iccd/iccv/msd9_results/msd9_RAS/';
+result_path = '/home/iccd/iccv/msd9_results/msd9_MHY2_140/';
 
 [PreF,RecallF,FMeasureF] =  get_Fmeasure(input_path,result_path,truth_path);
 

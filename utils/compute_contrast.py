@@ -14,8 +14,8 @@ import cv2
 import skimage.io
 from misc import data_write
 
-image_path = '/home/iccd/data/2019/msd3_all/all_images/'
-mask_path = '/home/iccd/data/2019/msd3_all/all_masks/'
+image_path = '/home/iccd/data/2019/msd9_all/all_images/'
+mask_path = '/home/iccd/data/2019/msd9_all/all_masks/'
 
 imglist = os.listdir(image_path)
 

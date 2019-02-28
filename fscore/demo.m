@@ -8,10 +8,10 @@ clc;clear;close all;
 % addpath(genpath('.'));
 
 %% First method
-input_path = '/home/iccd/data/msd5/test/image/';
-truth_path = '/home/iccd/data/msd5/test/mask/';
-result_path = '/home/iccd/iccv/ckpt/MHY1_msd5/MHY1_msd5_70/';
-% result_path = '/home/iccd/iccv/msd5_results/msd5_BDRAR_2/';
+input_path = '/home/iccd/data/msd9/test/image/';
+truth_path = '/home/iccd/data/msd9/test/mask/';
+% result_path = '/home/iccd/iccv/ckpt/MHY1_msd9/MHY1_msd5_70/';
+result_path = '/home/iccd/iccv/msd9_results/msd9_DSC/';
 
 [PreF,RecallF,FMeasureF] =  get_Fmeasure(input_path,result_path,truth_path);
 

@@ -133,7 +133,7 @@ class IS(nn.Module):
     def __init__(self, planes, rate):
         super(IS, self).__init__()
         self.invariance = Invariance(planes)
-        self.selectivity = Selectivity(planes / 4, rate)
+        self.selectivity = Selectivity(int(planes / 4), rate)
 
     def forward(self, x):
         invariance = self.invariance(x)
@@ -148,8 +148,8 @@ class IS(nn.Module):
 class Invariance(nn.Module):
     def __init__(self, planes):
         super(Invariance, self).__init__()
-        self.inplanes = planes
-        self.outplanes = planes / 4
+        self.inplanes = int(planes)
+        self.outplanes = int(planes / 4)
 
         self.conv1a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())

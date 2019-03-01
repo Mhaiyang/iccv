@@ -213,9 +213,9 @@ class Predict(nn.Module):
 ###################################################################
 # ########################## NETWORK ##############################
 ###################################################################
-class MHY2(nn.Module):
+class MHY2_B(nn.Module):
     def __init__(self, backbone_path=None):
-        super(MHY2, self).__init__()
+        super(MHY2_B, self).__init__()
         resnext = ResNeXt101(backbone_path)
         self.layer0 = resnext.layer0
         self.layer1 = resnext.layer1
@@ -228,21 +228,21 @@ class MHY2(nn.Module):
         self.conv_2 = nn.Sequential(nn.Conv2d(512, 128, 3, 1, 1), nn.BatchNorm2d(128), nn.ReLU())
         self.conv_1 = nn.Sequential(nn.Conv2d(256, 64, 3, 1, 1), nn.BatchNorm2d(64), nn.ReLU())
 
-        self.ccl_4 = CCL(512)
-        self.ccl_3 = CCL(256)
-        self.ccl_2 = CCL(128)
-        self.ccl_1 = CCL(64)
+        # self.ccl_4 = CCL(512)
+        # self.ccl_3 = CCL(256)
+        # self.ccl_2 = CCL(128)
+        # self.ccl_1 = CCL(64)
 
-        self.up_4 = nn.Sequential(nn.ConvTranspose2d(2048, 64, 16, 8, 4), nn.BatchNorm2d(64), nn.ReLU())
-        self.up_3 = nn.Sequential(nn.ConvTranspose2d(1024, 64, 8, 4, 2), nn.BatchNorm2d(64), nn.ReLU())
-        self.up_2 = nn.Sequential(nn.ConvTranspose2d(512, 64, 4, 2, 1), nn.BatchNorm2d(64), nn.ReLU())
-        self.up_1 = nn.Sequential(nn.Conv2d(256, 64, 1, 1, 0), nn.BatchNorm2d(64), nn.ReLU())
+        self.up_4 = nn.Sequential(nn.ConvTranspose2d(512, 64, 16, 8, 4), nn.BatchNorm2d(64), nn.ReLU())
+        self.up_3 = nn.Sequential(nn.ConvTranspose2d(256, 64, 8, 4, 2), nn.BatchNorm2d(64), nn.ReLU())
+        self.up_2 = nn.Sequential(nn.ConvTranspose2d(128, 64, 4, 2, 1), nn.BatchNorm2d(64), nn.ReLU())
+        self.up_1 = nn.Sequential(nn.Conv2d(64, 64, 1, 1, 0), nn.BatchNorm2d(64), nn.ReLU())
 
-        self.cbam_4 = CBAM(64)
-        self.cbam_3 = CBAM(64)
-        self.cbam_2 = CBAM(64)
-        self.cbam_1 = CBAM(64)
-        self.cbam_fusion = CBAM(256)
+        # self.cbam_4 = CBAM(64)
+        # self.cbam_3 = CBAM(64)
+        # self.cbam_2 = CBAM(64)
+        # self.cbam_1 = CBAM(64)
+        # self.cbam_fusion = CBAM(256)
 
         self.layer4_predict = Predict(64)
         self.layer3_predict = Predict(64)
@@ -267,30 +267,30 @@ class MHY2(nn.Module):
         conv_2 = self.conv_2(layer2)
         conv_1 = self.conv_1(layer1)
 
-        ccl_4 = self.ccl_4(conv_4)
-        ccl_3 = self.ccl_3(conv_3)
-        ccl_2 = self.ccl_2(conv_2)
-        ccl_1 = self.ccl_1(conv_1)
+        # ccl_4 = self.ccl_4(conv_4)
+        # ccl_3 = self.ccl_3(conv_3)
+        # ccl_2 = self.ccl_2(conv_2)
+        # ccl_1 = self.ccl_1(conv_1)
 
-        up_4 = self.up_4(ccl_4)
-        up_3 = self.up_3(ccl_3)
-        up_2 = self.up_2(ccl_2)
-        up_1 = self.up_1(ccl_1)
+        up_4 = self.up_4(conv_4)
+        up_3 = self.up_3(conv_3)
+        up_2 = self.up_2(conv_2)
+        up_1 = self.up_1(conv_1)
 
-        cbam_4 = self.cbam_4(up_4)
-        cbam_3 = self.cbam_3(up_3)
-        cbam_2 = self.cbam_2(up_2)
-        cbam_1 = self.cbam_1(up_1)
+        # cbam_4 = self.cbam_4(up_4)
+        # cbam_3 = self.cbam_3(up_3)
+        # cbam_2 = self.cbam_2(up_2)
+        # cbam_1 = self.cbam_1(up_1)
 
-        fusion = torch.cat((cbam_1, cbam_2, cbam_3, cbam_4), 1)
-        cbam_fusion = self.cbam_fusion(fusion)
+        fusion = torch.cat((up_1, up_2, up_3, up_4), 1)
+        # cbam_fusion = self.cbam_fusion(fusion)
 
-        layer4_predict = self.layer4_predict(cbam_4)
-        layer3_predict = self.layer3_predict(cbam_3)
-        layer2_predict = self.layer2_predict(cbam_2)
-        layer1_predict = self.layer1_predict(cbam_1)
+        layer4_predict = self.layer4_predict(up_4)
+        layer3_predict = self.layer3_predict(up_3)
+        layer2_predict = self.layer2_predict(up_2)
+        layer1_predict = self.layer1_predict(up_1)
 
-        fusion_predict = self.fusion_predict(cbam_fusion)
+        fusion_predict = self.fusion_predict(fusion)
 
         layer4_predict = F.upsample(layer4_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
         layer3_predict = F.upsample(layer3_predict, size=x.size()[2:], mode='bilinear', align_corners=True)

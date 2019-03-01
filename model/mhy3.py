@@ -130,8 +130,8 @@ class CBAM(nn.Module):
 # ########################## IS Module ############################
 ###################################################################
 class IS(nn.Module):
-    def __int__(self, planes, rate):
-        super(IS, self).__int__()
+    def __init__(self, planes, rate):
+        super(IS, self).__init__()
         self.invariance = Invariance(planes)
         self.selectivity = Selectivity(planes / 4, rate)
 

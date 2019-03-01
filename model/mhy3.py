@@ -153,25 +153,25 @@ class Invariance(nn.Module):
 
         self.conv1a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
-        self.conv1b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=2)
+        self.conv1b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=2, dilation=2)
         self.conv1c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
 
         self.conv2a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
-        self.conv2b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=2)
+        self.conv2b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=4, dilation=4)
         self.conv2c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
 
         self.conv3a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
-        self.conv3b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=2)
+        self.conv3b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=6, dilation=6)
         self.conv3c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
 
         self.conv4a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
-        self.conv4b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=2)
+        self.conv4b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=8, dilation=8)
         self.conv4c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
 

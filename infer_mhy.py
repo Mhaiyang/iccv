@@ -19,15 +19,15 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.mhy2 import MHY2
+from model.mhy3 import MHY3
 
 device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'MHY2_msd9_5'
+exp_name = 'MHY3_msd9'
 args = {
-    'snapshot': '200',
+    'snapshot': '130',
     'scale': 384,
     'crf': True
 }
@@ -44,7 +44,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = MHY2().cuda(device_ids[0])
+    net = MHY3().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

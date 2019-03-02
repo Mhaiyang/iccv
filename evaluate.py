@@ -24,8 +24,8 @@ ROOT_DIR = os.getcwd()
 IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
-# PREDICT_DIR = "/home/iccd/iccv/ckpt/MHY2_msd9_5/MHY2_msd9_5_200"
-PREDICT_DIR = "/home/iccd/iccv/msd9_results/msd9_icnet"
+PREDICT_DIR = "/home/iccd/iccv/ckpt/MHY3_msd9/MHY3_msd9_120"
+# PREDICT_DIR = "/home/iccd/iccv/msd9_results/msd9_segnet"
 # PREDICT_DIR = "/root/ckpt/MHY2_msd9_2/MHY2_msd9_2_140"
 
 if args['type'] != 0:

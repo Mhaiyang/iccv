@@ -133,7 +133,7 @@ class IS(nn.Module):
     def __init__(self, planes, rate):
         super(IS, self).__init__()
         self.invariance = Invariance(planes)
-        self.selectivity = Selectivity(int(planes / 4), rate)
+        self.selectivity = Selectivity(planes, rate)
 
     def forward(self, x):
         invariance = self.invariance(x)
@@ -151,32 +151,31 @@ class Invariance(nn.Module):
         self.inplanes = int(planes)
         self.outplanes = int(planes / 4)
 
-        self.conv1a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
+        self.conv1a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=1),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
-        self.conv1b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=2, dilation=2)
-        self.conv1c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
-                                    nn.BatchNorm2d(self.outplanes), nn.ReLU())
-
-        self.conv2a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
-                                    nn.BatchNorm2d(self.outplanes), nn.ReLU())
-        self.conv2b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=4, dilation=4)
-        self.conv2c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
+        self.conv1b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=1)
+        self.conv1c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
 
-        self.conv3a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
+        self.conv2a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=1),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
-        self.conv3b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=6, dilation=6)
-        self.conv3c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
+        self.conv2b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=2, dilation=2)
+        self.conv2c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
 
-        self.conv4a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
+        self.conv3a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=1),
+                                    nn.BatchNorm2d(self.outplanes), nn.ReLU())
+        self.conv3b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=4, dilation=4)
+        self.conv3c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1),
+                                    nn.BatchNorm2d(self.outplanes), nn.ReLU())
+
+        self.conv4a = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=1),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
         self.conv4b = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=8, dilation=8)
-        self.conv4c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=1, stride=1, padding=0),
+        self.conv4c = nn.Sequential(nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1),
                                     nn.BatchNorm2d(self.outplanes), nn.ReLU())
 
-        self.fuse = nn.Conv2d(4 * self.outplanes, self.outplanes, 1, 1, 0)
-        self.cbam = CBAM(self.outplanes)
+        self.cbam = CBAM(self.inplanes)
 
     def forward(self, x):
         conv1a = self.conv1a(x)
@@ -195,7 +194,7 @@ class Invariance(nn.Module):
         conv4b = self.conv4b(conv4a)
         conv4c = self.conv4c(conv4a + conv4b)
 
-        output = self.cbam(self.fuse(torch.cat((conv1c, conv2c, conv3c, conv4c), 1)))
+        output = self.cbam(torch.cat((conv1c, conv2c, conv3c, conv4c), 1))
 
         return output
 
@@ -206,26 +205,34 @@ class Invariance(nn.Module):
 class Selectivity(nn.Module):
     def __init__(self, planes, rate):
         super(Selectivity, self).__init__()
-        self.local_1 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_1 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
+        self.inplanes = int(planes)
+        self.outplanes = int(planes / 4)
 
-        self.local_2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
+        self.conv = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, 3, 1, 1),
+                                  nn.BatchNorm2d(self.outplanes), nn.ReLU())
 
-        self.local_3 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_3 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
+        self.local_1 = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=1)
+        self.context_1 = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=rate, dilation=rate)
 
-        self.local_4 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_4 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=rate, dilation=rate)
+        self.local_2 = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=1)
+        self.context_2 = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=rate, dilation=rate)
 
-        self.bn = nn.BatchNorm2d(planes)
+        self.local_3 = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=1)
+        self.context_3 = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=rate, dilation=rate)
+
+        self.local_4 = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=1)
+        self.context_4 = nn.Conv2d(self.outplanes, self.outplanes, kernel_size=3, stride=1, padding=rate, dilation=rate)
+
+        self.bn = nn.BatchNorm2d(self.outplanes)
         self.relu = nn.ReLU()
 
-        self.conv = nn.Conv2d(4 * planes, 4 * planes, kernel_size=1, stride=1, padding=0)
+        self.cbam = CBAM(self.inplanes)
 
     def forward(self, x):
-        local_1 = self.local_1(x)
-        context_1 = self.context_1(x)
+        y = self.conv(x)
+
+        local_1 = self.local_1(y)
+        context_1 = self.context_1(y)
         ccl_1 = local_1 - context_1
         ccl_1 = self.bn(ccl_1)
         ccl_1 = self.relu(ccl_1)
@@ -248,7 +255,7 @@ class Selectivity(nn.Module):
         ccl_4 = self.bn(ccl_4)
         ccl_4 = self.relu(ccl_4)
 
-        output = self.conv(torch.cat((ccl_1, ccl_2, ccl_3, ccl_4), 1))
+        output = self.cbam(torch.cat((ccl_1, ccl_2, ccl_3, ccl_4), 1))
 
         return output
 

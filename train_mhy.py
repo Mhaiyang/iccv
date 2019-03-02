@@ -26,16 +26,16 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.mhy6 import MHY6
+from model.mhy7 import MHY7
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [7]
+device_ids = [5]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY6_msd9'
+exp_name = 'MHY7_msd9'
 
 args = {
     'epoch_num': 140,
@@ -84,7 +84,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = MHY6(backbone_path).cuda(device_ids[0]).train()
+    net = MHY7(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

@@ -311,10 +311,10 @@ class MHY8(nn.Module):
         self.layer3 = resnext.layer3
         self.layer4 = resnext.layer4
 
-        self.cp_1 = CP(2048, 3)
-        self.cp_2 = CP(1024, 4)
-        self.cp_3 = CP(512, 5)
-        self.cp_4 = CP(256, 6)
+        self.cp_4 = CP(2048, 3)
+        self.cp_3 = CP(1024, 4)
+        self.cp_2 = CP(512, 5)
+        self.cp_1 = CP(256, 6)
 
         self.up_4 = nn.Sequential(nn.ConvTranspose2d(2048, 64, 16, 8, 4), nn.BatchNorm2d(64), nn.ReLU())
         self.up_3 = nn.Sequential(nn.ConvTranspose2d(1024, 64, 8, 4, 2), nn.BatchNorm2d(64), nn.ReLU())

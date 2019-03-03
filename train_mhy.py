@@ -32,7 +32,7 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [9]
+device_ids = [0]
 
 ckpt_path = './ckpt'
 exp_name = 'MHY8_msd9'
@@ -47,7 +47,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 384,
-    'save_point': [100, 110, 120, 130, 140],
+    'save_point': [100, 120, 140],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'
@@ -75,7 +75,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=64, shuffle=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 

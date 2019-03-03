@@ -32,14 +32,14 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [8]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY8_msd9'
+exp_name = 'MHY8_msd9_2'
 
 args = {
     'epoch_num': 140,
-    'train_batch_size': 8,
+    'train_batch_size': 10,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,

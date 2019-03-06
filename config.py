@@ -14,7 +14,10 @@
 # backbone_path = '/root/backbone/resnext/resnext_101_32x4d.pth'
 # backbone_path = "/root/backbone/resnet101.pth"
 
-msd_training_root = "/root/data/SBU-shadow/train"
-msd_testing_root = "/root/data/SBU-shadow/test"
-backbone_path = '/root/backbone/resnext/resnext_101_32x4d.pth'
+# msd_training_root = "/root/data/SBU-shadow/train"
+# msd_testing_root = "/root/data/SBU-shadow/test"
+# backbone_path = '/root/backbone/resnext/resnext_101_32x4d.pth'
 
+msd_training_root = "/root/data/MSRA10K/train"
+msd_testing_root = "/root/data/MSRA10K/test"
+backbone_path = '/root/backbone/resnext/resnext_101_32x4d.pth'

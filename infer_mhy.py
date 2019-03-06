@@ -16,18 +16,19 @@ import torch
 from PIL import Image
 from torch.autograd import Variable
 from torchvision import transforms
+import skimage.io
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.mhy9 import MHY9
+from model.our1 import OUR1
 
-device_ids = [1]
+device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'MHY9_msd9'
+exp_name = 'OUR1'
 args = {
-    'snapshot': '140',
+    'snapshot': '100',
     'scale': 384,
     'crf': True
 }
@@ -38,13 +39,13 @@ img_transform = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
-to_test = {'MSD9': msd_testing_root}
+to_test = {'msd9': msd_testing_root}
 
 to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = MHY9().cuda(device_ids[0])
+    net = OUR1().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))
@@ -68,10 +69,10 @@ def main():
                 if args['crf']:
                     prediction = crf_refine(np.array(img.convert('RGB')), prediction)
 
-                Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
+                # Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), np.where(prediction>=127.5, 255, 0).astype(np.uint8))
-                # check_mkdir(os.path.join(msd_testing_root, 'mirror_map'))
-                # Image.fromarray(prediction).save(os.path.join(msd_testing_root, 'mirror_map', img_name[:-4] + ".png"))
+                check_mkdir(os.path.join(msd_testing_root, 'mirror_map'))
+                Image.fromarray(prediction).save(os.path.join(msd_testing_root, 'mirror_map', img_name[:-4] + ".png"))
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))
 

@@ -133,9 +133,13 @@ class Contrast_Module(nn.Module):
     def __init__(self, planes):
         super(Contrast_Module, self).__init__()
         self.inplanes = int(planes)
+        self.inplanes_half = int(planes / 2)
         self.outplanes = int(planes / 4)
 
-        self.conv = nn.Sequential(nn.Conv2d(self.inplanes, self.outplanes, 3, 1, 1),
+        self.conv1 = nn.Sequential(nn.Conv2d(self.inplanes, self.inplanes_half, 3, 1, 1),
+                                   nn.BatchNorm2d(self.inplanes_half), nn.ReLU())
+
+        self.conv2 = nn.Sequential(nn.Conv2d(self.inplanes_half, self.outplanes, 3, 1, 1),
                                   nn.BatchNorm2d(self.outplanes), nn.ReLU())
 
         self.contrast_block_1 = Contrast_Block(self.outplanes)
@@ -146,9 +150,10 @@ class Contrast_Module(nn.Module):
         self.cbam = CBAM(self.inplanes)
 
     def forward(self, x):
-        y = self.conv(x)
+        conv1 = self.conv1(x)
+        conv2 = self.conv2(conv1)
 
-        contrast_block_1 = self.contrast_block_1(y)
+        contrast_block_1 = self.contrast_block_1(conv2)
         contrast_block_2 = self.contrast_block_2(contrast_block_1)
         contrast_block_3 = self.contrast_block_3(contrast_block_2)
         contrast_block_4 = self.contrast_block_4(contrast_block_3)
@@ -240,9 +245,9 @@ class Predict(nn.Module):
 ###################################################################
 # ########################## NETWORK ##############################
 ###################################################################
-class MHY9(nn.Module):
+class OUR2(nn.Module):
     def __init__(self, backbone_path=None):
-        super(MHY9, self).__init__()
+        super(OUR2, self).__init__()
         resnext = ResNeXt101(backbone_path)
         self.layer0 = resnext.layer0
         self.layer1 = resnext.layer1

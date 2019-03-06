@@ -10,7 +10,7 @@ clc;clear;close all;
 %% First method
 input_path = '/home/iccd/data/msd9/test/image/';
 truth_path = '/home/iccd/data/msd9/test/mask/';
-result_path = '/home/iccd/iccv/ckpt/MHY9_msd9/MHY9_msd9_100/';
+result_path = '/home/iccd/iccv/ckpt/OUR1/OUR1_100_crf/';
 % result_path = '/home/iccd/iccv/msd9_results/msd9_icnet/';
 
 [PreF,RecallF,FMeasureF] =  get_Fmeasure(input_path,result_path,truth_path);

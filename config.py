@@ -5,7 +5,7 @@
 
 # msd_training_root = "/home/iccd/data/msd9/train"
 # msd_testing_root = "/home/iccd/data/msd9/test"
-# msd_testing_root = "/media/iccd/TAYLORMEI/google"
+# msd_testing_root = "/media/iccd/TAYLORMEI/more"
 # backbone_path = '/home/iccd/iccv/backbone/resnext/resnext_101_32x4d.pth'
 # backbone_path = "/home/iccd/iccv/backbone/resnet101.pth"
 

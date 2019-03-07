@@ -26,11 +26,11 @@ device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'OUR2_2'
+exp_name = 'OUR2_SBU'
 args = {
-    'snapshot': '140',
+    'snapshot': '120',
     'scale': 384,
-    'crf': True
+    'crf': False
 }
 
 img_transform = transforms.Compose([
@@ -61,16 +61,22 @@ def main():
                 print('predicting for {}: {:>4d} / {}'.format(name, idx + 1, len(img_list)))
                 check_mkdir(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot'])))
                 img = Image.open(os.path.join(root, 'image', img_name))
+                if img.mode != 'RGB':
+                    img = img.convert('RGB')
+                    print("{} is a gray image.".format(name))
                 w, h = img.size
                 img_var = Variable(img_transform(img).unsqueeze(0)).cuda()
                 _, _, _, _, f = net(img_var)
                 output = f.data.squeeze(0).cpu()
                 prediction = np.array(transforms.Resize((h, w))(to_pil(output)))
+                print(np.max(prediction))
+                print(np.min(prediction))
                 if args['crf']:
                     prediction = crf_refine(np.array(img.convert('RGB')), prediction)
 
-                Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
+                # Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), np.where(prediction>=127.5, 255, 0).astype(np.uint8))
+                skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), prediction.astype(np.uint8))
                 # check_mkdir(os.path.join(msd_testing_root, 'mirror_map'))
                 # Image.fromarray(prediction).save(os.path.join(msd_testing_root, 'mirror_map', img_name[:-4] + ".png"))
             end = time.time()

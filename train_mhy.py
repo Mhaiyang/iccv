@@ -32,17 +32,34 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [7]
+device_ids = [5]
 
 ckpt_path = './ckpt'
-exp_name = 'OUR2_2'
+exp_name = 'OUR2_SBU'
 
 # mirror
+# args = {
+#     'epoch_num': 140,
+#     'train_batch_size': 10,
+#     'last_epoch': 0,
+#     'lr': 1e-3,
+#     'lr_decay': 0.9,
+#     'weight_decay': 5e-4,
+#     'momentum': 0.9,
+#     'snapshot': '',
+#     'scale': 384,
+#     'save_point': [80, 100, 120, 140],
+#     'add_graph': True,
+#     'poly_train': True,
+#     'optimizer': 'SGD'
+# }
+
+# shadow
 args = {
     'epoch_num': 140,
     'train_batch_size': 10,
     'last_epoch': 0,
-    'lr': 1e-3,
+    'lr': 1,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
@@ -53,23 +70,6 @@ args = {
     'poly_train': True,
     'optimizer': 'SGD'
 }
-
-# shadow
-# args = {
-#     'epoch_num': 140,
-#     'train_batch_size': 10,
-#     'last_epoch': 0,
-#     'lr': 1e-2,
-#     'lr_decay': 0.9,
-#     'weight_decay': 5e-4,
-#     'momentum': 0.9,
-#     'snapshot': '',
-#     'scale': 416,
-#     'save_point': [80, 100, 120, 140],
-#     'add_graph': True,
-#     'poly_train': True,
-#     'optimizer': 'SGD'
-# }
 
 # saliency
 # args = {

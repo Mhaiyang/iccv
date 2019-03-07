@@ -29,7 +29,7 @@ ckpt_path = './ckpt'
 exp_name = 'OUR2'
 args = {
     'snapshot': '140',
-    'scale': 320,
+    'scale': 384,
     'crf': True
 }
 

@@ -23,6 +23,10 @@
 # msd_testing_root = "/root/data/SBU-shadow/test"
 # backbone_path = '/root/backbone/resnext/resnext_101_32x4d.pth'
 
-msd_training_root = "/root/data/MSRA10K/train"
-msd_testing_root = "/root/data/MSRA10K/test"
-backbone_path = '/root/backbone/resnext/resnext_101_32x4d.pth'
+# msd_training_root = "/root/data/MSRA10K/train"
+# msd_testing_root = "/root/data/MSRA10K/test"
+# backbone_path = '/root/backbone/resnext/resnext_101_32x4d.pth'
+
+msd_training_root = "/home/iccd/data/MSRA10K/train"
+msd_testing_root = "/home/iccd/data/MSRA10K/test"
+backbone_path = '/home/iccd/iccv/backbone/resnext/resnext_101_32x4d.pth'

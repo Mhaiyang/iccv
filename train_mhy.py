@@ -32,7 +32,7 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [6]
+device_ids = [1]
 
 ckpt_path = './ckpt'
 exp_name = 'OUR2_MSRA'
@@ -76,13 +76,13 @@ args = {
     'epoch_num': 50,
     'train_batch_size': 10,
     'last_epoch': 0,
-    'lr': 1e-3,
+    'lr': 0.1,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 384,
-    'save_point': [20, 30, 40, 50],
+    'save_point': [30, 40, 50],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'
@@ -110,7 +110,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=32, shuffle=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 

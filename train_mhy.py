@@ -59,7 +59,7 @@ args = {
     'epoch_num': 140,
     'train_batch_size': 10,
     'last_epoch': 0,
-    'lr': 1,
+    'lr': 1-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,

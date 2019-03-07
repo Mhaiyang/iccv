@@ -20,15 +20,15 @@ import skimage.io
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.our1 import OUR1
+from model.our2 import OUR2
 
 device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'OUR1'
+exp_name = 'OUR2_2'
 args = {
-    'snapshot': '100',
+    'snapshot': '140',
     'scale': 384,
     'crf': True
 }
@@ -45,7 +45,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = OUR1().cuda(device_ids[0])
+    net = OUR2().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))
@@ -69,10 +69,10 @@ def main():
                 if args['crf']:
                     prediction = crf_refine(np.array(img.convert('RGB')), prediction)
 
-                # Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
+                Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), np.where(prediction>=127.5, 255, 0).astype(np.uint8))
-                check_mkdir(os.path.join(msd_testing_root, 'mirror_map'))
-                Image.fromarray(prediction).save(os.path.join(msd_testing_root, 'mirror_map', img_name[:-4] + ".png"))
+                # check_mkdir(os.path.join(msd_testing_root, 'mirror_map'))
+                # Image.fromarray(prediction).save(os.path.join(msd_testing_root, 'mirror_map', img_name[:-4] + ".png"))
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))
 

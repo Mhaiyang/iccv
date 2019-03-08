@@ -32,27 +32,27 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [9]
 
 ckpt_path = './ckpt'
 exp_name = 'OUR3'
 
 # mirror
-# args = {
-#     'epoch_num': 140,
-#     'train_batch_size': 10,
-#     'last_epoch': 0,
-#     'lr': 1e-3,
-#     'lr_decay': 0.9,
-#     'weight_decay': 5e-4,
-#     'momentum': 0.9,
-#     'snapshot': '',
-#     'scale': 384,
-#     'save_point': [80, 100, 120, 140],
-#     'add_graph': True,
-#     'poly_train': True,
-#     'optimizer': 'SGD'
-# }
+args = {
+    'epoch_num': 140,
+    'train_batch_size': 10,
+    'last_epoch': 0,
+    'lr': 1e-3,
+    'lr_decay': 0.9,
+    'weight_decay': 5e-4,
+    'momentum': 0.9,
+    'snapshot': '',
+    'scale': 384,
+    'save_point': [100, 120, 140],
+    'add_graph': True,
+    'poly_train': True,
+    'optimizer': 'SGD'
+}
 
 # shadow
 # args = {
@@ -72,21 +72,21 @@ exp_name = 'OUR3'
 # }
 
 # saliency
-args = {
-    'epoch_num': 50,
-    'train_batch_size': 10,
-    'last_epoch': 0,
-    'lr': 0.1,
-    'lr_decay': 0.9,
-    'weight_decay': 5e-4,
-    'momentum': 0.9,
-    'snapshot': '',
-    'scale': 384,
-    'save_point': [30, 40, 50],
-    'add_graph': True,
-    'poly_train': True,
-    'optimizer': 'SGD'
-}
+# args = {
+#     'epoch_num': 50,
+#     'train_batch_size': 10,
+#     'last_epoch': 0,
+#     'lr': 0.1,
+#     'lr_decay': 0.9,
+#     'weight_decay': 5e-4,
+#     'momentum': 0.9,
+#     'snapshot': '',
+#     'scale': 384,
+#     'save_point': [30, 40, 50],
+#     'add_graph': True,
+#     'poly_train': True,
+#     'optimizer': 'SGD'
+# }
 
 # Path.
 check_mkdir(ckpt_path)
@@ -114,6 +114,7 @@ train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_wo
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
+bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 
 def main():
     print(args)
@@ -160,7 +161,8 @@ def train(net, optimizer):
 
     for epoch in range(args['last_epoch'] + 1, args['last_epoch'] + 1 + args['epoch_num']):
         loss_4_record, loss_3_record, loss_2_record, loss_1_record, \
-        loss_f_record, loss_record = AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter()
+        loss_f_record, loss_e_record, loss_record = AvgMeter(), AvgMeter(), AvgMeter(), AvgMeter(), \
+                                                    AvgMeter(), AvgMeter(), AvgMeter()
 
         train_iterator = tqdm(train_loader, total=len(train_loader))
         for data in train_iterator:
@@ -169,22 +171,24 @@ def train(net, optimizer):
                 optimizer.param_groups[0]['lr'] = 2 * base_lr
                 optimizer.param_groups[1]['lr'] = 1 * base_lr
 
-            inputs, labels = data
+            inputs, labels, edges = data
             batch_size = inputs.size(0)
             inputs = Variable(inputs).cuda(device_ids[0])
             labels = Variable(labels).cuda(device_ids[0])
+            edges = Variable(edges).cuda(device_ids[0])
 
             optimizer.zero_grad()
 
-            predict_4, predict_3, predict_2, predict_1, predict_f = net(inputs)
+            predict_4, predict_3, predict_2, predict_1, predict_f, predict_e = net(inputs)
 
             loss_4 = L.lovasz_hinge(predict_4, labels)
             loss_3 = L.lovasz_hinge(predict_3, labels)
             loss_2 = L.lovasz_hinge(predict_2, labels)
             loss_1 = L.lovasz_hinge(predict_1, labels)
             loss_f = L.lovasz_hinge(predict_f, labels)
+            loss_e = bce_logit(predict_e, edges)
 
-            loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f
+            loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f + loss_e
 
             loss.backward()
 
@@ -196,6 +200,7 @@ def train(net, optimizer):
             loss_2_record.update(loss_2.data, batch_size)
             loss_1_record.update(loss_1.data, batch_size)
             loss_f_record.update(loss_f.data, batch_size)
+            loss_e_record.update(loss_e.data, batch_size)
 
             if curr_iter % 50 == 0:
                 writer.add_scalar('loss', loss, curr_iter)
@@ -204,10 +209,11 @@ def train(net, optimizer):
                 writer.add_scalar('loss_2', loss_2, curr_iter)
                 writer.add_scalar('loss_1', loss_1, curr_iter)
                 writer.add_scalar('loss_f', loss_f, curr_iter)
+                writer.add_scalar('loss_e', loss_e, curr_iter)
 
-            log = '[%3d], [%6d], [%.6f], [%.5f], [L4: %.5f], [L3: %.5f], [L2: %.5f], [L1: %.5f], [Lf: %.5f]' % \
+            log = '[%3d], [%6d], [%.6f], [%.5f], [L4: %.5f], [L3: %.5f], [L2: %.5f], [L1: %.5f], [Lf: %.5f], [Le: %.5f]' % \
                   (epoch, curr_iter, base_lr, loss_record.avg, loss_4_record.avg, loss_3_record.avg, loss_2_record.avg,
-                   loss_1_record.avg, loss_f_record.avg)
+                   loss_1_record.avg, loss_f_record.avg, loss_e_record.avg)
             train_iterator.set_description(log)
             open(log_path, 'a').write(log + '\n')
 

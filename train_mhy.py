@@ -26,16 +26,16 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.our3 import OUR3
+from model.our2 import OUR2
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [8]
 
 ckpt_path = './ckpt'
-exp_name = 'OUR3'
+exp_name = 'OUR2_MSRA_HL'
 
 # mirror
 # args = {
@@ -73,16 +73,16 @@ exp_name = 'OUR3'
 
 # saliency
 args = {
-    'epoch_num': 50,
+    'epoch_num': 60,
     'train_batch_size': 10,
     'last_epoch': 0,
-    'lr': 0.1,
+    'lr': 1e-3,
     'lr_decay': 0.9,
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
     'scale': 384,
-    'save_point': [30, 40, 50],
+    'save_point': [40, 50, 60],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'
@@ -119,7 +119,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = OUR3(backbone_path).cuda(device_ids[0]).train()
+    net = OUR2(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

@@ -32,10 +32,10 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [8]
+device_ids = [7]
 
 ckpt_path = './ckpt'
-exp_name = 'OUR2_MSRA_HL'
+exp_name = 'OUR2_MSRA_BL'
 
 # mirror
 # args = {
@@ -114,6 +114,7 @@ train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_wo
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
+bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 
 def main():
     print(args)
@@ -178,11 +179,17 @@ def train(net, optimizer):
 
             predict_4, predict_3, predict_2, predict_1, predict_f = net(inputs)
 
-            loss_4 = L.lovasz_hinge(predict_4, labels)
-            loss_3 = L.lovasz_hinge(predict_3, labels)
-            loss_2 = L.lovasz_hinge(predict_2, labels)
-            loss_1 = L.lovasz_hinge(predict_1, labels)
-            loss_f = L.lovasz_hinge(predict_f, labels)
+            # loss_4 = L.lovasz_hinge(predict_4, labels)
+            # loss_3 = L.lovasz_hinge(predict_3, labels)
+            # loss_2 = L.lovasz_hinge(predict_2, labels)
+            # loss_1 = L.lovasz_hinge(predict_1, labels)
+            # loss_f = L.lovasz_hinge(predict_f, labels)
+
+            loss_4 = bce_logit(predict_4, labels)
+            loss_3 = bce_logit(predict_3, labels)
+            loss_2 = bce_logit(predict_2, labels)
+            loss_1 = bce_logit(predict_1, labels)
+            loss_f = bce_logit(predict_f, labels)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f
 

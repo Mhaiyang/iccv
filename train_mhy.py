@@ -26,21 +26,21 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.our4 import OUR4
+from model.our2 import OUR2
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [1]
+device_ids = [0]
 
 ckpt_path = './ckpt'
-exp_name = 'OUR4'
+exp_name = 'OUR2_BL'
 
 # mirror
 args = {
     'epoch_num': 140,
-    'train_batch_size': 10,
+    'train_batch_size': 8,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,
@@ -120,7 +120,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = OUR4(backbone_path).cuda(device_ids[0]).train()
+    net = OUR2(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -179,17 +179,17 @@ def train(net, optimizer):
 
             predict_4, predict_3, predict_2, predict_1, predict_f = net(inputs)
 
-            loss_4 = L.lovasz_hinge(predict_4, labels)
-            loss_3 = L.lovasz_hinge(predict_3, labels)
-            loss_2 = L.lovasz_hinge(predict_2, labels)
-            loss_1 = L.lovasz_hinge(predict_1, labels)
-            loss_f = L.lovasz_hinge(predict_f, labels)
+            # loss_4 = L.lovasz_hinge(predict_4, labels)
+            # loss_3 = L.lovasz_hinge(predict_3, labels)
+            # loss_2 = L.lovasz_hinge(predict_2, labels)
+            # loss_1 = L.lovasz_hinge(predict_1, labels)
+            # loss_f = L.lovasz_hinge(predict_f, labels)
 
-            # loss_4 = bce_logit(predict_4, labels)
-            # loss_3 = bce_logit(predict_3, labels)
-            # loss_2 = bce_logit(predict_2, labels)
-            # loss_1 = bce_logit(predict_1, labels)
-            # loss_f = bce_logit(predict_f, labels)
+            loss_4 = bce_logit(predict_4, labels)
+            loss_3 = bce_logit(predict_3, labels)
+            loss_2 = bce_logit(predict_2, labels)
+            loss_1 = bce_logit(predict_1, labels)
+            loss_f = bce_logit(predict_f, labels)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f
 

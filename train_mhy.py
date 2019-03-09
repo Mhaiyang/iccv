@@ -26,16 +26,16 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.our7 import OUR7
+from model.our8 import OUR8
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [7]
+device_ids = [8]
 
 ckpt_path = './ckpt'
-exp_name = 'OUR7'
+exp_name = 'OUR8'
 
 # mirror
 args = {
@@ -120,7 +120,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = OUR7(backbone_path).cuda(device_ids[0]).train()
+    net = OUR8(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

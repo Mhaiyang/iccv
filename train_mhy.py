@@ -26,33 +26,33 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.mhy9_b import MHY9_B
+from model.our2 import OUR2
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [5]
 
 ckpt_path = './ckpt'
-exp_name = 'MHY9_msd9_B_BCE'
+exp_name = 'OUR2_MSRA_5e-4'
 
 # mirror
-args = {
-    'epoch_num': 140,
-    'train_batch_size': 10,
-    'last_epoch': 0,
-    'lr': 1e-3,
-    'lr_decay': 0.9,
-    'weight_decay': 5e-4,
-    'momentum': 0.9,
-    'snapshot': '',
-    'scale': 384,
-    'save_point': [90, 100, 120, 140],
-    'add_graph': True,
-    'poly_train': True,
-    'optimizer': 'SGD'
-}
+# args = {
+#     'epoch_num': 140,
+#     'train_batch_size': 10,
+#     'last_epoch': 0,
+#     'lr': 1e-3,
+#     'lr_decay': 0.9,
+#     'weight_decay': 5e-4,
+#     'momentum': 0.9,
+#     'snapshot': '',
+#     'scale': 384,
+#     'save_point': [90, 100, 120, 140],
+#     'add_graph': True,
+#     'poly_train': True,
+#     'optimizer': 'SGD'
+# }
 
 # shadow
 # args = {
@@ -72,21 +72,21 @@ args = {
 # }
 
 # saliency
-# args = {
-#     'epoch_num': 60,
-#     'train_batch_size': 10,
-#     'last_epoch': 0,
-#     'lr': 1e-3,
-#     'lr_decay': 0.9,
-#     'weight_decay': 5e-4,
-#     'momentum': 0.9,
-#     'snapshot': '',
-#     'scale': 384,
-#     'save_point': [40, 50, 60],
-#     'add_graph': True,
-#     'poly_train': True,
-#     'optimizer': 'SGD'
-# }
+args = {
+    'epoch_num': 100,
+    'train_batch_size': 10,
+    'last_epoch': 0,
+    'lr': 5e-4,
+    'lr_decay': 0.9,
+    'weight_decay': 5e-4,
+    'momentum': 0.9,
+    'snapshot': '',
+    'scale': 384,
+    'save_point': [60, 80, 100],
+    'add_graph': True,
+    'poly_train': True,
+    'optimizer': 'SGD'
+}
 
 # Path.
 check_mkdir(ckpt_path)
@@ -110,7 +110,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=32, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
@@ -120,7 +120,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = MHY9_B(backbone_path).cuda(device_ids[0]).train()
+    net = OUR2(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -179,17 +179,17 @@ def train(net, optimizer):
 
             predict_4, predict_3, predict_2, predict_1, predict_f = net(inputs)
 
-            # loss_4 = L.lovasz_hinge(predict_4, labels)
-            # loss_3 = L.lovasz_hinge(predict_3, labels)
-            # loss_2 = L.lovasz_hinge(predict_2, labels)
-            # loss_1 = L.lovasz_hinge(predict_1, labels)
-            # loss_f = L.lovasz_hinge(predict_f, labels)
+            loss_4 = L.lovasz_hinge(predict_4, labels)
+            loss_3 = L.lovasz_hinge(predict_3, labels)
+            loss_2 = L.lovasz_hinge(predict_2, labels)
+            loss_1 = L.lovasz_hinge(predict_1, labels)
+            loss_f = L.lovasz_hinge(predict_f, labels)
 
-            loss_4 = bce_logit(predict_4, labels)
-            loss_3 = bce_logit(predict_3, labels)
-            loss_2 = bce_logit(predict_2, labels)
-            loss_1 = bce_logit(predict_1, labels)
-            loss_f = bce_logit(predict_f, labels)
+            # loss_4 = bce_logit(predict_4, labels)
+            # loss_3 = bce_logit(predict_3, labels)
+            # loss_2 = bce_logit(predict_2, labels)
+            # loss_1 = bce_logit(predict_1, labels)
+            # loss_f = bce_logit(predict_f, labels)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f
 

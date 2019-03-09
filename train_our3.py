@@ -114,7 +114,7 @@ train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_wo
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
-bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
+# bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 
 def main():
     print(args)
@@ -186,7 +186,7 @@ def train(net, optimizer):
             loss_2 = L.lovasz_hinge(predict_2, labels)
             loss_1 = L.lovasz_hinge(predict_1, labels)
             loss_f = L.lovasz_hinge(predict_f, labels)
-            loss_e = bce_logit(predict_e, edges)
+            loss_e = L.lovasz_hinge(predict_e, edges)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f + loss_e
 

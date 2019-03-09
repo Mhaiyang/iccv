@@ -26,11 +26,11 @@ device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'OUR2_MSRA'
+exp_name = 'OUR2_BL'
 args = {
-    'snapshot': '50',
+    'snapshot': '140',
     'scale': 384,
-    'crf': False
+    'crf': True
 }
 
 img_transform = transforms.Compose([

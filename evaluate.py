@@ -24,7 +24,7 @@ ROOT_DIR = os.getcwd()
 IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
-PREDICT_DIR = "/home/iccd/iccv/ckpt/OUR4/OUR4_100"
+PREDICT_DIR = "/home/iccd/iccv/ckpt/OUR2_SBU_0.005_BL/OUR2_SBU_0.005_BL_140"
 # PREDICT_DIR = "/home/iccd/iccv/msd9_results/msd9_maskrcnn_scratch"
 # PREDICT_DIR = "/root/ckpt/MHY2_msd9_2/MHY2_msd9_2_140"
 
@@ -75,8 +75,10 @@ for i, imgname in enumerate(imglist):
     MAE.append(mae)
     BER.append(ber)
 
-    num = imgname.split("_")[0]
-    NUM.append(int(num))
+    # num = imgname.split("_")[0]
+    num = imgname.split(".")[0]
+    # NUM.append(int(num))
+    NUM.append(num)
 
 mean_ACC = sum(ACC)/len(ACC)
 mean_IOU = 100 * sum(IOU)/len(IOU)

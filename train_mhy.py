@@ -26,16 +26,16 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.our5 import OUR5
+from model.our6 import OUR6
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [6]
 
 ckpt_path = './ckpt'
-exp_name = 'OUR5'
+exp_name = 'OUR6'
 
 # mirror
 args = {
@@ -48,7 +48,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 384,
-    'save_point': [100, 120, 140],
+    'save_point': [90, 100, 120, 140],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'
@@ -110,7 +110,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=32, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
@@ -120,7 +120,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = OUR5(backbone_path).cuda(device_ids[0]).train()
+    net = OUR6(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

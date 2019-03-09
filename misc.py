@@ -88,7 +88,8 @@ def data_write(file_path, datas):
 
 
 def get_gt_mask(imgname, MASK_DIR):
-    filestr = imgname.split(".")[0]
+    # filestr = imgname.split(".")[0]
+    filestr = imgname[:-4]
     mask_folder = MASK_DIR
     mask_path = mask_folder + "/" + filestr + ".png"
     mask = skimage.io.imread(mask_path)
@@ -99,7 +100,8 @@ def get_gt_mask(imgname, MASK_DIR):
 
 def get_normalized_predict_mask(imgname, PREDICT_MASK_DIR):
     """Get mask by specified single image name"""
-    filestr = imgname.split(".")[0]
+    # filestr = imgname.split(".")[0]
+    filestr = imgname[:-4]
     mask_folder = PREDICT_MASK_DIR
     mask_path = mask_folder + "/" + filestr + ".png"
     if not os.path.exists(mask_path):
@@ -114,7 +116,8 @@ def get_normalized_predict_mask(imgname, PREDICT_MASK_DIR):
 
 def get_binary_predict_mask(imgname, PREDICT_MASK_DIR):
     """Get mask by specified single image name"""
-    filestr = imgname.split(".")[0]
+    # filestr = imgname.split(".")[0]
+    filestr = imgname[:-4]
     mask_folder = PREDICT_MASK_DIR
     mask_path = mask_folder + "/" + filestr + ".png"
     if not os.path.exists(mask_path):
@@ -137,8 +140,8 @@ def accuracy_mirror(predict_mask, gt_mask):
 
     N_p = np.sum(gt_mask)
     N_n = np.sum(np.logical_not(gt_mask))
-    if N_p + N_n != 640 * 512:
-        raise Exception("Check if mask shape is correct!")
+    # if N_p + N_n != 640 * 512:
+    #     raise Exception("Check if mask shape is correct!")
 
     TP = np.sum(np.logical_and(predict_mask, gt_mask))
     TN = np.sum(np.logical_and(np.logical_not(predict_mask), np.logical_not(gt_mask)))
@@ -160,8 +163,8 @@ def accuracy_image(predict_mask, gt_mask):
 
     N_p = np.sum(gt_mask)
     N_n = np.sum(np.logical_not(gt_mask))
-    if N_p + N_n != 640 * 512:
-        raise Exception("Check if mask shape is correct!")
+    # if N_p + N_n != 640 * 512:
+    #     raise Exception("Check if mask shape is correct!")
 
     TP = np.sum(np.logical_and(predict_mask, gt_mask))
     TN = np.sum(np.logical_and(np.logical_not(predict_mask), np.logical_not(gt_mask)))
@@ -226,8 +229,8 @@ def compute_mae(predict_mask, gt_mask):
 
     N_p = np.sum(gt_mask)
     N_n = np.sum(np.logical_not(gt_mask))
-    if N_p + N_n != 640 * 512:
-        raise Exception("Check if mask shape is correct!")
+    # if N_p + N_n != 640 * 512:
+    #     raise Exception("Check if mask shape is correct!")
 
     mae_ = np.mean(abs(predict_mask - gt_mask)).item()
 
@@ -245,8 +248,8 @@ def compute_ber(predict_mask, gt_mask):
 
     N_p = np.sum(gt_mask)
     N_n = np.sum(np.logical_not(gt_mask))
-    if N_p + N_n != 640 * 512:
-        raise Exception("Check if mask shape is correct!")
+    # if N_p + N_n != 640 * 512:
+    #     raise Exception("Check if mask shape is correct!")
 
     TP = np.sum(np.logical_and(predict_mask, gt_mask))
     TN = np.sum(np.logical_and(np.logical_not(predict_mask), np.logical_not(gt_mask)))

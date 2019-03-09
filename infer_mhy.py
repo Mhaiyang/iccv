@@ -20,15 +20,15 @@ import skimage.io
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.our4 import OUR4
+from model.our2 import OUR2
 
-device_ids = [0]
+device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'OUR4'
+exp_name = 'OUR2_SBU_0.005_BL'
 args = {
-    'snapshot': '100',
+    'snapshot': '140',
     'scale': 384,
     'crf': True
 }
@@ -45,7 +45,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = OUR4().cuda(device_ids[0])
+    net = OUR2().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

@@ -74,7 +74,7 @@ exp_name = 'OUR2_DUTS_1e-3'
 # saliency
 args = {
     'epoch_num': 100,
-    'train_batch_size': 10,
+    'train_batch_size': 1,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,

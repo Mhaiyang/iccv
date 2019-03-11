@@ -29,11 +29,18 @@
 import os
 from PIL import Image
 
-input_path = '/media/iccd/TAYLORMEI/saliency_dataset/DUTS/train/image/'
+image_path = '/media/iccd/TAYLORMEI/saliency_dataset/DUTS/train/image/n03447447_4852.jpg'
+image_path = '/home/iccd/iccv/color.jpg'
 
-imglist = os.listdir(input_path)
+image = Image.open(image_path)
+print(image.mode)
 
-for i, imgname in enumerate(imglist):
-    image = Image.open(input_path + imgname)
-    print(image.size)
-print('ok')
+# input_path = '/media/iccd/TAYLORMEI/saliency_dataset/DUTS/train/image/'
+#
+# imglist = os.listdir(input_path)
+#
+# for i, imgname in enumerate(imglist):
+#     image = Image.open(input_path + imgname)
+#     if image.mode != "RGB":
+#         print(imgname)
+# print('ok')

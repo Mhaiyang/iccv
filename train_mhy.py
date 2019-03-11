@@ -32,7 +32,7 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [9]
+device_ids = [2]
 
 ckpt_path = './ckpt'
 exp_name = 'OUR2_DUTS_1e-3'

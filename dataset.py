@@ -31,7 +31,8 @@ class ImageFolder(data.Dataset):
         if self.target_transform is not None:
             target = self.target_transform(target)
 
-        assert img.size == target.size
+        if img.size != target.size:
+            print(self.imgs[index])
         return img, target
 
     def __len__(self):

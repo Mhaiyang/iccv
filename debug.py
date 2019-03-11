@@ -34,6 +34,6 @@ input_path = '/media/iccd/TAYLORMEI/saliency_dataset/DUTS/train/image/'
 imglist = os.listdir(input_path)
 
 for i, imgname in enumerate(imglist):
-    if not imgname.endswith('.jpg'):
-        print(imgname)
+    image = Image.open(input_path + imgname)
+    print(image.size)
 print('ok')

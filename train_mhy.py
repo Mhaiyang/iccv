@@ -32,10 +32,10 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [4]
+device_ids = [9]
 
 ckpt_path = './ckpt'
-exp_name = 'OUR2_MSRA_1e-3'
+exp_name = 'OUR2_DUTS_1e-3'
 
 # mirror
 # args = {

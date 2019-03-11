@@ -8,14 +8,18 @@ clc;clear;close all;
 % addpath(genpath('.'));
 
 %% First method
-% input_path = '/home/iccd/data/msd9/test/image/';
-% truth_path = '/home/iccd/data/msd9/test/mask/';
+input_path = '/home/iccd/data/msd9/test/image/';
+truth_path = '/home/iccd/data/msd9/test/mask/';
 % input_path = '/home/iccd/data/MSRA10K/DUT-OMRON/image/';
 % truth_path = '/home/iccd/data/MSRA10K/DUT-OMRON/mask/';
-input_path = '/home/iccd/data/MSRA10K/ECSSD/image/';
-truth_path = '/home/iccd/data/MSRA10K/ECSSD/mask/';
-result_path = '/home/iccd/iccv/ckpt/OUR2_MSRA_0.001_BL/OUR2_MSRA_0.001_BL_60_E/';
-% result_path = '/home/iccd/iccv/msd9_results/msd9_icnet/';
+% input_path = '/home/iccd/data/MSRA10K/ECSSD/image/';
+% truth_path = '/home/iccd/data/MSRA10K/ECSSD/mask/';
+% input_path = '/home/iccd/data/MSRA10K/PASCAL-S/image/';
+% truth_path = '/home/iccd/data/MSRA10K/PASCAL-S/mask/';
+% input_path = '/home/iccd/data/MSRA10K/HKU-IS/image/';
+% truth_path = '/home/iccd/data/MSRA10K/HKU-IS/mask/';
+% result_path = '/home/iccd/iccv/ckpt/OUR2_MSRA_1e-3/OUR2_MSRA_1e-3_100_E/';
+result_path = '/home/iccd/iccv/msd9_results/msd9_pspnet/';
 
 [PreF,RecallF,FMeasureF] =  get_Fmeasure(input_path,result_path,truth_path);
 

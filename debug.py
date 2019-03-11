@@ -26,8 +26,14 @@
 # print(np.max(predict_mask))
 # predict_mask = skimage.transform.resize(predict_mask, [512, 512], 0)
 
-import numpy as np
+import os
+from PIL import Image
 
-a = np.finfo(np.float).eps
-print(a)
+input_path = '/media/iccd/TAYLORMEI/saliency_dataset/DUTS/train/image/'
 
+imglist = os.listdir(input_path)
+
+for i, imgname in enumerate(imglist):
+    if not imgname.endswith('.jpg'):
+        print(imgname)
+print('ok')

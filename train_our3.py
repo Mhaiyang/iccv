@@ -26,16 +26,16 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.our3 import OUR3
+from model.taylor2 import TAYLOR2
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [9]
+device_ids = [0]
 
 ckpt_path = './ckpt'
-exp_name = 'OUR3'
+exp_name = 'TAYLOR2'
 
 # mirror
 args = {
@@ -110,17 +110,17 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=32, shuffle=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
-# bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
+bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 
 def main():
     print(args)
     print(exp_name)
 
-    net = OUR3(backbone_path).cuda(device_ids[0]).train()
+    net = TAYLOR2(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))
@@ -186,7 +186,7 @@ def train(net, optimizer):
             loss_2 = L.lovasz_hinge(predict_2, labels)
             loss_1 = L.lovasz_hinge(predict_1, labels)
             loss_f = L.lovasz_hinge(predict_f, labels)
-            loss_e = L.lovasz_hinge(predict_e, edges)
+            loss_e = bce_logit(predict_e, edges)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f + loss_e
 

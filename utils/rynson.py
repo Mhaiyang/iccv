@@ -12,10 +12,10 @@ import os
 import numpy as np
 import skimage.io
 
-image_path = '/media/iccd/TAYLORMEI/rynson/image/'
-mask_path = '/media/iccd/TAYLORMEI/rynson/mirror_map_288/'
+image_path = '/media/iccd/TAYLORMEI/rynson2/image/'
+mask_path = '/media/iccd/TAYLORMEI/rynson2/picanet/'
 
-output_path = '/media/iccd/TAYLORMEI/rynson/color/our2_288/'
+output_path = '/media/iccd/TAYLORMEI/rynson2/color/picanet/'
 if not os.path.exists(output_path):
     os.mkdir(output_path)
 

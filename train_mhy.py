@@ -26,33 +26,33 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.our2 import OUR2
+from model.taylor1 import TAYLOR1
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [2]
+device_ids = [1]
 
 ckpt_path = './ckpt'
-exp_name = 'OUR2_DUTS_1e-3'
+exp_name = 'TAYLOR1'
 
 # mirror
-# args = {
-#     'epoch_num': 140,
-#     'train_batch_size': 10,
-#     'last_epoch': 0,
-#     'lr': 1e-3,
-#     'lr_decay': 0.9,
-#     'weight_decay': 5e-4,
-#     'momentum': 0.9,
-#     'snapshot': '',
-#     'scale': 384,
-#     'save_point': [90, 100, 120, 140],
-#     'add_graph': True,
-#     'poly_train': True,
-#     'optimizer': 'SGD'
-# }
+args = {
+    'epoch_num': 140,
+    'train_batch_size': 10,
+    'last_epoch': 0,
+    'lr': 1e-3,
+    'lr_decay': 0.9,
+    'weight_decay': 5e-4,
+    'momentum': 0.9,
+    'snapshot': '',
+    'scale': 384,
+    'save_point': [100, 120, 140],
+    'add_graph': True,
+    'poly_train': True,
+    'optimizer': 'SGD'
+}
 
 # shadow
 # args = {
@@ -72,21 +72,21 @@ exp_name = 'OUR2_DUTS_1e-3'
 # }
 
 # saliency
-args = {
-    'epoch_num': 100,
-    'train_batch_size': 1,
-    'last_epoch': 0,
-    'lr': 1e-3,
-    'lr_decay': 0.9,
-    'weight_decay': 5e-4,
-    'momentum': 0.9,
-    'snapshot': '',
-    'scale': 384,
-    'save_point': [60, 80, 100],
-    'add_graph': True,
-    'poly_train': True,
-    'optimizer': 'SGD'
-}
+# args = {
+#     'epoch_num': 100,
+#     'train_batch_size': 1,
+#     'last_epoch': 0,
+#     'lr': 1e-3,
+#     'lr_decay': 0.9,
+#     'weight_decay': 5e-4,
+#     'momentum': 0.9,
+#     'snapshot': '',
+#     'scale': 384,
+#     'save_point': [60, 80, 100],
+#     'add_graph': True,
+#     'poly_train': True,
+#     'optimizer': 'SGD'
+# }
 
 # Path.
 check_mkdir(ckpt_path)
@@ -110,7 +110,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=32, shuffle=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
@@ -120,7 +120,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = OUR2(backbone_path).cuda(device_ids[0]).train()
+    net = TAYLOR1(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

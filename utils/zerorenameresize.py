@@ -12,10 +12,10 @@ import os
 import random
 from skimage import io, transform
 
-IMAGE_DIR = '/media/iccd/TAYLORMEI/Camera'
-OUTPUT_DIR = '/media/iccd/TAYLORMEI/add/'
+IMAGE_DIR = '/media/iccd/TAYLORMEI/negative'
+OUTPUT_DIR = '/home/iccd/data/2019/31/'
 
-init_number = 5410
+init_number = 5540
 
 if not os.path.exists(OUTPUT_DIR):
     os.mkdir(OUTPUT_DIR)

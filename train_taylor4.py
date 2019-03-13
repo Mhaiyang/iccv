@@ -27,16 +27,16 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.taylor4 import TAYLOR4
+from model.taylor5 import TAYLOR5
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [1]
+device_ids = [0]
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR4'
+exp_name = 'TAYLOR5'
 
 args = {
     'epoch_num': 160,
@@ -48,7 +48,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 384,
-    'save_point': [100, 120, 140, 160],
+    'save_point': [140, 160],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'
@@ -84,7 +84,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = TAYLOR4(backbone_path).cuda(device_ids[0]).train()
+    net = TAYLOR5(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

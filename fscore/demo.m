@@ -18,8 +18,8 @@ truth_path = '/home/iccd/data/msd9/test/mask/';
 % truth_path = '/home/iccd/data/MSRA10K/PASCAL-S/mask/';
 % input_path = '/home/iccd/data/MSRA10K/HKU-IS/image/';
 % truth_path = '/home/iccd/data/MSRA10K/HKU-IS/mask/';
-% result_path = '/home/iccd/iccv/ckpt/OUR2_MSRA_1e-3/OUR2_MSRA_1e-3_100_E/';
-result_path = '/home/iccd/iccv/msd9_results/msd9_pspnet/';
+result_path = '/home/iccd/iccv/ckpt/TAYLOR1/TAYLOR1_140/';
+% result_path = '/home/iccd/iccv/msd9_results/msd9_pspnet/';
 
 [PreF,RecallF,FMeasureF] =  get_Fmeasure(input_path,result_path,truth_path);
 

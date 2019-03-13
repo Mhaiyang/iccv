@@ -20,6 +20,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from tensorboardX import SummaryWriter
 from tqdm import tqdm
+import torch.nn.functional as F
 
 import joint_transforms
 from config import msd_training_root
@@ -32,10 +33,10 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [1]
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR2'
+exp_name = 'TAYLOR2_2'
 
 # mirror
 args = {
@@ -114,7 +115,7 @@ train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_wo
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
-bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
+# bce_logit = nn.BCEWithLogitsLoss().cuda(device_ids[0])
 
 def main():
     print(args)
@@ -186,7 +187,8 @@ def train(net, optimizer):
             loss_2 = L.lovasz_hinge(predict_2, labels)
             loss_1 = L.lovasz_hinge(predict_1, labels)
             loss_f = L.lovasz_hinge(predict_f, labels)
-            loss_e = bce_logit(predict_e, edges)
+            # loss_e = bce_logit(predict_e, edges)
+            loss_e = F.binary_cross_entropy_with_logits(predict_e, edges, pos_weight=10)
 
             loss = loss_4 + loss_3 + loss_2 + loss_1 + loss_f + loss_e
 

@@ -20,16 +20,16 @@ import skimage.io
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.our2 import OUR2
+from model.taylor1 import TAYLOR1
 
-device_ids = [0]
+device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'OUR2'
+exp_name = 'TAYLOR1'
 args = {
     'snapshot': '140',
-    'scale': 576,
+    'scale': 384,
     'crf': True
 }
 
@@ -45,7 +45,8 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = OUR2().cuda(device_ids[0])
+    net = TAYLOR1().cuda(device_ids[0])
+    # net = TAYLOR1()
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))
@@ -67,17 +68,18 @@ def main():
                     print("{} is a gray image.".format(name))
                 w, h = img.size
                 img_var = Variable(img_transform(img).unsqueeze(0)).cuda()
+                # img_var = Variable(img_transform(img).unsqueeze(0))
                 _, _, _, _, f = net(img_var)
                 output = f.data.squeeze(0).cpu()
                 prediction = np.array(transforms.Resize((h, w))(to_pil(output)))
                 if args['crf']:
                     prediction = crf_refine(np.array(img.convert('RGB')), prediction)
 
-                # Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
+                Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), np.where(prediction>=127.5, 255, 0).astype(np.uint8))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), prediction.astype(np.uint8))
-                check_mkdir(os.path.join(msd_testing_root, 'mirror_map'))
-                Image.fromarray(prediction).save(os.path.join(msd_testing_root, 'mirror_map', img_name[:-4] + ".png"))
+                # check_mkdir(os.path.join(msd_testing_root, 'mirror_map'))
+                # Image.fromarray(prediction).save(os.path.join(msd_testing_root, 'mirror_map', img_name[:-4] + ".png"))
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))
 

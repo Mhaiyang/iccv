@@ -48,7 +48,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 384,
-    'save_point': [100, 120, 160],
+    'save_point': [100, 120, 140, 160],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'

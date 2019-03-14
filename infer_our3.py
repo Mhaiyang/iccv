@@ -20,15 +20,15 @@ import skimage.io
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.taylor5 import TAYLOR5
+from model.taylor6 import TAYLOR6
 
 device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR5'
+exp_name = 'TAYLOR6'
 args = {
-    'snapshot': '140',
+    'snapshot': '100',
     'scale': 384,
     'crf': True
 }
@@ -45,7 +45,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = TAYLOR5().cuda(device_ids[0])
+    net = TAYLOR6().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))
@@ -66,16 +66,16 @@ def main():
                     print("{} is a gray image.".format(name))
                 w, h = img.size
                 img_var = Variable(img_transform(img).unsqueeze(0)).cuda()
-                # f_4, f_3, f_2, f_1, e = net(img_var)
-                f_4, f_3, f_2, f_1 = net(img_var)
+                f_4, f_3, f_2, f_1, e = net(img_var)
+                # f_4, f_3, f_2, f_1 = net(img_var)
                 # output = f.data.squeeze(0).cpu()
-                # edge = e.data.squeeze(0).cpu()
+                edge = e.data.squeeze(0).cpu()
                 f_4 = f_4.data.squeeze(0).cpu()
                 f_3 = f_3.data.squeeze(0).cpu()
                 f_2 = f_2.data.squeeze(0).cpu()
                 f_1 = f_1.data.squeeze(0).cpu()
                 # prediction = np.array(transforms.Resize((h, w))(to_pil(output)))
-                # edge = np.array(transforms.Resize((h, w))(to_pil(edge)))
+                edge = np.array(transforms.Resize((h, w))(to_pil(edge)))
                 f_4 = np.array(transforms.Resize((h, w))(to_pil(f_4)))
                 f_3 = np.array(transforms.Resize((h, w))(to_pil(f_3)))
                 f_2 = np.array(transforms.Resize((h, w))(to_pil(f_2)))
@@ -83,19 +83,19 @@ def main():
                 if args['crf']:
                     # prediction = crf_refine(np.array(img.convert('RGB')), prediction)
                     f_1 = crf_refine(np.array(img.convert('RGB')), f_1)
-                    f_2 = crf_refine(np.array(img.convert('RGB')), f_2)
+                    # f_2 = crf_refine(np.array(img.convert('RGB')), f_2)
                     # edge = crf_refine(np.array(img.convert('RGB')), edge)
 
                 # Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'map', img_name[:-4] + ".png"))
-                # Image.fromarray(edge).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'edge', img_name[:-4] + ".png"))
+                Image.fromarray(edge).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'edge', img_name[:-4] + ".png"))
                 Image.fromarray(f_4).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f4', img_name[:-4] + ".png"))
                 Image.fromarray(f_3).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f3', img_name[:-4] + ".png"))
                 Image.fromarray(f_2).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f2', img_name[:-4] + ".png"))
                 Image.fromarray(f_1).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f1', img_name[:-4] + ".png"))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), np.where(prediction>=127.5, 255, 0).astype(np.uint8))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), prediction.astype(np.uint8))
-                # check_mkdir(os.path.join(msd_testing_root, 'mirror_map'))
-                # Image.fromarray(prediction).save(os.path.join(msd_testing_root, 'mirror_map', img_name[:-4] + ".png"))
+                # check_mkdir(os.path.join(msd_testing_root, 'taylor5'))
+                # Image.fromarray(f_1).save(os.path.join(msd_testing_root, 'taylor5', img_name[:-4] + ".png"))
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))
 

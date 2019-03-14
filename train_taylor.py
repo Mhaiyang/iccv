@@ -27,16 +27,16 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.taylor6 import TAYLOR6
+from model.taylor7 import TAYLOR7
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [1]
+device_ids = [6]
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR6'
+exp_name = 'TAYLOR7'
 
 # mirror
 args = {
@@ -77,7 +77,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=64, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
@@ -85,7 +85,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = TAYLOR6(backbone_path).cuda(device_ids[0]).train()
+    net = TAYLOR7(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

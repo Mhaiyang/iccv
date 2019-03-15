@@ -27,13 +27,14 @@
 # predict_mask = skimage.transform.resize(predict_mask, [512, 512], 0)
 
 import os
-from PIL import Image
+import numpy as np
+import skimage.io
 
-image_path = '/media/iccd/TAYLORMEI/saliency_dataset/DUTS/train/image/n03447447_4852.jpg'
-image_path = '/home/iccd/iccv/color.jpg'
+# mask_path = '/home/iccd/data/msd10/train/mask/5536_640x512.png'
+mask_path = '/home/iccd/data/msd10/train/mask/5540_512x640.png'
 
-image = Image.open(image_path)
-print(image.mode)
+mask = skimage.io.imread(mask_path)
+print(mask.shape)
 
 # input_path = '/media/iccd/TAYLORMEI/saliency_dataset/DUTS/train/image/'
 #

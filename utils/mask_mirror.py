@@ -12,9 +12,12 @@ import os
 import numpy as np
 import skimage.io
 
-image_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/image/'
-mask_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/mirror_map_448/'
-output_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/mask_mirror/448/'
+# image_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/image/'
+# mask_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/mirror_map_448/'
+# output_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/mask_mirror/448/'
+image_path = '/media/iccd/TAYLORMEI/figure1/image/'
+mask_path = '/media/iccd/TAYLORMEI/figure1/taylor5_384/'
+output_path = '/media/iccd/TAYLORMEI/figure1/mask_mirror/'
 
 if not os.path.exists(output_path):
     os.mkdir(output_path)
@@ -27,5 +30,5 @@ for i, imgname in enumerate(imglist):
 
     masked_image = np.zeros_like(image)
     for j in range(image.shape[2]):
-        masked_image[:, :, j] = np.where(mask >= 127.5, 255, image[:, :, j])
+        masked_image[:, :, j] = np.where(mask >= 127.5, 0, image[:, :, j])
     skimage.io.imsave(output_path + imgname, masked_image)

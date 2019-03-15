@@ -12,14 +12,15 @@ import os
 import numpy as np
 import skimage.io
 
-image_path = '/home/iccd/data/2019/31/image'
-mask_path = '/home/iccd/data/2019/31/mask'
+image_path = '/home/iccd/data/2019/32/image'
+mask_path = '/home/iccd/data/2019/32/mask'
 
 imglist = os.listdir(image_path)
 for i, imgname in enumerate(imglist):
     print(i, imgname)
     image = skimage.io.imread(os.path.join(image_path, imgname))
-    mask = np.zeros_like(image)
+    mask = np.zeros_like(image[:, :, 0])
+    print(mask.shape)
     skimage.io.imsave(os.path.join(mask_path, imgname[:-4] + '.png'), mask)
 
 print("ok")

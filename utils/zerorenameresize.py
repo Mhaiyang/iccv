@@ -12,10 +12,10 @@ import os
 import random
 from skimage import io, transform
 
-IMAGE_DIR = '/media/iccd/TAYLORMEI/mhy0'
-OUTPUT_DIR = '/media/iccd/TAYLORMEI/mhy/'
+IMAGE_DIR = '/media/iccd/TAYLORMEI/door0'
+OUTPUT_DIR = '/media/iccd/TAYLORMEI/door/'
 
-init_number = 200
+init_number = 5700
 
 if not os.path.exists(OUTPUT_DIR):
     os.mkdir(OUTPUT_DIR)
@@ -31,14 +31,14 @@ for i, imgname in enumerate(imglist):
 
     image = io.imread(image_path)
 
-    # height = image.shape[0]
-    # width = image.shape[1]
-    # if height > width:
-    #     fixed_size = (640, 512)
-    # else:
-    #     fixed_size = (512, 640)
-    # fixed_image = transform.resize(image, fixed_size, order=3)
-    # io.imsave(OUTPUT_DIR + str(init_number) + "_" + str(fixed_size[1]) + "x" + str(fixed_size[0]) + ".jpg", fixed_image)
+    height = image.shape[0]
+    width = image.shape[1]
+    if height > width:
+        fixed_size = (640, 512)
+    else:
+        fixed_size = (512, 640)
+    fixed_image = transform.resize(image, fixed_size, order=3)
+    io.imsave(OUTPUT_DIR + str(init_number) + "_" + str(fixed_size[1]) + "x" + str(fixed_size[0]) + ".jpg", fixed_image)
 
-    io.imsave(OUTPUT_DIR + str(init_number) + ".jpg", image)
+    # io.imsave(OUTPUT_DIR + str(init_number) + ".jpg", image)
     init_number += 1

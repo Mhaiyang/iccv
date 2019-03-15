@@ -27,16 +27,16 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.taylor6 import TAYLOR6
+from model.taylor5_noc import TAYLOR5_NOC
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [1]
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR6'
+exp_name = 'TAYLOR5_NOC'
 
 # mirror
 args = {

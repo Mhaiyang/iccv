@@ -33,13 +33,13 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [9]
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR5_DOOR'
+exp_name = 'TAYLOR5_MSRA'
 
 args = {
-    'epoch_num': 160,
+    'epoch_num': 100,
     'train_batch_size': 10,
     'last_epoch': 0,
     'lr': 1e-3,
@@ -48,7 +48,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 384,
-    'save_point': [100, 120, 140, 160],
+    'save_point': [60, 80, 100],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'
@@ -76,7 +76,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=128, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=0, shuffle=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 

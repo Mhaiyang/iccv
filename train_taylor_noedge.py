@@ -27,19 +27,19 @@ from config import msd_training_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.taylor5 import TAYLOR5
+from model.taylor5_oneb import TAYLOR5_ONEB
 
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [9]
+device_ids = [8]
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR5_MSRA'
+exp_name = 'TAYLOR5_ONEB'
 
 args = {
-    'epoch_num': 100,
+    'epoch_num': 140,
     'train_batch_size': 10,
     'last_epoch': 0,
     'lr': 1e-3,
@@ -48,7 +48,7 @@ args = {
     'momentum': 0.9,
     'snapshot': '',
     'scale': 384,
-    'save_point': [60, 80, 100],
+    'save_point': [100, 120, 140],
     'add_graph': True,
     'poly_train': True,
     'optimizer': 'SGD'
@@ -86,7 +86,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = TAYLOR5(backbone_path).cuda(device_ids[0]).train()
+    net = TAYLOR5_ONEB(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

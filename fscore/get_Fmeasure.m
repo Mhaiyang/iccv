@@ -7,7 +7,7 @@ function [PreF,RecallF,FMeasureF] =  get_Fmeasure(imdir,outdir, gtdir)
 % changed by Guangyu Zhong, Guangyuzhonghikari@gmail.com
 %----------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-imnames=dir([imdir '*' 'jpg']);
+imnames=dir([imdir '*' 'g']);
 
 for ii=1:length(imnames)
     ii

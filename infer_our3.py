@@ -20,16 +20,16 @@ import skimage.io
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.taylor5_b import TAYLOR5_B
+from model.taylor5 import TAYLOR5
 
 device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR5_B_BCE'
+exp_name = 'TAYLOR5_MSRA'
 args = {
     'snapshot': '100',
-    'scale': 352,
+    'scale': 384,
     'crf': True
 }
 
@@ -45,7 +45,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = TAYLOR5_B().cuda(device_ids[0])
+    net = TAYLOR5().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))
@@ -55,7 +55,8 @@ def main():
     net.eval()
     with torch.no_grad():
         for name, root in to_test.items():
-            img_list = [img_name for img_name in os.listdir(os.path.join(root, 'image')) if img_name.endswith('.jpg')]
+            # img_list = [img_name for img_name in os.listdir(os.path.join(root, 'image')) if img_name.endswith('.jpg')]
+            img_list = [img_name for img_name in os.listdir(os.path.join(root, 'image'))]
             start = time.time()
             for idx, img_name in enumerate(img_list):
                 print('predicting for {}: {:>4d} / {}'.format(name, idx + 1, len(img_list)))
@@ -90,14 +91,14 @@ def main():
 
                 # Image.fromarray(prediction).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'map', img_name[:-4] + ".png"))
                 # Image.fromarray(edge).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'edge', img_name[:-4] + ".png"))
-                Image.fromarray(f_4).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f4', img_name[:-4] + ".png"))
-                Image.fromarray(f_3).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f3', img_name[:-4] + ".png"))
-                Image.fromarray(f_2).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f2', img_name[:-4] + ".png"))
+                # Image.fromarray(f_4).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f4', img_name[:-4] + ".png"))
+                # Image.fromarray(f_3).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f3', img_name[:-4] + ".png"))
+                # Image.fromarray(f_2).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f2', img_name[:-4] + ".png"))
                 Image.fromarray(f_1).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f1', img_name[:-4] + ".png"))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f1', img_name[:-4] + ".png"), np.where(f_1>=127.5, 255, 0).astype(np.uint8))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), prediction.astype(np.uint8))
-                # check_mkdir(os.path.join(msd_testing_root, 'taylor5'))
-                # Image.fromarray(f_1).save(os.path.join(msd_testing_root, 'taylor5', img_name[:-4] + ".png"))
+                # check_mkdir(os.path.join(msd_testing_root, 'taylor5_' + str(args['scale'])))
+                # Image.fromarray(f_1).save(os.path.join(msd_testing_root, 'taylor5_' + str(args['scale']), img_name[:-4] + ".png"))
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))
 

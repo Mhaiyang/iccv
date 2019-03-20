@@ -26,19 +26,20 @@ device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR5'
+exp_name = 'TAYLOR5_MSRA_BCE'
 args = {
-    'snapshot': '160',
+    'snapshot': '100',
     'scale': 384,
     'crf': True
 }
 
 img_transform = transforms.Compose([
     transforms.Resize((args['scale'], args['scale'])),
+    # transforms.Resize((256, 512)),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
-
+# detectron
 to_test = {'msd9': msd_testing_root}
 
 to_pil = transforms.ToPILImage()
@@ -94,11 +95,11 @@ def main():
                 # Image.fromarray(f_4).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f4', img_name[:-4] + ".png"))
                 # Image.fromarray(f_3).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f3', img_name[:-4] + ".png"))
                 # Image.fromarray(f_2).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f2', img_name[:-4] + ".png"))
-                # Image.fromarray(f_1).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f1', img_name[:-4] + ".png"))
+                Image.fromarray(f_1).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f1', img_name[:-4] + ".png"))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f1', img_name[:-4] + ".png"), np.where(f_1>=127.5, 255, 0).astype(np.uint8))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), prediction.astype(np.uint8))
-                check_mkdir(os.path.join(msd_testing_root, 'taylor5_' + str(args['scale'])))
-                Image.fromarray(f_1).save(os.path.join(msd_testing_root, 'taylor5_' + str(args['scale']), img_name[:-4] + ".png"))
+                # check_mkdir(os.path.join(msd_testing_root, 'mei_' + str(args['scale'])))
+                # Image.fromarray(f_1).save(os.path.join(msd_testing_root, 'mei_' + str(args['scale']), img_name[:-4] + ".png"))
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))
 

@@ -134,7 +134,7 @@ class Contrast_Module(nn.Module):
         super(Contrast_Module, self).__init__()
         self.inplanes = int(planes)
         self.inplanes_half = int(planes / 2)
-        self.outplanes = int(planes / 2)
+        self.outplanes = int(planes / 4)
 
         self.conv1 = nn.Sequential(nn.Conv2d(self.inplanes, self.inplanes_half, 3, 1, 1),
                                    nn.BatchNorm2d(self.inplanes_half), nn.ReLU())
@@ -144,6 +144,8 @@ class Contrast_Module(nn.Module):
 
         self.contrast_block_1 = Contrast_Block(self.outplanes)
         self.contrast_block_2 = Contrast_Block(self.outplanes)
+        self.contrast_block_3 = Contrast_Block(self.outplanes)
+        self.contrast_block_4 = Contrast_Block(self.outplanes)
 
         self.cbam = CBAM(self.inplanes)
 
@@ -153,8 +155,10 @@ class Contrast_Module(nn.Module):
 
         contrast_block_1 = self.contrast_block_1(conv2)
         contrast_block_2 = self.contrast_block_2(contrast_block_1)
+        contrast_block_3 = self.contrast_block_3(contrast_block_2)
+        contrast_block_4 = self.contrast_block_4(contrast_block_3)
 
-        output = self.cbam(torch.cat((contrast_block_1, contrast_block_2), 1))
+        output = self.cbam(torch.cat((contrast_block_1, contrast_block_2, contrast_block_3, contrast_block_4), 1))
 
         return output
 
@@ -218,9 +222,9 @@ class Contrast_Block(nn.Module):
 ###################################################################
 # ########################## NETWORK ##############################
 ###################################################################
-class TAYLOR5_TWOB(nn.Module):
+class TAYLOR5(nn.Module):
     def __init__(self, backbone_path=None):
-        super(TAYLOR5_TWOB, self).__init__()
+        super(TAYLOR5, self).__init__()
         resnext = ResNeXt101(backbone_path)
         self.layer0 = resnext.layer0
         self.layer1 = resnext.layer1

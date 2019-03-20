@@ -170,19 +170,13 @@ class Contrast_Block(nn.Module):
     def __init__(self, planes):
         super(Contrast_Block, self).__init__()
         self.inplanes = int(planes)
-        self.outplanes = int(planes / 4)
+        self.outplanes = int(planes / 2)
 
         self.local_1 = nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_1 = nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=2, dilation=2)
+        self.context_1 = nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=4, dilation=4)
 
         self.local_2 = nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_2 = nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=4, dilation=4)
-
-        self.local_3 = nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_3 = nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=8, dilation=8)
-
-        self.local_4 = nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=1, dilation=1)
-        self.context_4 = nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=16, dilation=16)
+        self.context_2 = nn.Conv2d(self.inplanes, self.outplanes, kernel_size=3, stride=1, padding=8, dilation=8)
 
         self.bn = nn.BatchNorm2d(self.outplanes)
         self.relu = nn.ReLU()
@@ -202,19 +196,7 @@ class Contrast_Block(nn.Module):
         ccl_2 = self.bn(ccl_2)
         ccl_2 = self.relu(ccl_2)
 
-        local_3 = self.local_3(x)
-        context_3 = self.context_3(x)
-        ccl_3 = local_3 - context_3
-        ccl_3 = self.bn(ccl_3)
-        ccl_3 = self.relu(ccl_3)
-
-        local_4 = self.local_4(x)
-        context_4 = self.context_4(x)
-        ccl_4 = local_4 - context_4
-        ccl_4 = self.bn(ccl_4)
-        ccl_4 = self.relu(ccl_4)
-
-        output = self.cbam(torch.cat((ccl_1, ccl_2, ccl_3, ccl_4), 1))
+        output = self.cbam(torch.cat((ccl_1, ccl_2), 1))
 
         return output
 
@@ -222,9 +204,9 @@ class Contrast_Block(nn.Module):
 ###################################################################
 # ########################## NETWORK ##############################
 ###################################################################
-class TAYLOR5(nn.Module):
+class TAYLOR5_TWOC(nn.Module):
     def __init__(self, backbone_path=None):
-        super(TAYLOR5, self).__init__()
+        super(TAYLOR5_TWOC, self).__init__()
         resnext = ResNeXt101(backbone_path)
         self.layer0 = resnext.layer0
         self.layer1 = resnext.layer1

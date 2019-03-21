@@ -13,9 +13,9 @@ import numpy as np
 import skimage.io
 
 image_path = '/media/iccd/TAYLORMEI/mei/image/'
-mask_path = '/media/iccd/TAYLORMEI/mei/mei_448/'
+mask_path = '/media/iccd/TAYLORMEI/mei/dsc/'
 
-output_path = '/media/iccd/TAYLORMEI/mei/color/448/'
+output_path = '/media/iccd/TAYLORMEI/mei/color/dsc/'
 
 # image_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/image/'
 # mask_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/taylor5_384/'

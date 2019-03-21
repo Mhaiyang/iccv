@@ -20,15 +20,15 @@ import skimage.io
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from model.taylor5 import TAYLOR5
+from model.taylor5_twoc import TAYLOR5_TWOC
 
 device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR5_MSRA_BCE'
+exp_name = 'TAYLOR5_TWOC'
 args = {
-    'snapshot': '100',
+    'snapshot': '140',
     'scale': 384,
     'crf': True
 }
@@ -46,7 +46,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = TAYLOR5().cuda(device_ids[0])
+    net = TAYLOR5_TWOC().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))
@@ -98,8 +98,8 @@ def main():
                 Image.fromarray(f_1).save(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f1', img_name[:-4] + ".png"))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), 'f1', img_name[:-4] + ".png"), np.where(f_1>=127.5, 255, 0).astype(np.uint8))
                 # skimage.io.imsave(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']), img_name[:-4] + ".png"), prediction.astype(np.uint8))
-                # check_mkdir(os.path.join(msd_testing_root, 'mei_' + str(args['scale'])))
-                # Image.fromarray(f_1).save(os.path.join(msd_testing_root, 'mei_' + str(args['scale']), img_name[:-4] + ".png"))
+                # check_mkdir(os.path.join(msd_testing_root, 'xin_' + str(args['scale'])))
+                # Image.fromarray(f_1).save(os.path.join(msd_testing_root, 'xin_' + str(args['scale']), img_name[:-4] + ".png"))
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))
 

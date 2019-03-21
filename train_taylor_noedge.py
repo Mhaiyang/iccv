@@ -33,10 +33,10 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [3]
+device_ids = [6]
 
 ckpt_path = './ckpt'
-exp_name = 'TAYLOR5_TWOC'
+exp_name = 'TAYLOR5_TWOC_2'
 
 args = {
     'epoch_num': 140,

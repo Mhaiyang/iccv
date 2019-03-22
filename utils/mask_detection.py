@@ -1,36 +1,43 @@
 """
- @Time    : 203/10/19 18:20
+ @Time    : 203/22/19 10:40
  @Author  : TaylorMei
  @Email   : mhy845879017@gmail.com
  
  @Project : iccv
- @File    : rynson.py
+ @File    : mask_detection.py
  @Function:
  
+"""
+"""
+ @Time    : 203/12/19 19:00
+ @Author  : TaylorMei
+ @Email   : mhy845879017@gmail.com
+
+ @Project : iccv
+ @File    : mask_mirror.py
+ @Function:
+
 """
 import os
 import numpy as np
 import skimage.io
 
-image_path = '/media/iccd/TAYLORMEI/ke/image/'
+image_path = '/media/iccd/TAYLORMEI/ke/mask_rcnn_crop_resize/'
 mask_path = '/media/iccd/TAYLORMEI/ke/taylor5_512448/'
+output_path = '/media/iccd/TAYLORMEI/ke/mask_detection/'
 
-output_path = '/media/iccd/TAYLORMEI/ke/color/512448/'
-
-# image_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/image/'
-# mask_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/taylor5_384/'
-
-# output_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/color/taylor5_384/'
 if not os.path.exists(output_path):
     os.mkdir(output_path)
 
-color = [0, 1, 0, 0]
+color = [0, 1, 0]
 
 imglist = os.listdir(image_path)
 for i, imgname in enumerate(imglist):
     print(i, imgname)
     image = skimage.io.imread(image_path + imgname)
     mask = skimage.io.imread(mask_path + imgname[:-4] + '.png')
+    print(image.shape)
+    print(mask.shape)
 
     output = np.zeros_like(image)
 
@@ -41,5 +48,3 @@ for i, imgname in enumerate(imglist):
             output[:, :, j] = image[:, :, j]
 
     skimage.io.imsave(output_path + imgname, output)
-
-

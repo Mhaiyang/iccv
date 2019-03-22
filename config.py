@@ -1,6 +1,6 @@
 # msd_training_root = "/home/iccd/data/msd11/train"
 msd_testing_root = "/home/iccd/data/msd9/test"
-# msd_testing_root = "/media/iccd/TAYLORMEI/xin"
+# msd_testing_root = "/media/iccd/TAYLORMEI/ke"
 # msd_testing_root = "/home/iccd/data/MSRA10K/ECSSD"
 # msd_testing_root = "/home/iccd/data/MSRA10K/DUT-OMRON"
 # msd_testing_root = "/home/iccd/data/SBU-shadow/test"

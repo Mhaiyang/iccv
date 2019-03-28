@@ -29,13 +29,13 @@ ckpt_path = './ckpt'
 exp_name = 'TAYLOR5'
 args = {
     'snapshot': '160',
-    'scale': 512448,
+    'scale': 512,
     'crf': True
 }
 
 img_transform = transforms.Compose([
-    # transforms.Resize((args['scale'], args['scale'])),
-    transforms.Resize((512, 448)),
+    transforms.Resize((args['scale'], args['scale'])),
+    # transforms.Resize((512, 448)),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])

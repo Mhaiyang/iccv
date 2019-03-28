@@ -15,9 +15,9 @@ import matplotlib.image
 import matplotlib.pyplot as plt
 plt.set_cmap("jet")
 
-mask_path = '/media/iccd/TAYLORMEI/ke/taylor5_512448'
-depth_path = '/media/iccd/TAYLORMEI/ke/depth_color'
-output_path = '/media/iccd/TAYLORMEI/ke/masked_depth'
+mask_path = '/media/iccd/TAYLORMEI/figure1/taylor5_480'
+depth_path = '/media/iccd/TAYLORMEI/figure1/depth'
+output_path = '/media/iccd/TAYLORMEI/figure1/masked_depth'
 if not os.path.exists(output_path):
     os.mkdir(output_path)
 
@@ -28,7 +28,7 @@ for i, imgname in enumerate(image_list):
     depth = skimage.io.imread(depth_path + '/' + imgname)
     if i == 0:
         for j in range(3):
-            depth[:, :, j] = np.where(mask != 0, depth[210, 90, j], depth[:, :, j])
+            depth[:, :, j] = np.where(mask != 0, depth[50, 50, j], depth[:, :, j])
         matplotlib.image.imsave(output_path + "/" + imgname, depth)
     # if i == 1:
     #     for j in range(3):

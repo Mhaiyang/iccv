@@ -22,10 +22,10 @@ import os
 import numpy as np
 import skimage.io
 
-detection_path = '/media/iccd/TAYLORMEI/ke/mask_rcnn_white_c_crop_resize/'
-image_path = '/media/iccd/TAYLORMEI/ke/color/512448/'
-mask_path = '/media/iccd/TAYLORMEI/ke/taylor5_512448/'
-output_path = '/media/iccd/TAYLORMEI/ke/green_detection/'
+detection_path = '/media/iccd/TAYLORMEI/ban/mask_rcnn_white_c_crop_resize/'
+image_path = '/media/iccd/TAYLORMEI/ban/color/416/'
+mask_path = '/media/iccd/TAYLORMEI/ban/taylor5_416/'
+output_path = '/media/iccd/TAYLORMEI/ban/green_detection/'
 
 if not os.path.exists(output_path):
     os.mkdir(output_path)

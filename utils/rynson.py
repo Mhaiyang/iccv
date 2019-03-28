@@ -12,10 +12,10 @@ import os
 import numpy as np
 import skimage.io
 
-image_path = '/media/iccd/TAYLORMEI/ke/image/'
-mask_path = '/media/iccd/TAYLORMEI/ke/taylor5_512448/'
+image_path = '/media/iccd/TAYLORMEI/supp/image/'
+mask_path = '/media/iccd/TAYLORMEI/supp/taylor5_448/'
 
-output_path = '/media/iccd/TAYLORMEI/ke/color/512448/'
+output_path = '/media/iccd/TAYLORMEI/supp/color/448/'
 
 # image_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/image/'
 # mask_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/taylor5_384/'

@@ -14,8 +14,8 @@ import matplotlib.image
 import matplotlib.pyplot as plt
 plt.set_cmap("jet")
 
-input_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/val/depth'
-output_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/val/depth_color'
+input_path = '/media/iccd/大白菜U盘/RgbDepth'
+output_path = '/media/iccd/大白菜U盘/color'
 if not os.path.exists(output_path):
     os.mkdir(output_path)
 

@@ -197,31 +197,48 @@ def compute_iou(predict_mask, gt_mask):
     return iou_
 
 
-# def f_score(predict_mask, gt_mask):
-#
-#     check_size(predict_mask, gt_mask)
-#
-#     N_p = np.sum(gt_mask)
-#     N_n = np.sum(np.logical_not(gt_mask))
-#     if N_p + N_n != 640 * 512:
-#         raise Exception("Check if mask shape is correct!")
-#
-#     TP = np.sum(np.logical_and(predict_mask, gt_mask))
-#     TN = np.sum(np.logical_and(np.logical_not(predict_mask), np.logical_not(gt_mask)))
-#
-#     precision = TP/N_p
-#     if np.sum(predict_mask):
-#         recall = TP/np.sum(predict_mask)
-#     else:
-#         recall = 0
-#     alpha = 0.3
-#
-#     if precision == 0 and recall == 0:
-#         f_score_ = 0
-#     else:
-#         f_score_ = (1.3*precision*recall)/(0.3*precision+recall)
-#
-#     return f_score_
+def cal_precision_recall(predict_mask, gt_mask):
+    # input should be np array with data type uint8
+    assert predict_mask.dtype == np.uint8
+    assert gt_mask.dtype == np.uint8
+    assert predict_mask.shape == gt_mask.shape
+
+    eps = 1e-4
+
+    prediction = predict_mask / 255.
+    gt = gt_mask / 255.
+
+    # mae = np.mean(np.abs(prediction - gt))
+
+    hard_gt = np.zeros(prediction.shape)
+    hard_gt[gt > 0.5] = 1
+    t = np.sum(hard_gt)
+
+    precision, recall = [], []
+    # calculating precision and recall at 255 different binarizing thresholds
+    for threshold in range(256):
+        threshold = threshold / 255.
+
+        hard_prediction = np.zeros(prediction.shape)
+        hard_prediction[prediction > threshold] = 1
+
+        tp = np.sum(hard_prediction * hard_gt)
+        p = np.sum(hard_prediction)
+
+        precision.append((tp + eps) / (p + eps))
+        recall.append((tp + eps) / (t + eps))
+
+    return precision, recall
+
+
+def cal_fmeasure(precision, recall):
+    assert len(precision) == 256
+    assert len(recall) == 256
+    beta_square = 0.3
+    max_fmeasure = max([(1 + beta_square) * p * r / (beta_square * p + r) for p, r in zip(precision, recall)])
+
+    return max_fmeasure
+
 
 def compute_mae(predict_mask, gt_mask):
 

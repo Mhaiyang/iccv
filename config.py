@@ -1,11 +1,13 @@
 # msd_training_root = "/home/iccd/data/msd11/train"
-# msd_testing_root = "/home/iccd/data/msd9/test"
-msd_testing_root = "/media/iccd/TAYLORMEI/supp3"
+msd_testing_root = "/home/iccd/data/msd9/test"
+# msd_testing_root = "/media/iccd/TAYLORMEI/supp3"
 # msd_testing_root = "/home/iccd/data/MSRA10K/ECSSD"
 # msd_testing_root = "/home/iccd/data/MSRA10K/DUT-OMRON"
 # msd_testing_root = "/home/iccd/data/SBU-shadow/test"
 # msd_testing_root = "/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror"
 # msd_testing_root = "/media/iccd/TAYLORMEI/mhy"
+# msd_testing_root = "/home/iccd/iccv/ade20k"
+# msd_testing_root = "/media/iccd/disk/saliency_benchmark/HKU-IS"
 # backbone_path = '/home/iccd/iccv/backbone/resnext/resnext_101_32x4d.pth'
 # backbone_path = "/home/iccd/iccv/backbone/resnet101.pth"
 

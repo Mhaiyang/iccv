@@ -12,14 +12,15 @@ clc;clear;close all;
 % truth_path = '/home/iccd/data/msd9/test/mask/';
 % input_path = '/home/iccd/data/MSRA10K/DUT-OMRON/image/';
 % truth_path = '/home/iccd/data/MSRA10K/DUT-OMRON/mask/';
-input_path = '/home/iccd/data/MSRA10K/ECSSD/image/';
-truth_path = '/home/iccd/data/MSRA10K/ECSSD/mask/';
+input_path = '/media/iccd/disk/saliency_benchmark/HKU-IS/image/';
+truth_path = '/media/iccd/disk/saliency_benchmark/HKU-IS/mask/';
 % input_path = '/home/iccd/data/MSRA10K/PASCAL-S/image/';
 % truth_path = '/home/iccd/data/MSRA10K/PASCAL-S/mask/';
 % input_path = '/home/iccd/data/MSRA10K/HKU-IS/image/';
 % truth_path = '/home/iccd/data/MSRA10K/HKU-IS/mask/';
-result_path = '/home/iccd/iccv/ckpt/TAYLOR5_MSRA_BCE/TAYLOR5_MSRA_BCE_100/E/';
-% result_path = '/home/iccd/iccv/msd9_results/msd9_pspnet/';
+% result_path = '/home/iccd/iccv/ckpt/TAYLOR5_MSRA_BCE/TAYLOR5_MSRA_BCE_100/E/';
+% result_path = '/home/iccd/iccv/msd9_results/msd9_R3Net-2-test300/';
+result_path = '/home/iccd/R3Net/ckpt/R3Net/(R3Net) HKU-IS_6000/';
 
 [PreF,RecallF,FMeasureF] =  get_Fmeasure(input_path,result_path,truth_path);
 

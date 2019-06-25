@@ -212,7 +212,7 @@ def cal_precision_recall(predict_mask, gt_mask):
 
     hard_gt = np.zeros(prediction.shape)
     hard_gt[gt > 0.5] = 1
-    t = np.sum(hard_gt)
+    t = np.sum(hard_gt).astype(np.float32)
 
     precision, recall = [], []
     # calculating precision and recall at 255 different binarizing thresholds
@@ -222,8 +222,8 @@ def cal_precision_recall(predict_mask, gt_mask):
         hard_prediction = np.zeros(prediction.shape)
         hard_prediction[prediction > threshold] = 1
 
-        tp = np.sum(hard_prediction * hard_gt)
-        p = np.sum(hard_prediction)
+        tp = np.sum(hard_prediction * hard_gt).astype(np.float32)
+        p = np.sum(hard_prediction).astype(np.float32)
 
         precision.append((tp + eps) / (p + eps))
         recall.append((tp + eps) / (t + eps))

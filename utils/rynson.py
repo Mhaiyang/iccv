@@ -18,9 +18,9 @@ import skimage.io
 # output_path = '/media/iccd/TAYLORMEI/supp3/color/picanet/'
 
 image_path = '/home/iccd/iccv/ade20k/image/'
-mask_path = '/home/iccd/iccv/ade20k/taylor5_352/'
+mask_path = '/home/iccd/iccv/ade20k/taylor5_384/'
 
-output_path = '/home/iccd/iccv/ade20k/taylor5_352_color/'
+output_path = '/home/iccd/iccv/ade20k/taylor5_384_color/'
 
 # image_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/image/'
 # mask_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/taylor5_384/'

@@ -15,9 +15,9 @@ import skimage.io
 # image_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/image/'
 # mask_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/mirror_map_448/'
 # output_path = '/media/iccd/TAYLORMEI/Depth-Prediction/nyu_depth_v2/mirror/mask_mirror/448/'
-image_path = '/media/iccd/TAYLORMEI/ban/image/'
-mask_path = '/media/iccd/TAYLORMEI/ban/taylor5_416/'
-output_path = '/media/iccd/TAYLORMEI/ban/mask_mirror_white/'
+image_path = '/media/iccd/TAYLORMEI/mirror/camera-ready/image/'
+mask_path = '/media/iccd/TAYLORMEI/mirror/camera-ready/taylor5_384/'
+output_path = '/media/iccd/TAYLORMEI/mirror/camera-ready/mask_mirror_white/'
 
 if not os.path.exists(output_path):
     os.mkdir(output_path)

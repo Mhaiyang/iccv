@@ -13,8 +13,8 @@ import os
 import random
 from skimage import io, transform
 
-IMAGE_DIR = '/media/iccd/TAYLORMEI/ban/mask_rcnn_white_c_crop'
-OUTPUT_DIR = '/media/iccd/TAYLORMEI/ban/mask_rcnn_white_c_crop_resize/'
+IMAGE_DIR = '/media/iccd/TAYLORMEI/mirror/camera-ready/mask_rcnn_white_c_crop'
+OUTPUT_DIR = '/media/iccd/TAYLORMEI/mirror/camera-ready/mask_rcnn_white_c_crop_resize/'
 
 if not os.path.exists(OUTPUT_DIR):
     os.mkdir(OUTPUT_DIR)

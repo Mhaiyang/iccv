@@ -19,8 +19,8 @@ truth_path = '/home/iccd/data/msd9/test/mask/';
 % input_path = '/home/iccd/data/MSRA10K/HKU-IS/image/';
 % truth_path = '/home/iccd/data/MSRA10K/HKU-IS/mask/';
 % result_path = '/home/iccd/iccv/ckpt/TAYLOR5_MSRA_BCE/TAYLOR5_MSRA_BCE_100/E/';
-result_path = '/home/iccd/iccv/ckpt/TAYLOR5/TAYLOR5_160_crf/f1/';
-% result_path = '/home/iccd/iccv/msd9_results/msd9_R3Net-4-test512/';
+% result_path = '/home/iccd/iccv/ckpt/TAYLOR5/TAYLOR5_160_crf/f1/';
+result_path = '/home/iccd/iccv/msd9_results/msd9_R3Net-4-test512-nocrf/';
 % result_path = '/home/iccd/R3Net/ckpt/R3Net/(R3Net) HKU-IS_6000/';
 
 [PreF,RecallF,FMeasureF] =  get_Fmeasure(input_path,result_path,truth_path);

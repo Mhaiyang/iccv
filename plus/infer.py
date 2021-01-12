@@ -11,6 +11,8 @@
 import numpy as np
 import os
 import time
+import sys
+sys.path.append("..")
 
 import torch
 from PIL import Image
@@ -19,7 +21,7 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from plus.mirrornet_plus import MirrorNet_Plus
+from mirrornet_plus import MirrorNet_Plus
 
 device_ids = [1]
 torch.cuda.set_device(device_ids[0])

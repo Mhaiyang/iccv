@@ -10,6 +10,8 @@
 """
 import datetime
 import os
+import sys
+sys.path.append("..")
 
 import torch
 from torch import nn
@@ -27,7 +29,7 @@ from config import msd_training_root, msd_testing_root
 from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir, crf_refine, compute_ber
-from plus.mirrornet_plus import MirrorNet_Plus
+from mirrornet_plus import MirrorNet_Plus
 
 import numpy as np
 import loss as L

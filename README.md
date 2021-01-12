@@ -14,6 +14,8 @@ torchvision 0.2.1
 sudo pip3 install -r requirements.txt
 git clone https://github.com/Mhaiyang/dss_crf.git
 sudo python setup.py install
+
+pip install git+https://github.com/Mhaiyang/pydensecrf.git
 ```
 
 ### Make Dataset

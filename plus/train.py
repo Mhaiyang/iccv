@@ -36,7 +36,6 @@ import loss as L
 
 cudnn.benchmark = True
 
-
 device_ids = [0]
 
 ckpt_path = './ckpt'

@@ -34,7 +34,7 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [1]
 
 ckpt_path = './ckpt'
 exp_name = 'MirrorNet_Plus_1'
@@ -67,8 +67,8 @@ writer = SummaryWriter(log_dir=vis_path, comment=exp_name)
 
 # Transform Data.
 joint_transform = joint_transforms.Compose([
-    joint_transforms.RandomRotate(),
-    joint_transforms.Resize((args['scale'], args['scale']))
+    joint_transforms.Resize((args['scale'], args['scale'])),
+    joint_transforms.RandomRotate()
 ])
 img_transform = transforms.Compose([
     transforms.ToTensor(),
@@ -85,7 +85,7 @@ test_transform = transforms.Compose([
 # Prepare Data Set.
 train_set = ImageFolder(msd_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=32, shuffle=True)
+train_loader = DataLoader(train_set, batch_size=args['train_batch_size'], num_workers=8, shuffle=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
@@ -129,9 +129,6 @@ def main():
         net.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '.pth')))
         total_epoch = (args['epoch_num'] - int(args['snapshot'])) * len(train_loader)
         print(total_epoch)
-
-    net = nn.DataParallel(net, device_ids=device_ids)
-    print("Using {} GPU(s) to Train.".format(len(device_ids)))
 
     open(log_path, 'w').write(str(args) + '\n\n')
     train(net, optimizer)
@@ -196,7 +193,7 @@ def train(net, optimizer):
 
         if epoch in args['save_point']:
             net.cpu()
-            torch.save(net.module.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
+            torch.save(net.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
             net.cuda(device_ids[0])
 
         if epoch >= args['epoch_thres'] and epoch % 5 == 0:
@@ -204,14 +201,14 @@ def train(net, optimizer):
             print("mean ber of %d epoch is %.5f" % (epoch, ber))
             if ber < best_ber:
                 net.cpu()
-                torch.save(net.module.state_dict(),
-                           os.path.join(ckpt_path, exp_name, 'epoch_%d_ber_%.5f.pth' % (epoch, ber)))
+                torch.save(net.state_dict(),
+                           os.path.join(ckpt_path, exp_name, 'epoch_%d_ber_%.2f.pth' % (epoch, ber)))
                 print("The optimized epoch is %04d" % epoch)
             net = net.cuda().train()
 
         if epoch >= args['epoch_num']:
             net.cpu()
-            torch.save(net.module.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
+            torch.save(net.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
             print("Optimization Have Done!")
             return
 

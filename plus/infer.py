@@ -21,12 +21,12 @@ from config import msd_testing_root
 from misc import check_mkdir, crf_refine
 from plus.mirrornet_plus import MirrorNet_Plus
 
-device_ids = [0]
+device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
 exp_name = 'MirrorNet_Plus_1'
-pth_name = 'epoch_190_ber_6.03693.pth'
+pth_name = 'epoch_200_ber_6.04.pth'
 args = {
     'snapshot': '200',
     'scale': 384,
@@ -49,8 +49,6 @@ def main():
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))
-        # net.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, 'MirrorNet.pth')))
-        # print('Load {} succeed!'.format(os.path.join(ckpt_path, exp_name, 'MirrorNet.pth')))
         net.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, pth_name)))
         print('Load {} succeed!'.format(os.path.join(ckpt_path, exp_name, pth_name)))
 

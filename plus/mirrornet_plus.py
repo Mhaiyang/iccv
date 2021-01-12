@@ -263,87 +263,11 @@ class PAM_Module(nn.Module):
 
 
 ###################################################################
-############################## MPM ################################
+##########################  RCCFE  ################################
 ###################################################################
-class MPM(nn.Module):
-    def __init__(self, in_channel_left, in_channel_down):
-        super(MPM, self).__init__()
-        self.conv0 = nn.Conv2d(in_channel_left, 256, kernel_size=1, stride=1, padding=0)
-        self.bn0   = nn.BatchNorm2d(256)
-        self.conv1 = nn.Conv2d(in_channel_down, 256, kernel_size=3, stride=1, padding=1)
-        self.bn1   = nn.BatchNorm2d(256)
-        self.conv2 = nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1)
-
-    def forward(self, left, down):
-        left = F.relu(self.bn0(self.conv0(left)), inplace=True)
-        down = F.relu(self.bn1(self.conv1(down)), inplace=True)
-        down = self.conv2(down)
-        if down.size()[2:] != left.size()[2:]:
-            down = F.interpolate(down, size=left.size()[2:], mode='bilinear')
-        w,b = down[:,:256,:,:], down[:,256:,:,:]
-        return F.relu(w*left+b, inplace=True)
-
-
-###################################################################
-####################Dynamic Filter MPM#############################
-###################################################################
-class Dynamic_MPM(nn.Module):
-    def __init__(self, in_channel_left, in_channel_down):
-        super(Dynamic_MPM, self).__init__()
-        self.conv0 = nn.Conv2d(in_channel_left, 256, kernel_size=1, stride=1, padding=0)
-        self.bn0   = nn.BatchNorm2d(256)
-        # self.conv1 = nn.Conv2d(in_channel_down, 256, kernel_size=3, stride=1, padding=1)
-        # use dynamic filter to replace self.conv1
-        self.dynamic_kernel = nn.Sequential(nn.AdaptiveAvgPool2d(3),nn.Conv2d(in_channel_down, 256, kernel_size=1))
-        self.conv1_1 = nn.Conv2d(in_channel_down, 256, kernel_size=1)
-        self.conv1_2 = nn.Conv2d(256, 256, kernel_size=1)
-        self.bn1   = nn.BatchNorm2d(256)
-        self.conv2 = nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1)
-
-    def forward(self, left, down):
-        left = F.relu(self.bn0(self.conv0(left)), inplace=True)
-        # down = F.relu(self.bn1(self.conv1(down)), inplace=True)
-        # use dynamic filter to replace conv1
-        dynamic_filter = self.dynamic_kernel(down)
-        down = self.conv1_1(down)
-        down = F.conv2d(down, dynamic_filter, bias=None, stride=1, padding=1, dilation=1, groups=256)
-        down = self.conv1_2(down)
-        # same as MPM
-        down = self.conv2(down)
-        if down.size()[2:] != left.size()[2:]:
-            down = F.interpolate(down, size=left.size()[2:], mode='bilinear')
-        w,b = down[:,:256,:,:], down[:,256:,:,:]
-        return F.relu(w*left+b, inplace=True)
-
-##########################  RCCFE #################################
-class GCM(nn.Module):
-    def __init__(self, in_channels, theta):
-        super(GCM, self).__init__()
-        self.glo = nn.Sequential(
-            nn.AdaptiveAvgPool2d((1, 1)),
-            nn.Conv2d(in_channels, in_channels, 1, bias=False),
-            nn.BatchNorm2d(in_channels),
-            nn.ReLU()
-        )
-        self.theta = theta
-        self.alpha = nn.Parameter(torch.ones(1))
-
-    def forward(self, x):
-        x_glo = self.glo(x)  # (batch, C, 1, 1)
-        x_D = torch.norm(x - x_glo, dim=1)  # (batch, H, W)
-        x_D_min = x_D.view(x_D.shape[0], -1).min(dim=1)[0]  # (batch,)
-        x_D_min = x_D_min.view(-1, 1, 1)  # (batch, 1, 1)
-        W_glo = torch.exp(-(x_D - x_D_min) / self.theta)  # (batch, H, W)
-        W_glo = W_glo.unsqueeze(1)  # (batch, 1, H, W)
-        x_c = self.alpha * x_glo * W_glo + x
-        return x_c  # return global coefficient
-
-
-##########################  RCCFE #################################
 class RCCFE(nn.Module):
     def __init__(self, in_channel, in_shape):
         super(RCCFE, self).__init__()
-        # self.conv2d = nn.Conv2d(in_channel, out_channel, kernel_size=3, stride=1, padding=1)
         self.glo = nn.Sequential(
             nn.AdaptiveAvgPool2d((1, 1)),
             nn.Conv2d(in_channel, in_channel, 1, bias=False),
@@ -354,12 +278,9 @@ class RCCFE(nn.Module):
         self.in_shape = in_shape
         self.adp = nn.AdaptiveAvgPool2d(in_shape)
         self.pam = PAM_Module(in_channel)
-        # self.gcm = GCM(in_channel, 5)
 
     def forward(self, x):
-        # x = self.conv2d(x)
         x_ccfe = self.ccfe(x)
-        # x_gcm = self.gcm(x)
         x_gcm = self.glo(x)
         x_adp = self.adp(x)
         x_pam = self.pam(x_adp)
@@ -368,6 +289,7 @@ class RCCFE(nn.Module):
         x_out = x_ccfe * x_up
 
         return x_out
+
 
 ###################################################################
 # ########################## NETWORK ##############################
@@ -381,8 +303,6 @@ class MirrorNet_Plus(nn.Module):
         self.layer2 = resnext.layer2
         self.layer3 = resnext.layer3
         self.layer4 = resnext.layer4
-
-
 
         self.contrast_4 = RCCFE(2048, 12)
         self.contrast_3 = RCCFE(1024, 12)
@@ -415,32 +335,23 @@ class MirrorNet_Plus(nn.Module):
         layer3 = self.layer3(layer2)
         layer4 = self.layer4(layer3)
 
-        #print(layer4.shape)
-        ###### Add PAM Module paralleled with CCFE Module ######
-
-
         contrast_4 = self.contrast_4(layer4)
         up_4 = self.up_4(contrast_4)
         cbam_4 = self.cbam_4(up_4)
         layer4_predict = self.layer4_predict(cbam_4)
 
-        ###### left is layer3 down is cbam_4; as these filters are at the same W,H, we don't need upsampling here? #####
-
-        # layer3_mpm = self.mpm_3(layer3, cbam_4)
         layer3_mpm = layer3 + cbam_4
         contrast_3 = self.contrast_3(layer3_mpm)
         up_3 = self.up_3(contrast_3)
         cbam_3 = self.cbam_3(up_3)
         layer3_predict = self.layer3_predict(cbam_3)
 
-        # layer2_mpm = self.mpm_2(layer2, cbam_3)
         layer2_mpm = layer2 + cbam_3
         contrast_2 = self.contrast_2(layer2_mpm)
         up_2 = self.up_2(contrast_2)
         cbam_2 = self.cbam_2(up_2)
         layer2_predict = self.layer2_predict(cbam_2)
 
-        # layer1_mpm = self.mpm_1(layer1, cbam_2)
         layer1_mpm = layer1 + cbam_2
         contrast_1 = self.contrast_1(layer1_mpm)
         up_1 = self.up_1(contrast_1)

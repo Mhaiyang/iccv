@@ -1,5 +1,5 @@
 clc;clear;
-path = '/home/iccd/data/2019/ylt_add_mask/';
+path = '/home/iccd/data/msd9_c/test/correction/cor_json/';
 
 list = dir(fullfile(path, '*_json'));
 

@@ -33,4 +33,4 @@ for i, sub_dir_name in enumerate(sub_dir):
     end_number = total_number
     print(end_number - start_number)
 
-print("OJBK!")
+print("OK!")

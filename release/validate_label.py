@@ -12,9 +12,9 @@ import os
 import numpy as np
 import skimage.io
 
-image_path = '/media/iccd/disk/release/MSD/test/image'
-mask_path = '/media/iccd/disk/release/MSD/test/mask'
-output_path = '/home/iccd/iccv/release/test'
+image_path = '/media/iccd/disk/release/MSD/cor_test/image'
+mask_path = '/media/iccd/disk/release/MSD/cor_test/mask'
+output_path = '/home/iccd/iccv/release/cor_color/test'
 
 if not os.path.exists(output_path):
     os.mkdir(output_path)

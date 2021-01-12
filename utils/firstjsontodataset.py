@@ -10,13 +10,13 @@
 """
 import os
 
-json_path = '/home/iccd/data/2019/ylt_add_mask/'
+json_path = '/home/iccd/data/msd9_c/test/correction/cor_json'
 
 json_list = os.listdir(json_path)
 
 for i, json_name in enumerate(json_list):
     print(i, json_name)
 
-    full_path = json_path + json_name
+    full_path = os.path.join(json_path, json_name)
 
     os.system('labelme_json_to_dataset %s' % (full_path))

@@ -36,10 +36,10 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [1]
+device_ids = [0]
 
 ckpt_path = './ckpt'
-exp_name = 'MirrorNet_Plus_1'
+exp_name = 'MirrorNet_Plus_2'
 
 args = {
     'epoch_num': 200,

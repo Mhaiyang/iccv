@@ -8,19 +8,11 @@
  @Function:
  
 """
-"""
- @Time    : 12/23/19 21:42
- @Author  : TaylorMei
- @Email   : mhy666@mail.dlut.edu.cn
-
- @Project : sod
- @File    : train_denet_four.py
- @Function:
-
-"""
 import datetime
 import time
 import os
+import sys
+sys.path.append("..")
 
 import torch
 import torch.nn.functional as F
@@ -35,24 +27,24 @@ from tqdm import tqdm
 
 import joint_transforms
 from config import sod_training_root
-from config import backbone_path, resnet50_backbone_path
+from config import backbone_path
 from datasets import ImageFolder
 from misc import AvgMeter, check_mkdir
-from model.mirrornet_NAC_resnet50 import MirrorNet
+from mirrornet_plus import MirrorNet_Plus
 
 import loss
 
 cudnn.benchmark = True
 
 torch.manual_seed(2019)
-device_ids = [0]
+device_ids = [1]
 
-ckpt_path = 'sod_ckpt'
-exp_name = 'MirrorNet_NAC_resnet50_bie_four_ms_poly_v12'
+ckpt_path = '/media/iccd/disk2/tip_mirror_ckpt'
+exp_name = 'MirrorNet_Plus_sod_1'
 
 args = {
     'epoch_num': 120,
-    'train_batch_size': 12,
+    'train_batch_size': 10,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,
@@ -95,7 +87,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(sod_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, collate_fn=train_set.collate, batch_size=args['train_batch_size'], num_workers=32, shuffle=True)
+train_loader = DataLoader(train_set, collate_fn=train_set.collate, batch_size=args['train_batch_size'], num_workers=8, shuffle=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 
@@ -138,7 +130,7 @@ def main():
     print(args)
     print(exp_name)
 
-    net = MirrorNet(resnet50_backbone_path).cuda(device_ids[0]).train()
+    net = MirrorNet_Plus(backbone_path).cuda(device_ids[0]).train()
 
     if args['optimizer'] == 'Adam':
         print("Adam")
@@ -162,9 +154,6 @@ def main():
         net.load_state_dict(torch.load(os.path.join(ckpt_path, exp_name, args['snapshot'] + '.pth')))
         total_epoch = (args['epoch_num'] - int(args['snapshot'])) * len(train_loader)
         print(total_epoch)
-
-    net = nn.DataParallel(net, device_ids=device_ids)
-    print("Using {} GPU(s) to Train.".format(len(device_ids)))
 
     open(log_path, 'w').write(str(args) + '\n\n')
     train(net, optimizer)
@@ -256,12 +245,12 @@ def train(net, optimizer):
 
         if epoch in args['save_point']:
             net.cpu()
-            torch.save(net.module.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
+            torch.save(net.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
             net.cuda(device_ids[0])
 
         if epoch >= args['epoch_num']:
             net.cpu()
-            torch.save(net.module.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
+            torch.save(net.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
             print("Total Training Time: {}".format(str(datetime.timedelta(seconds=int(time.time() - start_time)))))
             print("Optimization Have Done!")
             return

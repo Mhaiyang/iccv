@@ -1,8 +1,11 @@
 import os
 import os.path
+import random
 
 import torch.utils.data as data
 from PIL import Image
+import torch
+import torch.nn.functional as F
 
 
 def make_dataset(root):
@@ -32,6 +35,18 @@ class ImageFolder(data.Dataset):
             target = self.target_transform(target)
 
         return img, target
+
+    def collate(self, batch):
+        size = [256, 288, 320, 352, 384][random.randint(0, 4)]
+
+        image, mask = [list(item) for item in zip(*batch)]
+
+        image = torch.stack(image, dim=0)
+        image = F.interpolate(image, size=(size, size), mode="bilinear", align_corners=False)
+        mask = torch.stack(mask, dim=0)
+        mask = F.interpolate(mask, size=(size, size), mode="nearest")
+
+        return image, mask
 
     def __len__(self):
         return len(self.imgs)

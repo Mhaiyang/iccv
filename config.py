@@ -34,3 +34,5 @@ backbone_path = '../backbone/resnext/resnext_101_32x4d.pth'
 # msd_training_root = "/home/iccd/data/SBU-shadow/train"
 # msd_testing_root = "/home/iccd/data/SBU-shadow/test"
 # backbone_path = '/home/iccd/iccv/backbone/resnext/resnext_101_32x4d.pth'
+
+sod_training_root = "/media/iccd/disk1/saliency_benchmark/DUTS-TR"

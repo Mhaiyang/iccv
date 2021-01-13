@@ -37,14 +37,14 @@ import loss
 cudnn.benchmark = True
 
 torch.manual_seed(2021)
-device_ids = [0]
+device_ids = [1]
 
 ckpt_path = '/media/iccd/disk2/tip_mirror_ckpt'
-exp_name = 'MirrorNet_Plus_sod_2'
+exp_name = 'MirrorNet_Plus_sod_1'
 
 args = {
     'epoch_num': 120,
-    'train_batch_size': 6,
+    'train_batch_size': 8,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,
@@ -88,7 +88,7 @@ target_transform = transforms.ToTensor()
 # Prepare Data Set.
 train_set = ImageFolder(sod_training_root, joint_transform, img_transform, target_transform)
 print("Train set: {}".format(train_set.__len__()))
-train_loader = DataLoader(train_set, collate_fn=train_set.collate, batch_size=args['train_batch_size'], num_workers=8, shuffle=True)
+train_loader = DataLoader(train_set, collate_fn=train_set.collate, batch_size=args['train_batch_size'], num_workers=8, shuffle=True, drop_last=True)
 
 total_epoch = args['epoch_num'] * len(train_loader)
 

@@ -81,7 +81,7 @@ def main():
                     f_1 = crf_refine(np.array(img.convert('RGB')), f_1)
 
                 Image.fromarray(f_1).save(
-                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]) + "_no_crf",
+                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]) + "_crf",
                                  img_name[:-4] + ".png"))
 
             end = time.time()

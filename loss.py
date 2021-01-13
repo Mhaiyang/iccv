@@ -321,3 +321,67 @@ def ssim(img1, img2, window_size = 11, size_average = True):
     window = window.type_as(img1)
 
     return _ssim(img1, img2, window, window_size, channel, size_average)
+
+
+
+###################################################################
+# ########################## iou loss #############################
+###################################################################
+def _iou(pred, target, size_average = True):
+
+    b = pred.shape[0]
+    IoU = 0.0
+    for i in range(0,b):
+        #compute the IoU of the foreground
+        Iand1 = torch.sum(target[i,:,:,:]*pred[i,:,:,:])
+        Ior1 = torch.sum(target[i,:,:,:]) + torch.sum(pred[i,:,:,:])-Iand1
+        if Ior1:
+            IoU1 = Iand1/Ior1
+        else:
+            IoU1 = 1
+
+        #IoU loss is (1-IoU1)
+        IoU = IoU + (1-IoU1)
+
+    return IoU/b
+
+class IOU(torch.nn.Module):
+    def __init__(self, size_average = True):
+        super(IOU, self).__init__()
+        self.size_average = size_average
+
+    def forward(self, pred, target):
+
+        return _iou(pred, target, self.size_average)
+
+
+###################################################################
+# ########################## edge loss ############################
+###################################################################
+def logit(x):
+    eps = 1e-7
+    x = torch.clamp(x,eps,1-eps)
+    x = torch.log(x / (1 - x))
+    return x
+
+def cross_entropy(logits,labels):
+    return torch.mean((1 - labels) * logits + torch.log(1 + torch.exp(-logits)))
+
+def weighted_cross_entropy(logits,labels,alpha):
+    return torch.mean((1 - alpha) * ((1 - labels) * logits + torch.log(1 + torch.exp(-logits))) + (2 * alpha - 1) * labels * torch.log(1 + torch.exp(-logits)))
+
+class EdgeLoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+        laplace = torch.FloatTensor([[-1,-1,-1,],[-1,8,-1],[-1,-1,-1]]).view([1,1,3,3])
+        # filter shape in Pytorch: out_channel, in_channel, height, width
+        self.laplace = nn.Parameter(data=laplace,requires_grad=False)
+    def torchLaplace(self,x):
+        edge = F.conv2d(x,self.laplace,padding=1)
+        edge = torch.abs(torch.tanh(edge))
+        return edge
+    def forward(self,y_pred,y_true,mode=None):
+        y_true_edge = self.torchLaplace(y_true)
+        y_pred_edge = self.torchLaplace(y_pred)
+        edge_loss = cross_entropy(y_pred_edge,y_true_edge)
+        return edge_loss

@@ -363,8 +363,8 @@ class MirrorNet_Plus(nn.Module):
         layer2_predict = F.upsample(layer2_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
         layer1_predict = F.upsample(layer1_predict, size=x.size()[2:], mode='bilinear', align_corners=True)
 
-        if self.training:
-            return layer4_predict, layer3_predict, layer2_predict, layer1_predict
+        # if self.training:
+        #     return layer4_predict, layer3_predict, layer2_predict, layer1_predict
 
         return F.sigmoid(layer4_predict), F.sigmoid(layer3_predict), F.sigmoid(layer2_predict), \
                F.sigmoid(layer1_predict)

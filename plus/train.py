@@ -10,6 +10,7 @@
 """
 import datetime
 import os
+import time
 import sys
 sys.path.append("..")
 
@@ -140,6 +141,7 @@ def main():
 def train(net, optimizer):
     global best_ber
     curr_iter = 1
+    start_time = time.time()
 
     for epoch in range(args['last_epoch'] + 1, args['last_epoch'] + 1 + args['epoch_num']):
         loss_4_record, loss_3_record, loss_2_record, loss_1_record, \
@@ -211,6 +213,8 @@ def train(net, optimizer):
         if epoch >= args['epoch_num']:
             net.cpu()
             torch.save(net.state_dict(), os.path.join(ckpt_path, exp_name, '%d.pth' % epoch))
+            print("Total Training Time: {}".format(str(datetime.timedelta(seconds=int(time.time() - start_time)))))
+            print(exp_name)
             print("Optimization Have Done!")
             return
 
@@ -226,7 +230,7 @@ def test(net):
         img_list = [img_name for img_name in os.listdir(os.path.join(root, 'image'))]
 
         for idx, img_name in enumerate(img_list):
-            print('predicting for {}: {:>4d} / {}'.format(name, idx + 1, len(img_list)))
+            # print('predicting for {}: {:>4d} / {}'.format(name, idx + 1, len(img_list)))
             # check_mkdir(os.path.join(ckpt_path, exp_name, '%s_%s_%s' % (exp_name, args['snapshot'], 'nocrf')))
             img = Image.open(os.path.join(root, 'image', img_name))
             gt = Image.open(os.path.join(root, 'mask', img_name[:-4] + '.png'))
@@ -252,7 +256,7 @@ def test(net):
             f_1 = np.where(f_1 * 255.0 >= 127.5, 1, 0).astype(np.float32)
 
             ber = compute_ber(f_1, gt)
-            print("The %d pics ber is %.5f" % (idx + 1, ber))
+            # print("The %d pics ber is %.5f" % (idx + 1, ber))
             BER.append(ber)
         mean_BER = 100 * sum(BER) / len(BER)
     return mean_BER

@@ -44,7 +44,7 @@ exp_name = 'MirrorNet_Plus_sod_1'
 
 args = {
     'epoch_num': 120,
-    'train_batch_size': 10,
+    'train_batch_size': 8,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,

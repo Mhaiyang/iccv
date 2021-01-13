@@ -28,7 +28,7 @@ from tqdm import tqdm
 import joint_transforms
 from config import sod_training_root
 from config import backbone_path
-from datasets import ImageFolder
+from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir
 from mirrornet_plus import MirrorNet_Plus
 
@@ -75,8 +75,9 @@ writer = SummaryWriter(log_dir=vis_path, comment=exp_name)
 
 # Transform Data.
 joint_transform = joint_transforms.Compose([
-    joint_transforms.RandomHorizontallyFlip(),
-    joint_transforms.Resize((args['scale'], args['scale']))
+    joint_transforms.Resize((args['scale'], args['scale'])),
+    joint_transforms.RandomRotate(),
+
 ])
 img_transform = transforms.Compose([
     transforms.ToTensor(),

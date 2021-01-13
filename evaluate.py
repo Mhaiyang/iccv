@@ -12,21 +12,23 @@ import os
 import numpy as np
 import skimage.io
 from misc import *
-from config import msd_testing_root
+# from config import msd_testing_root
 
 args = {
-    'exp_name': 'msd8_MHY1',
+    'exp_name': '',
     'type': 0
 }
 
 
 ROOT_DIR = os.getcwd()
+
+msd_testing_root = './data/MSD/test/'
 IMAGE_DIR = os.path.join(msd_testing_root, "image")
 MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
 # PREDICT_DIR = "/home/iccd/iccv/ckpt/TAYLOR5/TAYLOR5_160_crf/f1"
 # PREDICT_DIR = "/home/iccd/iccv/ckpt/TAYLOR5_NOC/TAYLOR5_NOC_140/f1"
-PREDICT_DIR = "/home/iccd/iccv/msd9_results/msd9_R3Net-4-test512-nocrf"
+PREDICT_DIR = "./plus/ckpt/MirrorNet_Plus_2/MirrorNet_Plus_2_epoch_195_ber_7.60_crf"
 # PREDICT_DIR = "/home/iccd/R3Net/ckpt/R3Net/(R3Net) HKU-IS_6000"
 
 if args['type'] != 0:
@@ -93,8 +95,8 @@ print(len(IOU))
 print(len(MAE))
 print(len(BER))
 
-data_write(os.path.join('./excel', '%s.xlsx' % (args['exp_name'])), [NUM, ACC,
-            [100*x for x in IOU], MAE, [100*x for x in BER]])
+# data_write(os.path.join('./excel', '%s.xlsx' % (args['exp_name'])), [NUM, ACC,
+#             [100*x for x in IOU], MAE, [100*x for x in BER]])
 
 print("{}, \n{:20} {:.2f} \n{:20} {:.3f} \n{:20} {:.3f} \n{:20} {:.3f} \n{:20} {:.2f}\n".
       format(PREDICT_DIR, "mean_IOU", mean_IOU, "mean_ACC", mean_ACC, "F", F,

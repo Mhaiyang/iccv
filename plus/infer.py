@@ -61,7 +61,7 @@ def main():
             start = time.time()
             for idx, img_name in enumerate(img_list):
                 print('predicting for {}: {:>4d} / {}'.format(name, idx + 1, len(img_list)))
-                check_mkdir(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]) + "_no_crf"))
+                check_mkdir(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]) + "_crf"))
                 img = Image.open(os.path.join(root, 'image', img_name))
                 if img.mode != 'RGB':
                     img = img.convert('RGB')

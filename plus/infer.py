@@ -23,14 +23,14 @@ from config import msd_testing_root
 from misc import check_mkdir, crf_refine
 from mirrornet_plus import MirrorNet_Plus
 
-device_ids = [0]
+device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'MirrorNet_Plus_1'
-pth_name = 'epoch_175_ber_5.87.pth'
+exp_name = 'MirrorNet_Plus_3'
+pth_name = 'epoch_190_ber_5.77.pth'
 args = {
-    'snapshot': '175',
+    'snapshot': '190',
     'scale': 384,
     'crf': True
 }

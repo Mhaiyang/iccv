@@ -27,10 +27,10 @@ device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
-exp_name = 'MirrorNet_Plus_2'
-pth_name = 'epoch_195_ber_7.60.pth'
+exp_name = 'MirrorNet_Plus_1'
+pth_name = 'epoch_175_ber_5.87.pth'
 args = {
-    'snapshot': '195',
+    'snapshot': '175',
     'scale': 384,
     'crf': True
 }

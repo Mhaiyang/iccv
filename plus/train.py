@@ -37,16 +37,16 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [0]
+device_ids = [1]
 
 # ckpt_path = './ckpt'
 ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
-exp_name = 'MirrorNet_Plus_5'
+exp_name = 'MirrorNet_Plus_4'
 
 args = {
     'epoch_num': 200,
     'epoch_thres': 150,
-    'train_batch_size': 6,
+    'train_batch_size': 8,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,
@@ -209,7 +209,7 @@ def train(net, optimizer):
                 torch.save(net.state_dict(),
                            os.path.join(ckpt_path, exp_name, 'epoch_%d_ber_%.2f.pth' % (epoch, ber)))
                 print("The optimized epoch is %04d" % epoch)
-            net = net.cuda().train()
+            net = net.cuda(device_ids[0]).train()
 
         if epoch >= args['epoch_num']:
             net.cpu()

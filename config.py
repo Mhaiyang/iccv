@@ -1,3 +1,5 @@
+import os
+
 # msd_training_root = "/home/iccd/data/msd11/train"
 # msd_testing_root = "/home/iccd/data/msd9/test"
 # msd_testing_root = "/media/iccd/TAYLORMEI/mirror/camera-ready"
@@ -35,4 +37,12 @@ backbone_path = '../backbone/resnext/resnext_101_32x4d.pth'
 # msd_testing_root = "/home/iccd/data/SBU-shadow/test"
 # backbone_path = '/home/iccd/iccv/backbone/resnext/resnext_101_32x4d.pth'
 
+datasets_root = '/media/iccd/disk1/saliency_benchmark'
 sod_training_root = "/media/iccd/disk1/saliency_benchmark/DUTS-TR"
+ecssd_path = os.path.join(datasets_root, 'ECSSD')
+hkuis_path = os.path.join(datasets_root, 'HKU-IS')
+hkuis_test_path = os.path.join(datasets_root, 'HKU-IS-TEST')
+pascals_path = os.path.join(datasets_root, 'PASCAL-S')
+dutomron_path = os.path.join(datasets_root, 'DUT-OMRON')
+sod_path = os.path.join(datasets_root, 'SOD')
+dutste_path = os.path.join(datasets_root, 'DUTS-TE')

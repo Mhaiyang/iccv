@@ -10,6 +10,8 @@
 """
 import time
 import datetime
+import sys
+sys.path.append("..")
 
 import torch
 from PIL import Image
@@ -19,22 +21,23 @@ from collections import OrderedDict
 
 from config import *
 from misc import *
-from model.mirrornet_NAC_resnet50  import MirrorNet
+from mirrornet_plus import MirrorNet_Plus
 # from model.base_dce_wof import Base_dce_wof
 
 torch.manual_seed(2020)
 device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
-results_path = '../sod/results'
+results_path = './results'
 # results_path = '/home/iccd/sod/results_intermediate_ca'
 # results_path = '/home/iccd/sod/results_intermediate_sa'
 check_mkdir(results_path)
-ckpt_path = 'sod_ckpt'
+ckpt_path = '/media/iccd/disk2/tip_mirror_ckpt'
 # exp_name = 'MirrorNet_NAC_SL_resnet50'
-exp_name = 'MirrorNet_NAC_resnet50_bie_four_ms_poly_v12'
+# exp_name = 'MirrorNet_NAC_resnet50_bie_four_ms_poly_v12'
+exp_name = 'MirrorNet_Plus_sod_1'
 args = {
-    'snapshot': '100',
+    'snapshot': '120',
     'scale': 384,
     'crf': False,
     'save_results': True,  # whether to save the resulting masks
@@ -66,7 +69,7 @@ results = OrderedDict()
 
 
 def main():
-    net = MirrorNet(resnet50_backbone_path).cuda(device_ids[0])
+    net = MirrorNet_Plus(backbone_path).cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

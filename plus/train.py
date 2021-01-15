@@ -37,11 +37,11 @@ import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [1]
+device_ids = [0]
 
 ckpt_path = './ckpt'
 # ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
-exp_name = 'MirrorNet_Plus_6'
+exp_name = 'MirrorNet_Plus_7'
 
 args = {
     'epoch_num': 200,

@@ -39,14 +39,14 @@ cudnn.benchmark = True
 
 device_ids = [0]
 
-ckpt_path = './ckpt'
-# ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
-exp_name = 'MirrorNet_Plus_7'
+# ckpt_path = './ckpt'
+ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
+exp_name = 'MirrorNet_Plus_9'
 
 args = {
     'epoch_num': 200,
     'epoch_thres': 150,
-    'train_batch_size': 8,
+    'train_batch_size': 6,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,

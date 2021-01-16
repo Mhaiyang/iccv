@@ -28,8 +28,8 @@ MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = os.path.join(ROOT_DIR, ckpt_path, exp_name, '%s_%s' % (exp_name, args['snapshot']))
 # PREDICT_DIR = "/home/iccd/iccv/ckpt/TAYLOR5/TAYLOR5_160_crf/f1"
 # PREDICT_DIR = "/home/iccd/iccv/ckpt/TAYLOR5_NOC/TAYLOR5_NOC_140/f1"
-# PREDICT_DIR = "./plus/ckpt/MirrorNet_Plus_3/MirrorNet_Plus_3_epoch_190_ber_5.77_crf"
-PREDICT_DIR = "./plus/results/Statistics"
+PREDICT_DIR = "./plus/ckpt/MirrorNet_Plus_10/MirrorNet_Plus_10_epoch_165_ber_6.25_crf"
+# PREDICT_DIR = "./plus/results/Statistics"
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/2019", str(args['type']))

@@ -26,10 +26,10 @@ from mirrornet_plus import MirrorNet_Plus
 device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
-# ckpt_path = './ckpt'
-ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
-exp_name = 'MirrorNet_Plus_8'
-pth_name = 'epoch_160_ber_6.19.pth'
+ckpt_path = './ckpt'
+# ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
+exp_name = 'MirrorNet_Plus_3'
+pth_name = 'epoch_165_ber_5.76.pth'
 args = {
     'snapshot': '165',
     'scale': 384,

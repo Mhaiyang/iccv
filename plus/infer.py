@@ -28,10 +28,11 @@ torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
 # ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
-exp_name = 'MirrorNet_Plus_3'
-pth_name = 'epoch_165_ber_5.76.pth'
+# exp_name = 'MirrorNet_Plus_3'
+exp_name = 'ylt'
+pth_name = 'epoch_190_ber_6.03693.pth'
 args = {
-    'snapshot': '165',
+    'snapshot': '190',
     'scale': 384,
     'crf': True
 }

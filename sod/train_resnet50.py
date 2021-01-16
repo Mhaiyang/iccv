@@ -52,7 +52,7 @@ args = {
     'weight_decay': 5e-4,
     'momentum': 0.9,
     'snapshot': '',
-    'scale': 320,
+    'scale': 384,
     'save_point': [100],
     'poly_train': False,
     'poly_warmup': False,

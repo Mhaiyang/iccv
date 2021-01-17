@@ -22,20 +22,20 @@ from collections import OrderedDict
 from config import *
 from misc import *
 from mirrornet_plus import MirrorNet_Plus
-# from model.base_dce_wof import Base_dce_wof
 
 torch.manual_seed(2020)
-device_ids = [0]
+device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
 results_path = './results'
 # results_path = '/home/iccd/sod/results_intermediate_ca'
 # results_path = '/home/iccd/sod/results_intermediate_sa'
 check_mkdir(results_path)
-ckpt_path = '/media/iccd/disk2/tip_mirror_ckpt'
+ckpt_path = './ckpt'
+# ckpt_path = '/media/iccd/disk2/tip_mirror_ckpt'
 # exp_name = 'MirrorNet_NAC_SL_resnet50'
 # exp_name = 'MirrorNet_NAC_resnet50_bie_four_ms_poly_v12'
-exp_name = 'MirrorNet_Plus_sod_2'
+exp_name = 'MirrorNet_Plus_sod_3'
 args = {
     'snapshot': '120',
     'scale': 384,

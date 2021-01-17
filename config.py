@@ -15,8 +15,8 @@ import os
 
 msd_training_root = "../data/MSD/train"
 msd_testing_root = "../data/MSD/test"
-backbone_path = '../backbone/resnext/resnext_101_32x4d.pth'
-# backbone_path = '../backbone/resnet/resnet50-19c8e357.pth'
+# backbone_path = '../backbone/resnext/resnext_101_32x4d.pth'
+backbone_path = '../backbone/resnet/resnet50-19c8e357.pth'
 # backbone_path = "/root/backbone/resnet101.pth"
 
 # msd_training_root = "/root/data/SBU-shadow/train"
@@ -38,10 +38,10 @@ backbone_path = '../backbone/resnext/resnext_101_32x4d.pth'
 # msd_testing_root = "/home/iccd/data/SBU-shadow/test"
 # backbone_path = '/home/iccd/iccv/backbone/resnext/resnext_101_32x4d.pth'
 
-# datasets_root = '/media/iccd/disk1/saliency_benchmark'
-# sod_training_root = "/media/iccd/disk1/saliency_benchmark/DUTS-TR"
-datasets_root = '../data/saliency_benchmark'
-sod_training_root = "../data/saliency_benchmark/DUTS-TR"
+datasets_root = '/media/iccd/disk1/saliency_benchmark'
+sod_training_root = "/media/iccd/disk1/saliency_benchmark/DUTS-TR"
+# datasets_root = '../data/saliency_benchmark'
+# sod_training_root = "../data/saliency_benchmark/DUTS-TR"
 ecssd_path = os.path.join(datasets_root, 'ECSSD')
 hkuis_path = os.path.join(datasets_root, 'HKU-IS')
 hkuis_test_path = os.path.join(datasets_root, 'HKU-IS-TEST')

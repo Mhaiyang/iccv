@@ -38,14 +38,15 @@ import loss
 cudnn.benchmark = True
 
 torch.manual_seed(2021)
-device_ids = [0]
+device_ids = [1]
 
-ckpt_path = '/media/iccd/disk2/tip_mirror_ckpt'
-exp_name = 'MirrorNet_Plus_sod_resnet50_2'
+# ckpt_path = '/media/iccd/disk2/tip_mirror_ckpt'
+ckpt_path = './ckpt'
+exp_name = 'MirrorNet_Plus_sod_resnet50_3'
 
 args = {
     'epoch_num': 120,
-    'train_batch_size': 10,
+    'train_batch_size': 24,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,

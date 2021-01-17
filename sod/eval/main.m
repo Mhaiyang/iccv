@@ -20,7 +20,7 @@ algorithms = {
 %      'GDNet';
 
 
-     'MirrorNet_NAC_resnet50_bie_four_ms_poly_v12'
+     'MirrorNet_Plus_sod_3'
     };
 
 datasets = {
@@ -46,12 +46,12 @@ for i = 1:numel(algorithms)
 %         predpath     = ['/media/iccd/disk/15/' alg '/' dataset '/'];
 %         predpath     = ['../results/' alg '/' dataset '/'];
         predpath     = ['../results/' alg '/120/' dataset '/'];
-        maskpath     = ['/media/iccd/disk1/saliency_benchmark/' dataset '/mask/'];
-%         maskpath     = ['../../data/' dataset '/mask/'];
+%         maskpath     = ['/media/iccd/disk1/saliency_benchmark/' dataset '/mask/'];
+        maskpath     = ['../../data/saliency_benchmark/' dataset '/mask/'];
         if ~exist(predpath, 'dir'), continue; end
 
-        names = dir(['/media/iccd/disk1/saliency_benchmark/' dataset '/mask/*.png']);
-%         names = dir(['../../data/' dataset '/mask/*.png']);
+%         names = dir(['/media/iccd/disk1/saliency_benchmark/' dataset '/mask/*.png']);
+        names = dir(['../../data/saliency_benchmark/' dataset '/mask/*.png']);
         names = {names.name}';
         wfm          = 0; mae    = 0; sm     = 0; fm     = 0; prec   = 0; rec    = 0; em     = 0;
         score1       = 0; score2 = 0; score3 = 0; score4 = 0; score5 = 0; score6 = 0; score7 = 0;

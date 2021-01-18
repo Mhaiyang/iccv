@@ -12,15 +12,15 @@ algorithms = {
 %      'BASNet';
 %      'CPD';
 %      'PAGE-Net';
-%      'PoolNet';
 %      'AFNet';
 %      'BANet';
+%      'GCPANet';
 %      'F3Net';
-%      'DCENet';
-%      'GDNet';
+%      'MINet-R';
+%      'ITSD';
 
 
-     'MirrorNet_Plus_sod_resnet50_3'
+     'MirrorNet_Plus_sod_resnet50_4'
     };
 
 datasets = {
@@ -44,7 +44,7 @@ for i = 1:numel(algorithms)
     for j = 1:numel(datasets)
         dataset      = datasets{j};
 %         predpath     = ['/media/iccd/disk/15/' alg '/' dataset '/'];
-%         predpath     = ['../results/' alg '/' dataset '/'];
+%         predpath     = ['../results/18/' alg '/' dataset '/'];
         predpath     = ['../results/' alg '/120/' dataset '/'];
 %         maskpath     = ['/media/iccd/disk1/saliency_benchmark/' dataset '/mask/'];
         maskpath     = ['../../data/saliency_benchmark/' dataset '/mask/'];

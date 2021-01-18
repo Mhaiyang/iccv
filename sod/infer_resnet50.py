@@ -34,11 +34,11 @@ results_path = './results'
 # results_path = '/home/iccd/sod/results_intermediate_ca'
 # results_path = '/home/iccd/sod/results_intermediate_sa'
 check_mkdir(results_path)
-ckpt_path = '/media/iccd/disk2/tip_mirror_ckpt'
-# ckpt_path = './ckpt'
+# ckpt_path = '/media/iccd/disk2/tip_mirror_ckpt'
+ckpt_path = './ckpt'
 # exp_name = 'MirrorNet_NAC_SL_resnet50'
 # exp_name = 'MirrorNet_NAC_resnet50_bie_four_ms_poly_v12'
-exp_name = 'MirrorNet_Plus_sod_resnet50_2'
+exp_name = 'MirrorNet_Plus_sod_resnet50_3'
 args = {
     'snapshot': '120',
     'scale': 384,

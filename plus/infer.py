@@ -26,11 +26,13 @@ from mirrornet_plus import MirrorNet_Plus
 device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
-ckpt_path = './ckpt'
+# ckpt_path = './ckpt'
+ckpt_path = './'
 # ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
 # exp_name = 'MirrorNet_Plus_3'
-exp_name = 'ylt'
-pth_name = 'epoch_190_ber_6.03693.pth'
+exp_name = 'results'
+# pth_name = 'epoch_190_ber_6.03693.pth'
+pth_name = 'MirrorNet+.pth'
 args = {
     'snapshot': '190',
     'scale': 384,
@@ -83,7 +85,9 @@ def main():
                     f_1 = crf_refine(np.array(img.convert('RGB')), f_1)
 
                 Image.fromarray(f_1).save(
-                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]) + "_crf",
+                    # os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]) + "_crf",
+                    #              img_name[:-4] + ".png"))
+                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]),
                                  img_name[:-4] + ".png"))
 
             end = time.time()

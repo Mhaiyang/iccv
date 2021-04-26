@@ -65,7 +65,8 @@ def main():
             start = time.time()
             for idx, img_name in enumerate(img_list):
                 print('predicting for {}: {:>4d} / {}'.format(name, idx + 1, len(img_list)))
-                check_mkdir(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]) + "_crf"))
+                # check_mkdir(os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]) + "_crf"))
+                check_mkdir(os.path.join(ckpt_path, exp_name, pth_name[:-4]))
                 img = Image.open(os.path.join(root, 'image', img_name))
                 if img.mode != 'RGB':
                     img = img.convert('RGB')
@@ -87,8 +88,7 @@ def main():
                 Image.fromarray(f_1).save(
                     # os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]) + "_crf",
                     #              img_name[:-4] + ".png"))
-                    os.path.join(ckpt_path, exp_name, '%s_%s' % (exp_name, pth_name[:-4]),
-                                 img_name[:-4] + ".png"))
+                    os.path.join(ckpt_path, exp_name, pth_name[:-4], img_name[:-4] + ".png"))
 
             end = time.time()
             print("Average Time Is : {:.2f}".format((end - start) / len(img_list)))

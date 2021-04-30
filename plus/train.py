@@ -44,7 +44,7 @@ device_ids = [0]
 ckpt_path = './ckpt'
 # ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
 # exp_name = 'MirrorNet_Plus_GB_1'
-exp_name = 'MirrorNet_Plus_RB_1'
+exp_name = 'MirrorNet_Plus_RB_2'
 
 args = {
     'epoch_num': 200,

@@ -21,20 +21,23 @@ from torchvision import transforms
 
 from config import msd_testing_root
 from misc import check_mkdir, crf_refine
-from mirrornet_plus import MirrorNet_Plus
+# from mirrornet_plus import MirrorNet_Plus
+from mirrornet_plus_gb import MirrorNet_Plus_GB
+# from mirrornet_plus_rb import MirrorNet_Plus_RB
 
 device_ids = [1]
 torch.cuda.set_device(device_ids[0])
 
-# ckpt_path = './ckpt'
-ckpt_path = './'
+ckpt_path = './ckpt'
+# ckpt_path = './'
 # ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
 # exp_name = 'MirrorNet_Plus_3'
-exp_name = 'results'
+# exp_name = 'results'
+exp_name = 'MirrorNet_Plus_GB_1'
 # pth_name = 'epoch_190_ber_6.03693.pth'
-pth_name = 'MirrorNet+.pth'
+pth_name = 'epoch_170_ber_6.20.pth'
 args = {
-    'snapshot': '190',
+    'snapshot': '170',
     'scale': 384,
     'crf': True
 }
@@ -51,7 +54,7 @@ to_pil = transforms.ToPILImage()
 
 
 def main():
-    net = MirrorNet_Plus().cuda(device_ids[0])
+    net = MirrorNet_Plus_GB().cuda(device_ids[0])
 
     if len(args['snapshot']) > 0:
         print('Load snapshot {} for testing'.format(args['snapshot']))

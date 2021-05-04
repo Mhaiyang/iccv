@@ -34,7 +34,7 @@ MASK_DIR = os.path.join(msd_testing_root, "mask")
 # PREDICT_DIR = "./plus/results/TIP-Mirror/MirrorNet+"
 # PREDICT_DIR = "./plus/results/MirrorNet+"
 # PREDICT_DIR = "./plus/ckpt/MirrorNet_Plus_GB_1/epoch_170_ber_6.20"
-PREDICT_DIR = "./plus/ckpt/MirrorNet_Plus_RB_2/epoch_150_ber_5.86"
+PREDICT_DIR = "./plus/ckpt/MirrorNet_Plus_RB_2/epoch_200_ber_5.90"
 
 if args['type'] != 0:
     type_path = os.path.join("/home/iccd/data/2019", str(args['type']))

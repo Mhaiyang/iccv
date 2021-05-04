@@ -26,7 +26,7 @@ from misc import check_mkdir, crf_refine
 # from mirrornet_plus_gb import MirrorNet_Plus_GB
 from mirrornet_plus_rb import MirrorNet_Plus_RB
 
-device_ids = [1]
+device_ids = [0]
 torch.cuda.set_device(device_ids[0])
 
 ckpt_path = './ckpt'
@@ -38,9 +38,9 @@ ckpt_path = './ckpt'
 exp_name = 'MirrorNet_Plus_RB_2'
 # pth_name = 'epoch_190_ber_6.03693.pth'
 # pth_name = 'MirrorNet+.pth'
-pth_name = 'epoch_150_ber_5.86.pth'
+pth_name = 'epoch_200_ber_5.90.pth'
 args = {
-    'snapshot': '150',
+    'snapshot': '200',
     'scale': 384,
     'crf': True
 }

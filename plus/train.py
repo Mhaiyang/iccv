@@ -31,25 +31,25 @@ from config import backbone_path
 from dataset import ImageFolder
 from misc import AvgMeter, check_mkdir, crf_refine, compute_ber
 # from mirrornet_plus import MirrorNet_Plus
-# from mirrornet_plus_gb import MirrorNet_Plus_GB
-from mirrornet_plus_rb import MirrorNet_Plus_RB
+from mirrornet_plus_gb import MirrorNet_Plus_GB
+# from mirrornet_plus_rb import MirrorNet_Plus_RB
 
 import numpy as np
 import loss as L
 
 cudnn.benchmark = True
 
-device_ids = [1]
+device_ids = [0]
 
 ckpt_path = './ckpt'
 # ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
-# exp_name = 'MirrorNet_Plus_GB_1'
-exp_name = 'MirrorNet_Plus_RB_3'
+exp_name = 'MirrorNet_Plus_GB_5'
+# exp_name = 'MirrorNet_Plus_RB_3'
 
 args = {
     'epoch_num': 200,
     'epoch_thres': 150,
-    'train_batch_size': 10,
+    'train_batch_size': 12,
     'last_epoch': 0,
     'lr': 1e-3,
     'lr_decay': 0.9,
@@ -110,8 +110,8 @@ def main():
     print(exp_name)
 
     # net = MirrorNet_Plus(backbone_path).cuda(device_ids[0]).train()
-    # net = MirrorNet_Plus_GB(backbone_path).cuda(device_ids[0]).train()
-    net = MirrorNet_Plus_RB(backbone_path).cuda(device_ids[0]).train()
+    net = MirrorNet_Plus_GB(backbone_path).cuda(device_ids[0]).train()
+    # net = MirrorNet_Plus_RB(backbone_path).cuda(device_ids[0]).train()
     if args['add_graph']:
         writer.add_graph(net, input_to_model=torch.rand(
             args['train_batch_size'], 3, args['scale'], args['scale']).cuda(device_ids[0]))

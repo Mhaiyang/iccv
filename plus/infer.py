@@ -34,13 +34,13 @@ ckpt_path = './ckpt'
 # ckpt_path = '/media/iccd/disk1/tip_mirror_ckpt'
 # exp_name = 'MirrorNet_Plus_3'
 # exp_name = 'results'
-exp_name = 'MirrorNet_Plus_GB_2'
+exp_name = 'MirrorNet_Plus_GB_7'
 # exp_name = 'MirrorNet_Plus_RB_2'
 # pth_name = 'epoch_190_ber_6.03693.pth'
 # pth_name = 'MirrorNet+.pth'
-pth_name = 'epoch_180_ber_6.66.pth'
+pth_name = 'epoch_165_ber_6.31.pth'
 args = {
-    'snapshot': '180',
+    'snapshot': '165',
     'scale': 384,
     'crf': True
 }

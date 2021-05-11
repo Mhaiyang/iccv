@@ -1,8 +1,8 @@
 import os
 import shutil
 
-root_dir = '/home/iccd/iccv/plus/ablation_methods'
-output_dir = '/home/iccd/iccv/plus/ablation_all'
+root_dir = '/home/iccd/iccv/plus/more'
+output_dir = '/home/iccd/iccv/plus/more_all'
 methods = os.listdir(root_dir)
 for method in methods:
     images = os.listdir(os.path.join(root_dir, method))

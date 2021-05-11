@@ -20,7 +20,7 @@ algorithms = {
 %      'ITSD';
 
 
-     'MirrorNet_Plus_sod_resnet50_4'
+     'MirrorNet_Plus_sod_7'
     };
 
 datasets = {
@@ -60,9 +60,7 @@ for i = 1:numel(algorithms)
         ALLPRECISION = zeros(numel(names), 256);
         ALLRECALL    = zeros(numel(names), 256);
         file_num     = false(numel(names), 1);
-        
-        
-    
+       
         
         for k = 1:numel(names)
             name          = names{k,1};
